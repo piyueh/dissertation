@@ -1,0 +1,5 @@
+\usepackage{amsmath}
+\usepackage{mathtools}
+\usepackage{relsize}
+\usetikzlibrary{shapes}
+\DeclareMathOperator*{\argmin}{arg\,min} % thin space, limits underneath in displays

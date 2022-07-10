@@ -1,0 +1,282 @@
+%! TEX root = main.tex
+
+% the overview table, the label is `table:tgv-overview`
+\begin{landscape}
+    \singlespacing
+    \scriptsize
+    \centering
+    \input{tables/tgv-data-overview.tex}
+\end{landscape}
+
+% training histories, nl=1, nn=16 to 256
+\begin{figure}[H]
+    \centering
+    \vfill
+    \includegraphics[width=0.475\linewidth, height=0.3\textheight]{tgv-2d-re100/training-hist/fixed-arch-loss-nl1-nn16}%
+    \hfill
+    \includegraphics[width=0.475\linewidth, height=0.3\textheight]{tgv-2d-re100/training-hist/fixed-arch-loss-nl1-nn32}%
+    \newline
+    \includegraphics[width=0.475\linewidth, height=0.3\textheight]{tgv-2d-re100/training-hist/fixed-arch-loss-nl1-nn64}%
+    \hfill
+    \includegraphics[width=0.475\linewidth, height=0.3\textheight]{tgv-2d-re100/training-hist/fixed-arch-loss-nl1-nn128}%
+    \newline
+    \includegraphics[width=0.475\linewidth, height=0.3\textheight]{tgv-2d-re100/training-hist/fixed-arch-loss-nl1-nn256}%
+    \caption{Training histories of architectures $N_l=1$ and $N_n=16,32,64,128,256$}
+\end{figure}
+
+% training histories, nl=2, nn=16 to 256
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.475\linewidth, height=0.3\textheight]{tgv-2d-re100/training-hist/fixed-arch-loss-nl2-nn16}%
+    \hfill
+    \includegraphics[width=0.475\linewidth, height=0.3\textheight]{tgv-2d-re100/training-hist/fixed-arch-loss-nl2-nn32}%
+    \newline
+    \includegraphics[width=0.475\linewidth, height=0.3\textheight]{tgv-2d-re100/training-hist/fixed-arch-loss-nl2-nn64}%
+    \hfill
+    \includegraphics[width=0.475\linewidth, height=0.3\textheight]{tgv-2d-re100/training-hist/fixed-arch-loss-nl2-nn128}%
+    \newline
+    \includegraphics[width=0.475\linewidth, height=0.3\textheight]{tgv-2d-re100/training-hist/fixed-arch-loss-nl2-nn256}%
+    \caption{Training histories of architectures $N_l=2$ and $N_n=16,32,64,128,256$}
+\end{figure}
+
+% training histories, nl=3, nn=16 to 256
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.475\linewidth, height=0.3\textheight]{tgv-2d-re100/training-hist/fixed-arch-loss-nl3-nn16}%
+    \hfill
+    \includegraphics[width=0.475\linewidth, height=0.3\textheight]{tgv-2d-re100/training-hist/fixed-arch-loss-nl3-nn32}%
+    \newline
+    \includegraphics[width=0.475\linewidth, height=0.3\textheight]{tgv-2d-re100/training-hist/fixed-arch-loss-nl3-nn64}%
+    \hfill
+    \includegraphics[width=0.475\linewidth, height=0.3\textheight]{tgv-2d-re100/training-hist/fixed-arch-loss-nl3-nn128}%
+    \newline
+    \includegraphics[width=0.475\linewidth, height=0.3\textheight]{tgv-2d-re100/training-hist/fixed-arch-loss-nl3-nn256}%
+    \caption{Training histories of architectures $N_l=3$ and $N_n=16,32,64,128,256$}
+\end{figure}
+
+% continuity residuals v.s. iterations, nl=1, nn=16 to 256
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.475\linewidth, height=0.3\textheight]{tgv-2d-re100/training-hist/fixed-arch-cont_res-nl1-nn16}%
+    \hfill
+    \includegraphics[width=0.475\linewidth, height=0.3\textheight]{tgv-2d-re100/training-hist/fixed-arch-cont_res-nl1-nn32}%
+    \newline
+    \includegraphics[width=0.475\linewidth, height=0.3\textheight]{tgv-2d-re100/training-hist/fixed-arch-cont_res-nl1-nn64}%
+    \hfill
+    \includegraphics[width=0.475\linewidth, height=0.3\textheight]{tgv-2d-re100/training-hist/fixed-arch-cont_res-nl1-nn128}%
+    \newline
+    \includegraphics[width=0.475\linewidth, height=0.3\textheight]{tgv-2d-re100/training-hist/fixed-arch-cont_res-nl1-nn256}%
+    \caption{Change of the residuals of the continuity equation during training. Architectures $N_l=1$ and $N_n=16,32,64,128,256$}
+\end{figure}
+
+% continuity residuals v.s. iterations, nl=2, nn=16 to 256
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.475\linewidth, height=0.3\textheight]{tgv-2d-re100/training-hist/fixed-arch-cont_res-nl2-nn16}%
+    \hfill
+    \includegraphics[width=0.475\linewidth, height=0.3\textheight]{tgv-2d-re100/training-hist/fixed-arch-cont_res-nl2-nn32}%
+    \newline
+    \includegraphics[width=0.475\linewidth, height=0.3\textheight]{tgv-2d-re100/training-hist/fixed-arch-cont_res-nl2-nn64}%
+    \hfill
+    \includegraphics[width=0.475\linewidth, height=0.3\textheight]{tgv-2d-re100/training-hist/fixed-arch-cont_res-nl2-nn128}%
+    \newline
+    \includegraphics[width=0.475\linewidth, height=0.3\textheight]{tgv-2d-re100/training-hist/fixed-arch-cont_res-nl2-nn256}%
+    \caption{Change of the residuals of the continuity equation during training. Architectures $N_l=2$ and $N_n=16,32,64,128,256$}
+\end{figure}
+
+% continuity residuals v.s. iterations, nl=3, nn=16 to 256
+\begin{figure}[H]
+    \centering
+        \includegraphics[width=0.475\linewidth, height=0.3\textheight]{tgv-2d-re100/training-hist/fixed-arch-cont_res-nl3-nn16}%
+    \hfill
+        \includegraphics[width=0.475\linewidth, height=0.3\textheight]{tgv-2d-re100/training-hist/fixed-arch-cont_res-nl3-nn32}%
+    \hfill
+        \includegraphics[width=0.475\linewidth, height=0.3\textheight]{tgv-2d-re100/training-hist/fixed-arch-cont_res-nl3-nn64}%
+    \hfill
+        \includegraphics[width=0.475\linewidth, height=0.3\textheight]{tgv-2d-re100/training-hist/fixed-arch-cont_res-nl3-nn128}%
+    \newline
+        \includegraphics[width=0.475\linewidth, height=0.3\textheight]{tgv-2d-re100/training-hist/fixed-arch-cont_res-nl3-nn256}%
+    \caption{Change of the residuals of the continuity equation during training. Architectures $N_l=3$ and $N_n=16,32,64,128,256$}
+\end{figure}
+
+% momentum x residuals v.s. iterations, nl=1, nn=16 to 256
+\begin{figure}[H]
+    \centering
+        \includegraphics[width=0.475\linewidth, height=0.3\textheight]{tgv-2d-re100/training-hist/fixed-arch-momem_x_res-nl1-nn16}%
+    \hfill
+        \includegraphics[width=0.475\linewidth, height=0.3\textheight]{tgv-2d-re100/training-hist/fixed-arch-momem_x_res-nl1-nn32}%
+    \newline
+        \includegraphics[width=0.475\linewidth, height=0.3\textheight]{tgv-2d-re100/training-hist/fixed-arch-momem_x_res-nl1-nn64}%
+    \hfill
+        \includegraphics[width=0.475\linewidth, height=0.3\textheight]{tgv-2d-re100/training-hist/fixed-arch-momem_x_res-nl1-nn128}%
+    \newline
+        \includegraphics[width=0.475\linewidth, height=0.3\textheight]{tgv-2d-re100/training-hist/fixed-arch-momem_x_res-nl1-nn256}%
+    \caption{Change of the residuals in $x$ momentum equation during training. Architectures $N_l=1$ and $N_n=16,32,64,128,256$}
+\end{figure}
+
+% momentum x residuals v.s. iterations, nl=2, nn=16 to 256
+\begin{figure}[H]
+    \centering
+        \includegraphics[width=0.475\linewidth, height=0.3\textheight]{tgv-2d-re100/training-hist/fixed-arch-momem_x_res-nl2-nn16}%
+    \hfill
+        \includegraphics[width=0.475\linewidth, height=0.3\textheight]{tgv-2d-re100/training-hist/fixed-arch-momem_x_res-nl2-nn32}%
+    \newline
+        \includegraphics[width=0.475\linewidth, height=0.3\textheight]{tgv-2d-re100/training-hist/fixed-arch-momem_x_res-nl2-nn64}%
+    \hfill
+        \includegraphics[width=0.475\linewidth, height=0.3\textheight]{tgv-2d-re100/training-hist/fixed-arch-momem_x_res-nl2-nn128}%
+    \newline
+        \includegraphics[width=0.475\linewidth, height=0.3\textheight]{tgv-2d-re100/training-hist/fixed-arch-momem_x_res-nl2-nn256}%
+    \caption{Change of the residuals in $x$ momentum equation during training. Architectures $N_l=2$ and $N_n=16,32,64,128,256$}
+\end{figure}
+
+% momentum x residuals v.s. iterations, nl=3, nn=16 to 256
+\begin{figure}[H]
+    \centering
+        \includegraphics[width=0.475\linewidth, height=0.3\textheight]{tgv-2d-re100/training-hist/fixed-arch-momem_x_res-nl3-nn16}%
+    \hfill
+        \includegraphics[width=0.475\linewidth, height=0.3\textheight]{tgv-2d-re100/training-hist/fixed-arch-momem_x_res-nl3-nn32}%
+    \hfill
+        \includegraphics[width=0.475\linewidth, height=0.3\textheight]{tgv-2d-re100/training-hist/fixed-arch-momem_x_res-nl3-nn64}%
+    \hfill
+        \includegraphics[width=0.475\linewidth, height=0.3\textheight]{tgv-2d-re100/training-hist/fixed-arch-momem_x_res-nl3-nn128}%
+    \newline
+        \includegraphics[width=0.475\linewidth, height=0.3\textheight]{tgv-2d-re100/training-hist/fixed-arch-momem_x_res-nl3-nn256}%
+    \caption{Change of the residuals in $x$ momentum equation during training. Architectures $N_l=3$ and $N_n=16,32,64,128,256$}
+\end{figure}
+
+% momentum y residuals v.s. iterations, nl=1, nn=16 to 256
+\begin{figure}[H]
+    \centering
+        \includegraphics[width=0.475\linewidth, height=0.3\textheight]{tgv-2d-re100/training-hist/fixed-arch-momem_y_res-nl1-nn16}%
+    \hfill
+        \includegraphics[width=0.475\linewidth, height=0.3\textheight]{tgv-2d-re100/training-hist/fixed-arch-momem_y_res-nl1-nn32}%
+    \newline
+        \includegraphics[width=0.475\linewidth, height=0.3\textheight]{tgv-2d-re100/training-hist/fixed-arch-momem_y_res-nl1-nn64}%
+    \hfill
+        \includegraphics[width=0.475\linewidth, height=0.3\textheight]{tgv-2d-re100/training-hist/fixed-arch-momem_y_res-nl1-nn128}%
+    \newline
+        \includegraphics[width=0.475\linewidth, height=0.3\textheight]{tgv-2d-re100/training-hist/fixed-arch-momem_y_res-nl1-nn256}%
+    \caption{Change of the residuals in $y$ momentum equation during training. Architectures $N_l=1$ and $N_n=16,32,64,128,256$}
+\end{figure}
+
+% momentum y residuals v.s. iterations, nl=2, nn=16 to 256
+\begin{figure}[H]
+    \centering
+        \includegraphics[width=0.475\linewidth, height=0.3\textheight]{tgv-2d-re100/training-hist/fixed-arch-momem_y_res-nl2-nn16}%
+    \hfill
+        \includegraphics[width=0.475\linewidth, height=0.3\textheight]{tgv-2d-re100/training-hist/fixed-arch-momem_y_res-nl2-nn32}%
+    \newline
+        \includegraphics[width=0.475\linewidth, height=0.3\textheight]{tgv-2d-re100/training-hist/fixed-arch-momem_y_res-nl2-nn64}%
+    \hfill
+        \includegraphics[width=0.475\linewidth, height=0.3\textheight]{tgv-2d-re100/training-hist/fixed-arch-momem_y_res-nl2-nn128}%
+    \newline
+        \includegraphics[width=0.475\linewidth, height=0.3\textheight]{tgv-2d-re100/training-hist/fixed-arch-momem_y_res-nl2-nn256}%
+    \caption{Change of the residuals in $y$ momentum equation during training. Architectures $N_l=2$ and $N_n=16,32,64,128,256$}
+\end{figure}
+
+% momentum y residuals v.s. iterations, nl=3, nn=16 to 256
+\begin{figure}[H]
+    \centering
+        \includegraphics[width=0.475\linewidth, height=0.3\textheight]{tgv-2d-re100/training-hist/fixed-arch-momem_y_res-nl3-nn16}%
+    \hfill
+        \includegraphics[width=0.475\linewidth, height=0.3\textheight]{tgv-2d-re100/training-hist/fixed-arch-momem_y_res-nl3-nn32}%
+    \hfill
+        \includegraphics[width=0.475\linewidth, height=0.3\textheight]{tgv-2d-re100/training-hist/fixed-arch-momem_y_res-nl3-nn64}%
+    \hfill
+        \includegraphics[width=0.475\linewidth, height=0.3\textheight]{tgv-2d-re100/training-hist/fixed-arch-momem_y_res-nl3-nn128}%
+    \newline
+        \includegraphics[width=0.475\linewidth, height=0.3\textheight]{tgv-2d-re100/training-hist/fixed-arch-momem_y_res-nl3-nn256}%
+    \caption{Change of the residuals in $y$ momentum equation during training. Architectures $N_l=3$ and $N_n=16,32,64,128,256$}
+\end{figure}
+
+% errors v.s. iterations
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.475\linewidth, height=0.3\textheight]{tgv-2d-re100/err-vs-iters/nl1-nn16/nl1-nn16-orig-u-t=000}%
+    \hfill%
+    \includegraphics[width=0.475\linewidth, height=0.3\textheight]{tgv-2d-re100/err-vs-iters/nl1-nn16/nl1-nn16-orig-v-t=000}%
+    \newline
+    \vfill
+    \includegraphics[width=0.475\linewidth, height=0.3\textheight]{tgv-2d-re100/err-vs-iters/nl1-nn32/nl1-nn32-orig-u-t=000}%
+    \hfill
+    \includegraphics[width=0.475\linewidth, height=0.3\textheight]{tgv-2d-re100/err-vs-iters/nl1-nn32/nl1-nn32-orig-v-t=000}%
+    \newline
+    \vfill
+    \includegraphics[width=0.475\linewidth, height=0.3\textheight]{tgv-2d-re100/err-vs-iters/nl1-nn64/nl1-nn64-orig-u-t=000}%
+    \hfill
+    \includegraphics[width=0.475\linewidth, height=0.3\textheight]{tgv-2d-re100/err-vs-iters/nl1-nn64/nl1-nn64-orig-v-t=000}%
+    \caption{Change of the $l_2$ errors of $u$ and $v$ for architectures $(N_l, N_n)=(1, 16)$, $(1, 32)$ and $(1, 64)$.}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.475\linewidth, height=0.3\textheight]{tgv-2d-re100/err-vs-iters/nl1-nn128/nl1-nn128-orig-u-t=000}%
+    \hfill%
+    \includegraphics[width=0.475\linewidth, height=0.3\textheight]{tgv-2d-re100/err-vs-iters/nl1-nn128/nl1-nn128-orig-v-t=000}%
+    \newline
+    \vfill
+    \includegraphics[width=0.475\linewidth, height=0.3\textheight]{tgv-2d-re100/err-vs-iters/nl1-nn256/nl1-nn256-orig-u-t=000}%
+    \hfill
+    \includegraphics[width=0.475\linewidth, height=0.3\textheight]{tgv-2d-re100/err-vs-iters/nl1-nn256/nl1-nn256-orig-v-t=000}%
+    \newline
+    \vfill
+    \includegraphics[width=0.475\linewidth, height=0.3\textheight]{tgv-2d-re100/err-vs-iters/nl2-nn16/nl2-nn16-orig-u-t=000}%
+    \hfill
+    \includegraphics[width=0.475\linewidth, height=0.3\textheight]{tgv-2d-re100/err-vs-iters/nl2-nn16/nl2-nn16-orig-v-t=000}%
+    \caption{Change of the $l_2$ errors of $u$ and $v$ for architectures $(N_l, N_n)=(1, 128)$, $(1, 256)$ and $(2, 16)$.}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.475\linewidth, height=0.3\textheight]{tgv-2d-re100/err-vs-iters/nl2-nn32/nl2-nn32-orig-u-t=000}%
+    \hfill%
+    \includegraphics[width=0.475\linewidth, height=0.3\textheight]{tgv-2d-re100/err-vs-iters/nl2-nn32/nl2-nn32-orig-v-t=000}%
+    \newline
+    \vfill
+    \includegraphics[width=0.475\linewidth, height=0.3\textheight]{tgv-2d-re100/err-vs-iters/nl2-nn64/nl2-nn64-orig-u-t=000}%
+    \hfill
+    \includegraphics[width=0.475\linewidth, height=0.3\textheight]{tgv-2d-re100/err-vs-iters/nl2-nn64/nl2-nn64-orig-v-t=000}%
+    \newline
+    \vfill
+    \includegraphics[width=0.475\linewidth, height=0.3\textheight]{tgv-2d-re100/err-vs-iters/nl2-nn128/nl2-nn128-orig-u-t=000}%
+    \hfill
+    \includegraphics[width=0.475\linewidth, height=0.3\textheight]{tgv-2d-re100/err-vs-iters/nl2-nn128/nl2-nn128-orig-v-t=000}%
+    \caption{Change of the $l_2$ errors of $u$ and $v$ for architectures $(N_l, N_n)=(2, 32)$, $(2, 64)$ and $(2, 128)$.}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.475\linewidth, height=0.3\textheight]{tgv-2d-re100/err-vs-iters/nl2-nn256/nl2-nn256-orig-u-t=000}%
+    \hfill%
+    \includegraphics[width=0.475\linewidth, height=0.3\textheight]{tgv-2d-re100/err-vs-iters/nl2-nn256/nl2-nn256-orig-v-t=000}%
+    \newline
+    \vfill
+    \includegraphics[width=0.475\linewidth, height=0.3\textheight]{tgv-2d-re100/err-vs-iters/nl3-nn16/nl3-nn16-orig-u-t=000}%
+    \hfill
+    \includegraphics[width=0.475\linewidth, height=0.3\textheight]{tgv-2d-re100/err-vs-iters/nl3-nn16/nl3-nn16-orig-v-t=000}%
+    \newline
+    \vfill
+    \includegraphics[width=0.475\linewidth, height=0.3\textheight]{tgv-2d-re100/err-vs-iters/nl3-nn32/nl3-nn32-orig-u-t=000}%
+    \hfill
+    \includegraphics[width=0.475\linewidth, height=0.3\textheight]{tgv-2d-re100/err-vs-iters/nl3-nn32/nl3-nn32-orig-v-t=000}%
+    \caption{Change of the $l_2$ errors of $u$ and $v$ for architectures $(N_l, N_n)=(2, 256)$, $(3, 16)$ and $(3, 32)$.}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.475\linewidth, height=0.3\textheight]{tgv-2d-re100/err-vs-iters/nl3-nn64/nl3-nn64-orig-u-t=000}%
+    \hfill%
+    \includegraphics[width=0.475\linewidth, height=0.3\textheight]{tgv-2d-re100/err-vs-iters/nl3-nn64/nl3-nn64-orig-v-t=000}%
+    \newline
+    \vfill
+    \includegraphics[width=0.475\linewidth, height=0.3\textheight]{tgv-2d-re100/err-vs-iters/nl3-nn128/nl3-nn128-orig-u-t=000}%
+    \hfill
+    \includegraphics[width=0.475\linewidth, height=0.3\textheight]{tgv-2d-re100/err-vs-iters/nl3-nn128/nl3-nn128-orig-v-t=000}%
+    \newline
+    \vfill
+    \includegraphics[width=0.475\linewidth, height=0.3\textheight]{tgv-2d-re100/err-vs-iters/nl3-nn256/nl3-nn256-orig-u-t=000}%
+    \hfill
+    \includegraphics[width=0.475\linewidth, height=0.3\textheight]{tgv-2d-re100/err-vs-iters/nl3-nn256/nl3-nn256-orig-v-t=000}%
+    \caption{Change of the $l_2$ errors of $u$ and $v$ for architectures $(N_l, N_n)=(3, 64)$, $(3, 128)$ and $(3, 256)$.}
+\end{figure}
+% vim:ft=tex

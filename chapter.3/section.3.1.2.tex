@@ -1,0 +1,49 @@
+%! TEX root = main.tex
+
+For readers with a background in numerical methods for partial differential equations, we would like to make an analogy between traditional numerical methods and PINN.
+
+In obtaining strong solutions to differential equations, we can describe the solution workflows of most numerical methods with five stages:
+
+1. *Designing the approximate solution with undetermined parameters*
+2. *Choosing proper approximation for derivatives*
+3. *Obtaining the so-called modified equation by substituting approximate derivatives into the differential equations and initial/boundary conditions*
+4. *Generating a system of linear/nonlinear algebraic equations*
+5. *Solving the system of equations*
+
+For example, to solve $\nabla U^2(x)=s(x)$, the most naive spectral method \cite{trefethen_spectral_2000} approximates the solution with $U(x)\approx G(x)=\sum\limits_{i=1}^{N}c_i\phi_i(x)$, where $c_i$ represents undetermined parameters, and $\phi_i(x)$ denotes a set of either polynomials, trigonometric functions, or complex exponentials.
+Next, obtaining the first derivative of $U$ is straightforward—we can just assume $U^{\prime}(x)\approx G^{\prime}(x)=\sum\limits_{i=1}^{N}c_i \phi_i^{\prime}(x)$.
+The second-order derivative may be more tricky.
+One can assume $U^{\prime\prime}(x)\approx G^{\prime\prime}=\sum\limits_{i=1}^{N}c_i \phi_i^{\prime\prime}(x)$.
+Or, another choice for nodal bases (i.e., when $\phi_i(x)$ is chosen to make $c_i\equiv G(x_i)$) is $U^{\prime\prime}(x)\approx \sum\limits_{i=1}^{N}c_i G^{\prime}(x_i)$.
+Because $\phi_i(x)$ is known, the derivatives are analytical.
+After substituting the approximate solution and derivatives in to the target differential equation, we need to solve for parameters $c_1,\cdots,c_N$.
+We do so by selecting $N$ points from the computational domain and creating a system of $N$ linear equations:
+
+\begin{equation}\label{eq:spectral-linear-sys}
+    \begin{bmatrix}
+        \phi_1^{\prime\prime}(x_1) & \cdots & \phi_N^{\prime\prime}(x_1) \\
+        \vdots & \ddots & \vdots \\
+        \phi_1^{\prime\prime}(x_N) & \cdots & \phi_N^{\prime\prime}(x_N)
+    \end{bmatrix}
+    \begin{bmatrix}
+        c_1 \\ \vdots \\ c_N
+    \end{bmatrix}
+    - 
+    \begin{bmatrix}
+        s(x_1) \\ \vdots \\ s(x_N)
+    \end{bmatrix}
+    = 0
+\end{equation}
+
+Finally, we determine the parameters by solving this linear system.
+Though this example uses a spectral method, the workflow also applies to many other numerical methods, such as finite difference methods, which can be reformatted as a form of spectral method.
+
+With this workflow in mind, it should be easy to see the analogy between PINN and conventional numerical methods.
+Aside from using much more complicated approximate solutions, the major difference lies in how to determine the unknown parameters in the approximate solutions.
+While traditional methods solve the zero-residual conditions, PINN relies on searching the minimal residuals.
+A secondary difference is how to approximate derivatives.
+Conventional numerical methods use analytical or numerical differentiation of the approximate solutions, and the PINN methods usually depends on automatic differentiation.
+This difference may be minor as we are still able to use analytical differentiation for simple network architectures with PINN.
+However, automatic differentiation is a major factor affecting PINN's performance.
+
+% vim:ft=tex

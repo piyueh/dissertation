@@ -1,0 +1,164 @@
+%! TEX root = main.tex
+
+\subsection{Problem description}
+
+The Taylor-Green vortex (TGV) represents a family of flows with a specific form of analytical initial flow conditions in both 2D and 3D.
+Specifically, 2D TGV problems with periodic boundary conditions have closed-form analytical solutions, and hence they are standard benchmark cases for verifying CFD solvers. 
+In the follow sections, we used the following 2D TGV problem to investigate several different aspects of the PINN method:
+\begin{equation}\label{eq:tgv}
+    \left\{
+        \begin{aligned}
+            u(x, y, t) &= V_0\cos(\frac{x}{L})\sin(\frac{y}{L})\exp(-2\frac{\nu}{L^2}t) \\
+            v(x, y, t) &= - V_0 \sin(\frac{x}{L})\cos(\frac{y}{L})\exp(-2\frac{\nu}{L^2}t) \\
+            p(x, y, t) &= -\frac{\rho}{4}V_0^2\left(cos(\frac{2x}{L}) + cos(\frac{2y}{L})\right)\exp(-4\frac{\nu}{L^2}t)
+        \end{aligned}
+    \right.
+\end{equation}
+
+\noindent $V_0$ represents the peak (and also the lowest) velocity at $t=0$;
+$L$ is a scaling factor in the spatial domain;
+$\nu$ and $\rho$ are kinematic viscosity and density, respectively.
+$u$ and $v$ denote the velocity components in $x$ and $y$ directions.
+$p$ is the pressure.
+The periodic boundary conditions are applied to $x=-L\pi$, $x=L\pi$, $y=-L\pi$, and $y=L\pi$.
+
+We used the following parameters for all our computational experiments: $V_0=L=\rho=1.0$ and $\nu=0.01$.
+These parameters correspond to a Reynolds number of $Re=100$.
+Figure \ref{fig:tgv-analytical-demo} shows the snapshots of the analytical solutions at $t=40$ and $t=80$..
+\begin{figure}[H]
+    \centering
+    \includegraphics{tgv-2d-re100/tgv-re100-analytical-demo}%
+    \caption{Contours of the analytical solutions of 2D TGV ($Re=100$) at $t=40$ and $t=80$ for demonstration.}\label{fig:tgv-analytical-demo}
+\end{figure}
+
+\noindent As shown in the figure and in the analytical solutions, the flow patterns do not change spatially, and only the amplitudes decay exponentially in time.
+
+This TGV problem serves as a good benchmark case because it reduces the number of required residual constraints in PINNs.
+Periodic boundary conditions eliminates the constraints coming from boundary conditions.
+Rather, modified input coordinates are used as described in section \ref{section:periodic-boundary}.
+The optimizer hence can focus only on the residuals of initial conditions and the Navier-Stokes equations.
+The training process should be easier, compared to other more realistic flow problems.
+
+\subsection{Solver configuration}
+
+The neural network used in the PINN solver is a weight-normalization fully-connected neural network.
+The benchmarks cases cover the numbers of hidden layers ranging from 1 to 3 layers, i.e., $N_l=1$, $2$, and $3$.
+Each number of hidden layers have neurons per layer ranging from 16 to 256 (that is , $N_n=2^k$ for $k=4, 5, \cdots, 8$.
+The activation functions are SiLU \cite{hendrycks_gaussian_2016}.
+See equation \ref{eq:silu}.
+
+The training processes are the same for all cases: 100,000 iterations of Adam optimization and 200 iterations of CG optimization.
+Adam training is as described in section \ref{section:adam}.
+The benchmarks in this section all use exponentially decaying learning rates: at $i$-th iteration, the learning rate is
+\begin{equation}
+    lr(i) = 0.95^\frac{i}{5000}
+\end{equation}
+The Adam optimizer itself has $\beta_1=0.9$, $\beta_2=0.999$, and $\epsilon=10^{-8}$.
+We used annealing loss aggregation algorithm to sum up different residuals sources.
+See section \ref{section:loss-annealing}.
+
+Aside from the changes in network architectures, we also investigated the effect of the number of training points used per iteration (i.e., the batch size, $N_{bs}$).
+7 different batch sizes were used for each architecture, that is, $N_{bs}=2^m$ for $m=10, 11, \cdots, 16$.
+The solver pre-generated $1000 \times N_{bs}$ spatial-temporal points and only used $N_{bs}$ in each iteration.
+In other words, running through the whole dataset takes 1,000 iterations.
+These training points were randomly sampled from the spatial domain $[-\pi, \pi]\times[-\pi, \pi]$ and temporal domain $(0, 100]$.
+
+In addition to the PDE residual evaluation points, the solver also pre-generated $1000 \times N_{bs}$ random points to evaluate the residuals of the initial conditions.
+Note that for the initial condition, the evaluation points were sampled from the spatial domain only because $t=0$ is a fixed condition.
+Because of the periodic boundary conditions, the solver does not require any training points for boundary conditions.
+
+In sum, combining the changes in $N_l$, $N_n$, and $N_{bs}$, we ran a total of 105 cases for this 2D TGV problem.
+
+The hardware used for the PINN solver were NVIDIA's V100 GPUs.
+Except for the scaling benchmarks, all other benchmarks ran on only one GPU.
+
+After training, the PINN solver's prediction errors (i.e., accuracy) were evaluated on cell centers of a $512 \times 512$ Cartesian mesh against the analytical solutions.
+With these spatially distributed errors, we calculated the $L_2$ error norm for a given $t$.
+For example, the $L_2$ error of $u$ is calculated by
+\begin{equation}\label{eq:l2norm}
+    L_2(t)
+    =
+    \sqrt{\int\limits_{\Omega} u_{err}(x, y, t)^2 \diff\Omega}
+    \approx
+    \sqrt{\sum\limits_{i}\sum\limits_{j} \left(u_{PINN}\left(x_i, y_j, t\right)-u_{analytical}\left(x_i, y_j, t\right)\right)^2 \Delta \Omega_{i, j}}
+\end{equation}
+
+\noindent where $i$ and $j$ are the indices of a cell center in the Cartesian mesh. $\Delta\Omega_{i,j}$ is the corresponding cell area, which is $4\pi^2/512^2$ in this case.
+
+Some results are compared against those from PetIBM simulations.
+All PetIBM simulations were done with 1 K40 GPU and 6 CPU cores (Intel i7-5930K).
+We carried out 7 PetIBM simulations with different spatial resolutions: $2^k\times 2^k$ for $k=4, 5, \dots, 10$.
+The time step size for each spatial resolution was $\Delta t=0.1/2^{k-4}$.
+
+A special note should be made here: the PINN solver used single-precision floats, while PetIBM used double-precision floats.
+This discrepancy does not change the qualitative findings and conclusions we will see in later sections.
+
+\subsection{Training Histories and Results Visualization}
+
+In this section, we present the training histories and basic result visualizations for some of the cases.
+The selected cases are all $N_{bs}$ under architectures $(N_l, N_n)=(1, 16)$, $(1, 256)$, $(3, 16)$, and $(3, 256)$.
+These are the edge cases in $N_l$-$N_n$ space.
+We hope to have a qualitative insight toward the bounds of the accuracy and performance in $N_l$-$N_n$ space.
+
+Figures \ref{fig:nl1-nn16-u-err-contour},  \ref{fig:nl1-nn256-u-err-contour}, \ref{fig:nl3-nn16-u-err-contour}, and \ref{fig:nl3-nn256-u-err-contour} show the error contours of $u$ for the selected cases.
+We leave the similar visualizations for other fields and other architectures in Appendix \ref{section:extra-data}.
+
+\begin{figure}[H]
+    \centering%
+    \floatbox{figure}{%
+        \begin{subfloatrow}[2]%
+            \ffigbox[\FBwidth]{%
+                \includegraphics[width=0.45\textwidth]{tgv-2d-re100/training-hist/fixed-arch-loss-nl1-nn16}%
+            }{%
+                \caption{$(N_l, N_n)=(1, 16)$}\label{fig:nl1-nn16-loss-hist}%
+            }%
+            \ffigbox[\FBwidth]{%
+                \includegraphics[width=0.45\textwidth]{tgv-2d-re100/training-hist/fixed-arch-loss-nl1-nn256}%
+            }{%
+                \caption{$(N_l, N_n)=(1, 256)$}\label{fig:nl1-nn256-loss-hist}%
+            }%
+        \end{subfloatrow}%
+
+        \begin{subfloatrow}[2]%
+            \ffigbox[\FBwidth]{%
+                \includegraphics[width=0.45\textwidth]{tgv-2d-re100/training-hist/fixed-arch-loss-nl3-nn16}%
+            }{%
+                \caption{$(N_l, N_n)=(3, 16)$}\label{fig:nl3-nn16-loss-hist}%
+            }%
+            \ffigbox[\FBwidth]{%
+                \includegraphics[width=0.45\textwidth]{tgv-2d-re100/training-hist/fixed-arch-loss-nl3-nn256}%
+            }{%
+                \caption{$(N_l, N_n)=(3, 256)$}\label{fig:nl3-nn256-loss-hist}%
+            }%
+        \end{subfloatrow}%
+    }{%
+        \caption{Training history (aggregated loss) of selected architectures.}\label{fig:loss-hist}%
+    }%
+\end{figure}
+
+\begin{figure}[H]
+    \includegraphics{tgv-2d-re100/contours/nl1-nn16/nl1-nn16-orig-u}
+    \caption{Spatial distributions of errors for architecture $(N_l, N_n)=(1, 16)$.}\label{fig:nl1-nn16-u-err-contour}
+\end{figure}
+
+\begin{figure}[H]
+    \includegraphics{tgv-2d-re100/contours/nl1-nn256/nl1-nn256-orig-u}
+    \caption{Spatial distributions of errors for architecture $(N_l, N_n)=(1, 256)$.}\label{fig:nl1-nn256-u-err-contour}
+\end{figure}
+
+\begin{figure}[H]
+    \includegraphics{tgv-2d-re100/contours/nl3-nn16/nl3-nn16-orig-u}
+    \caption{Spatial distributions of errors for architecture $(N_l, N_n)=(3, 16)$.}\label{fig:nl3-nn16-u-err-contour}
+\end{figure}
+
+\begin{figure}[H]
+    \includegraphics{tgv-2d-re100/contours/nl3-nn256/nl3-nn256-orig-u}
+    \caption{Spatial distributions of errors for architecture $(N_l, N_n)=(3, 256)$.}\label{fig:nl3-nn256-u-err-contour}
+\end{figure}
+
+
+\subsection{Optimal Batch Size Investigation}
+\subsection{Loss and Accuracy versus Model Complexity}
+\subsection{Performance and Scalability}
+
+% vim:ft=tex

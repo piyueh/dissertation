@@ -1,0 +1,60 @@
+%! TEX root = main.tex
+
+Deep learning usually refers to the model fitting process of artificial neural networks with two or more hidden layers.
+To simply put, a neural network model maps inputs to final outputs through several linear and nonlinear mappings, local filtering, and recurrent events.
+The temporary outputs at the intermediate mapping steps are called hidden layers.
+The elements in hidden layers are called neurons.
+For example, if the result of a nonlinear mapping is a one-dimensional vector with ten elements, then we call it a hidden layer with ten neurons.
+When the coefficients in mapping operators are unknown, we rely on model fitting to determine the coefficients.
+In the area of neural networks, the process of modeling fitting is called learning or training.
+We can also interpret many other neural network components with the terminology of traditional numerical methods, which are familiar to CFD practitioners.
+For example, local filtering is like local smoothing or stencil operations, while recurrent events are similar to time-marching schemes.
+Readers can find a brief illustration of neural network models in Appendix~\ref{section:neural-network-models} and complete introductions in~\cite{nielsen_neural_2015, goodfellow_deep_2016}.
+
+Neural network modeling differs from traditional modeling techniques (e.g., linear/logistic regression, support vector machines, etc.) in that neural networks are universal approximators.
+The universal approximation theorem~\cite{nielsen_neural_2015, hornik_approximation_1991} indicates that neural networks can approximate any continuous functions to arbitrary precision.
+It implies the possibility of the constructing accurate approximated solutions to Navier-Stokes equations or other flow governing equations.
+The theorem, however, does not tell us how to construct such approximations.
+It remains unclear how to correctly choose, for example, the coefficients of mapping operators, the number of hidden layers, and the number of neurons in a neural network to achieve the desired precision.
+
+Nevertheless, neural networks being universal approximators gives CFD practitioners a tool to tackle complicated flow problems.
+We can solve the Navier-Stokes equations by assuming the solution is a neural network, $f: (\Theta; X)\mapsto Y$.
+$X$ and $Y$ are hyperspaces containing all possible spatial-temporal coordinates and flow primitive variables, respectively.
+$\Theta$ represents the coefficients in the neural network $f$.
+The model training process tries to find a set of $\Theta$ that minimizes the residuals when we substitute $f$ into the Navier-Stokes equations.
+The universal approximation theorem states that, as long as the network has enough neurons, and as long as the exact solution exists, $f$ should approximate the exact solution reasonably.
+Hence, we should be able to find such a set of $\Theta$ that gives almost zero residuals.
+Raissi et al.\@~\cite{raissi_physics-informed_2019} coined a term to describe this type of neural network applications: physics-informed neural networks (PINN).
+Appendix~\ref{section:pinn} gives a concise walk-through of the PINN method.
+
+The first key factor to the PINN method is automatic differentiation.
+Automatic differentiation algorithms are computer realization of the chain rule of calculus.
+When substituting $f$ into the Navier-Stokes equations, automatic differentiation calculates the derivatives of velocity and pressure with respect to spatial-temporal coordinates.
+Derivatives are always exact (i.e., no truncation errors) and do not need any discretization in these algorithms.
+Reference~\cite{griewank_automatic_1988} provides a detailed introduction to automatic differentiation.
+Appendix~\ref{section:automatic-differentiation} has a toy problem to demonstrate how automatic differentiation works.
+
+The second essential component in the PINN method is the nonlinear optimization during the training process.
+The training process solves a system of nonlinear equations, $NS{\left(f\left(\Theta; \vec{x}^i\right)\right)}+r_{BC/IC}=0,~\forall \vec{x}^i\in X_T$, where $X_T$ represents all training points, $NS{\left(\dots\right)}$ the Navier-Stokes equations, and $r_{BC/IC}$ the residuals of boundary/initial conditions.
+A way to solve nonlinear equations is through minimizing the least square sums of residuals, that is, we are finding a set of parameters $\theta=\arg\min\limits_{\Theta}\,\left(\sum\limits_{i}{\left[NS\left(f\left(\Theta;\vec{x}^i\right)\right)\right]}^2+r_{BC/IC}^2\right)$.
+Please refer to Appendix~\ref{section:pinn} for a better mathematical representation of the problem.
+Mainstream optimization methods to find $\theta$ are based on gradient-descent.
+These methods are first-order and converge slowly, but they are robust and require less computer memory.
+Gradient-descent-based methods, however, usually can only find local minimum residuals unless the hypersurface of residuals is a convex.
+Unfortunately, the hypersurface of residuals in the PINN method is not convex.
+For day-to-day neural network applications, local minimum residuals may be good enough.
+However, for solving the Navier-Stokes equations, a local minimum may not be good enough and can even give a deviated solution.
+The instinct is that, for example, if the residual is not small enough, it may imply the divergence is not free.
+This posts a difficulty when solving $\theta$ for the Navier-Stokes equations. 
+The more complicated the exact solution (if it exists) is, the more difficult it is to find $\theta$~\cite{zhu_physics-constrained_2019}.
+
+In addition to solving the governing PDEs of flow problems with neural networks, there are other ways to utilize neural networks in CFD\@.
+We roughly categorize other applications into three types:
+\begin{enumerate}
+    \item Constructing surrogate models or solving inverse problems.
+    \item Improving traditional CFD solvers in either performance or accuracy.
+    \item Improving utilities used in CFD simulation workflows.
+\end{enumerate}
+We will not cover these applications in this project but will identify some representative literature for reference.
+
+% vim:ft=tex

@@ -1,0 +1,41 @@
+%! TEX root = main.tex
+We have developed two traditional CFD solvers that are useful in academic and industrial applications: one for incompressible flow with immersed bodies and one for oil overland flow.
+We also have a PINN solver for Navier-Stokes equations and a shallow-water equation solver using PyTorch (a neural network library).
+These solvers give us a starting point to conduct a comparative study between neural network techniques and traditional CFD solvers.
+The descriptions of these solvers are in section 2.
+Readers can also find preliminary results of benchmarks and V\&V (verification and validation) in the same section.
+
+In general, this project will achieve the following high-level aims:
+\begin{enumerate}[label=Aim \arabic*]
+
+    \item Understand the feasibility of neural-network-based flow solvers in practical engineering.
+
+        Dockhorn~\cite{dockhorn_discussion_2019} compared traditional CFD solvers and neural network solvers in limited aspects.
+        We would like to extend this type of discussion.
+
+        The feasibility of a numerical solver in real-world problems depends on the trade-off between time-cost and accuracy.
+        In real-world engineering, the time-cost includes the whole simulation workflow, including pre-processing and post-processing.
+        For in-house solvers, it may also include the time required for code development and maintenance.
+        We would like to understand the time-cost in this sense and the accuracy of neural network solvers.
+
+        The PINN method itself is slower than traditional CFD methods.
+        However, when considering pre-/post-processing, the overall time-cost may be different.
+        People tend to ignore the pre-/post-processing's time-cost from solvers'.
+        Actually, both labor and computational times required for pre-/post-processing highly depend on the solvers.
+        For example, unstructured-grid CFD solvers require much more labor and computational times during pre-processing.
+        These invisible time-costs of numerical solvers accumulate and become significant in applications such as those requiring parameter sweeps.
+        So when it comes to applications like the geometry design of a fluid flow-related product, the PINN method may not be necessarily slower than traditional CFD solvers.
+
+        By understanding the overall performance, we can better understand the role that neural network solvers can play in CFD applications.
+
+    \item Implement and run traditional CFD solvers with neural network-specialized tools and hardware.
+
+        When neural-network-based flow solvers are a way to adopt deep learning in CFD, another way is to implement traditional CFD solvers with neural networks' programming tools.
+        One potential benefit is that such solvers should run on neural network-specialized hardware, such as TPUs.
+        We already have a finite-volume shallow-water equation (SWE) solver using PyTorch.
+        Using PyTorch makes the solver portable to either GPUs or TPUs.
+        We would like to know how much gain we can get by running a traditional CFD solver with TPUs.
+        TPU being a new technology, we have not found any CFD performance study with it against CPUs and GPUs.
+
+\end{enumerate}
+% vim:ft=tex

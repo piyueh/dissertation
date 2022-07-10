@@ -1,0 +1,85 @@
+%! TEX root = main.tex
+
+The basic form of the PINN method (\cite{raissi_physics-informed_2019,cai_physics-informed_2021}) starts from approximating $\vec{U}$ and $p$ with a neural network:
+\begin{equation}\label{eq:neural-network}
+    \begin{bmatrix}
+        \vec{U} \\ p
+    \end{bmatrix}(\vec{x}, t)
+    \approx
+    G(\vec{x}, t; \Theta)
+\end{equation}
+Here we use a single network that predicts both pressure and velocity fields.
+It is also possible to use different networks for them separately.
+Later in this work, we will use $G^U$ and $G^p$ to denote the predicted velocity and pressure from the neural network.
+$\Theta$ at this point represents the free parameters of the network.
+
+To determine the free parameters, $\Theta$, ideally, we hope the approximate solution gives zero residuals for equations (\ref{eq:continuity}), (\ref{eq:momentum}), and (\ref{eq:ic-and-bc}).
+That is
+
+\begin{equation}\label{eq:residuals}
+    \begin{aligned}
+        & r_{1}(\vec{x}, t; \Theta) \equiv \nabla \cdot G^{U} = 0 \\
+        & r_{2}(\vec{x}, t; \Theta) \equiv \frac{\partial G^{U}}{\partial t}+(G^{U} \cdot \nabla) G^{U}+\frac{1}{\rho} \nabla G^p -\nu \nabla^{2} G^{U} - \vec{g} =0 \\
+        & r_{3}(\vec{x}; \Theta) \equiv G^{U}_{t=0}-\vec{U}_0 = 0 \\
+        & r_{4}(\vec{x}, t; \Theta) \equiv G^{U}-\vec{U}_\Gamma = 0,\ \forall \vec{x} \in \Gamma \\
+        & r_{5}(\vec{x}, t; \Theta) \equiv G^{p}-p_\Gamma = 0,\ \forall \vec{x} \in \Gamma \\
+   \end{aligned}
+\end{equation}
+
+And the set of desired parameter, $\Theta=\theta$, is the common zero root of all the residuals.
+
+The derivatives of $G$ with respect to $\vec{x}$ and $t$ are usually obtained using automatic differentiation. 
+Nevertheless, it is possible to use analytical derivatives when the chosen network architecture is simple enough, as reported by early-day literature \cite{lagaris_artificial_1998,Li2003}.
+
+If residuals in (\ref{eq:residuals}) are not complicated, and if the number of the parameters, $N_\Theta$, is small enough, we may numerically find the zero root by solving a system of $N_\Theta$ nonlinear equations generated from a suitable set of $N_\Theta$ spatial-temporal points.
+However, the scenario rarely happens as $G$ is usually highly complicated and $N_\Theta$ is large.
+Moreover, we do not even know if such a zero root exists for the equations in (\ref{eq:residuals}).
+
+Instead, in PINN, the condition is relaxed.
+We do not seek the zero root of (\ref{eq:residuals}) but just hope to find a set of parameters that make the residuals sufficiently close to zero.
+Consider the sum of the $l_2$ norms of residuals:
+
+\begin{equation}\label{eq:total-residual}
+    r(\vec{x}, t; \Theta=\theta) \equiv \sum\limits_{i=1}^{5} \lVert r_i(\vec{x}, t; \Theta=\theta) \rVert^2,\ \forall \left\{\begin{array}{l}x \in \Omega \\ t\in[0, T]\end{array}\right.
+\end{equation}
+
+The $\theta$ that makes residuals closest to zero (or even equal to zero if such $\theta$ exists) also makes (\ref{eq:total-residual}) minimal because $r(\vec{x}, t; \Theta) \ge 0$.
+In other words,
+
+\begin{equation}\label{eq:objective}
+    \theta = \operatorname*{arg\,min}\limits_{\Theta} r(\vec{x}, t; \Theta)\,\ \forall \left\{\begin{array}{l}x \in \Omega \\ t\in[0, T]\end{array}\right.
+\end{equation}
+
+This poses a fundamental difference between the PINN method and traditional CFD schemes, making it potentially more difficult for the PINN method to achieve the same accuracy as the traditional schemes.
+We will discuss this more in section 3.
+Note that in practice, each loss term on the right-hand-side of equation (\ref{eq:total-residual}) is weighted.
+We ignore the weights here for demonstrating purpose. 
+
+To solve (\ref{eq:objective}), theoretically, we can use any number of spatial-temporal points, which eases the need of computational resources, compared to finding the zero root directly.
+Gradient-descent-based optimizers further reduce the computational cost, especially in terms of memory usage and the difficulty of parallelization.
+Alternatively, Quasi-Newton methods may work but only when $N_\Theta$ is small enough.
+
+However, even though equation (\ref{eq:objective}) may be solvable, it is still a significantly expensive task.
+While typical data-driven learning requires one back-propagation pass on the derivatives of the loss function, here automatic differentiation is needed to evaluate the derivatives of $G$ with respect to $\vec{x}$ and $t$.
+The first-order derivatives require one back-propagation on the network, while the second-order derivatives present in the diffusion term $\nabla^2 G^U$ require an additional back-propagation on the first-order derivatives' computational graph. 
+Finally, to update parameters in an optimizer, the gradients of $G$ with respect to parameters $\Theta$ requires another back-propagation on the graph of the second-order derivatives.
+This all leads to a very large computational graph.
+We will see the performance of the PINN method in the case studies.
+
+In summary, when viewing the PINN method as supervised machine learning, the inputs of a network are spatial-temporal coordinates, and the outputs are the physical quantities of our interest.
+The loss or objective functions in PINN are governing equations that regulate how the target physical quantities should behave. 
+The use of governing equations eliminates the need for true answers.
+A trivial example is using Bernoulli's equation as the loss function, i.e., $loss=\frac{u^2}{2g}+\frac{p}{\rho g}-H_0+z(x)$, and a neural network predicts the flow speed $u$ and pressure $p$ at a given location $x$ along a streamline.
+(The gravitational acceleration $g$, density $\rho$, energy head $H_0$, and elevation $z(x)$ are usually known and given.)
+Such a loss function regulates the relationship between predicted $u$ and $p$ and does not need true answers for the two quantities.
+Unlike Bernoulli’s equation, most governing equations in physics are usually differential equations (e.g., heat equations).
+The main difference is that now the PINN method needs automatic differentiation to evaluate the loss.
+Regardless of the forms of governing equations, spatial-temporal coordinates are the only data required during training.
+Hence, throughout this paper, training data means spatial-temporal points and does not involve any true answers to predicted quantities.
+(Note in some literature, the PINN method is applied to applications that do need true answers, see \cite{cai_physics-informed_2021}. These applications are out of scope here.)
+
+\begin{equation}\label{eq:silu}
+    \operatorname{SiLU}(x)=\frac{x}{1+\exp({-x})}
+\end{equation}
+
+% vim:ft=tex

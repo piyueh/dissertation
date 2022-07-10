@@ -1,0 +1,66 @@
+%! TEX root = main.tex
+
+% ISO-style vector notation
+\RenewDocumentCommand{\vec}{m}{\symbfup{#1}}
+
+% ISO-style matrix notation
+\NewDocumentCommand{\mat}{m}{\symbfit{#1}}
+
+% ISO-style upright ordinary differentiation
+\NewDocumentCommand{\diff}{}{\mathop{}\!\symup{d}}
+
+% helper for partial differential terms
+\NewDocumentCommand{\pdiff}{o o O{}}{
+    \IfNoValueTF{#1}{
+        \partial
+    }{
+        \IfNoValueTF{#2}{
+            \partial #1
+        }{
+            \frac{\partial^{#3} #1}{\partial #2^{#3}}
+        }
+    }
+}
+
+% put two same-size but unrelated (i.e., not sharing the same caption) figures side-by-side
+\NewDocumentCommand{\twoindfigrow}{mmmmmm}{
+    \begin{figure}[hbt!]%
+        \floatbox{figure}[\textwidth]{%
+            \begin{subfloatrow}[2]
+                \floatbox{figure}[0.98\linewidth]{%
+                    \caption{#1}\label{#2}
+                }{%
+                    \includegraphics[width=\linewidth]{#3}%
+                }
+                \floatbox{figure}[0.98\linewidth]{%
+                    \caption{#4}\label{#5}%
+                }{%
+                    \includegraphics[width=\linewidth]{#6}%
+                }
+            \end{subfloatrow}
+        }{}
+    \end{figure}%
+}
+
+% put two same-size figures side-by-side
+\NewDocumentCommand{\twofigrow}{mmmmmmmm}{
+    \begin{figure}[hbt!]%
+        \floatbox{figure}[\textwidth]{%
+            \begin{subfloatrow}[2]
+                \floatbox{figure}[0.98\linewidth]{%
+                    \caption{#1}\label{#2}
+                }{%
+                    \includegraphics[width=\linewidth]{#3}%
+                }
+                \floatbox{figure}[0.98\linewidth]{%
+                    \caption{#4}\label{#5}%
+                }{%
+                    \includegraphics[width=\linewidth]{#6}%
+                }
+            \end{subfloatrow}
+        }{%
+            \caption{#7}\label{#8}
+        }
+    \end{figure}%
+}
+% vim:ft=tex
