@@ -1,82 +1,59 @@
 %! TEX root = main.tex
 
-If everyone only writes papers about bleeding edge methods, then each method will not have time to be sufficiently tested, analysed, and understood, especially that nowadays new methods come out every day.
-
-Feasibility includes cost and performance (or more accurately, cost-performance ratio) and how controllable it is.
-(Do not be confused with the performance here (i.e., accuracy) and the computational performance (wall time, more like a part of cost).)
-
-Hardware and programming tools are the two vital resources for CFD (computational fluid dynamics) practitioners.
-The boundaries of these resources have been pushed by deep learning in recent years.
+While CFD (computational fluid dynamics) and other applications of numerical PDEs (partial differential equations) were once the major reason for the advance in HPC (high-performance computing) hardware and programming tools, the boundaries of these computing resources have been recently pushed by deep learning.
 For example, Google developed TPU (tensor processing unit), TensorFlow, and Colaboratory with deep learning in mind.
-NVIDIA has been promoting its recent-generation GPUs (graphical processing units) for deep learning since 2015~\cite{Buck2015}.
-Even supercomputing centers, such as those managed by the United States Department of Energy, shifted their focuses to deep learning for their next-generation hardware~\cite{USDepartmentofEnergy2019}.
-As deep learning is leading the development of hardware and programming tools, it is inevitable to adopt deep learning in CFD one day.
+NVIDIA has been promoting its recent-generation GPUs (graphical processing units) for deep learning since 2015~\cite{buck_nvidias_2015}.
+Even supercomputing centers, such as those managed by the United States Department of Energy, shifted their focuses to deep learning for their next-generation hardware~\cite{us_department_of_energy_argonne_2019}.
+As hardware and programming tools are the two vital resources for CFD practitioners, it is inevitable for CFD practitioners and the industry to adopt deep learning for practical engineering of fluid dynamics.
 
-CFD practitioners and researchers have been slowly catching up with this trend.
-Nevertheless, most recent studies focus only on the proof-of-concept aspect of solving flow problems with deep neural networks.
-They show different ways of incorporating neural networks in CFD, and they show that these new techniques are capable of giving visually acceptable results.
-However, some critical questions regarding practical engineering remain unanswered in even the most recent studies.
-From an engineering perspective, these questions are crucial during the planning and designing stage of a project.
-For example:
+Applications of deep learning in CFD can be roughly categorized into two types: data-driven and data-free applications.
 
-\begin{itemize}
-    \item In what types of numerical simulations, neural networks have advantages, in terms of time-cost and accuracy, over traditional CFD solvers?
-    \item How does the hardware demand scale with problem sizes when using neural networks to solve flow problems?
-    \item What is the time-cost of developing an in-house flow solver with neural network models?
-    \item The trade-off between performance and accuracy is the key to CFD practice. How difficult or how easy is it to tune this balance when using neural network solvers?
-\end{itemize}
-    
-The proposed works in this document will try to answer some of these questions. Section 1.3 gives a high-level description of our research aims, and section 3 gives the details of the planned tasks.
+\subsection*{Data-driven learning in CFD}
 
-Recent advances in computing and programming techniques have motivated practitioners to revisit deep learning applications in computational fluid dynamics (CFD).
-We use the verb "revisit" because deep learning applications in CFD already existed going back to at least the 1990s, for example, using neural networks as surrogate models \cite{Linse1993, Faller1997}.
-Another example is the work of Lagaris and his/her colleagues \cite{lagaris_artificial_1998} on solving partial differential equations with fully-connected neural networks back in 1998.
-Similar work with radial basis function networks can be found in reference \cite{Li2003}.
-Nevertheless, deep learning applications in CFD did not get much attention until this decade, thanks to modern computing technology, including GPUs, cloud computing, high-level libraries like PyTorch and TensorFlow, and their Python APIs.
+Data-driven deep learning can be naively thought as a much more complicated version of linear regression.
+Fundamentally, we want to find a mathematical model that best fits some observed data.
+However, in deep learning, the model is not linear anymore.
+The models are now deep neural networks and has much more free parameters (compared to only two parameters in linear models) that need to be determined during regression process.
+The regression process, which is called training in deep learning context or called model fitting in engineering, determines the values of free parameters by minimize the distance between observations and predictions (i.e., the outputs of the models).
+Once the free parameters are determined, the model can be used as an interpolator to reconstruct the missing data or an extrapolator to predict quantities outside the boundary of observations.
 
-Solving partial differential equations with neural networks is particularly interesting to CFD researchers and practitioners.
-The name physics-informed neural network (PINN) was coined by Raissi et al. \cite{raissi_physics-informed_2019} to describe such an application of deep learning.
-These partial differential equations include the well-known Navier-Stokes equations—one of the Millennium Prize Problems.
-The universal approximation theorem \cite{hornik_approximation_1991} implies that neural networks can model the solution to the Navier-Stokes equations with high fidelity and capture complicated flow details as long as networks are big enough.
-This deep learning application is sometimes branded as unsupervised learning—it does not rely on human-provided data, making it sounds very *"AI."*
-It is unsurprising to see headlines like *"AI has cracked the Navier-Stokes equations"* in recent popular science articles \cite{hao_ai_2020}.
+As data fitting has been long existed in engineering, a straightforward application of deep learning in CFD is data-driven surrogate modeling.
+In such an application, practitioners use deep neural networks to model the desired flow physics.
+The observations that the models fit against may be experimental or computational data.
+The fitted models are used to give quick predictions in situations where solving governing equations are not feasible.
+For example, flight control systems need such a model to quickly predict how lift and drag forces respond to change of speed, angle of attack, or environmental factors (wind, temperature, etc.). 
+Surrogate modeling with deep learning in aerodynamics has been studied since as early as 1993 (\cite{linse_identification_1993, faller_unsteady_1997}).
+More recently, data-driven surrogate modeling is also used to model the closure equations for turbulence simulations or flow data reconstruction (e.g., \cite{Tracey2015,milano_neural_2002}).
 
-The PINN method promises several advantages over traditional numerical methods (such as finite volume methods).
-First, it is a mesh-free scheme.
-A mesh-free scheme benefits engineering problems in which fluid flows interact with objects of complicated geometries.
-Simulating these fluid flows with traditional numerical methods usually requires high-quality unstructured meshes.
-Such meshes need time-consuming human intervention in the pre-processing stage before actual simulations.
-The second benefit of PINN is that the trained models approximate the governing equations' general solutions, meaning there is no need to solve the equations repeatedly for different flow parameters.
-For example, a flow model taking boundary velocity profiles as its input arguments can predict flows under different boundary velocity profiles after training.
-Conventional numerical methods, on the contrary, require several simulations, with each one covering one boundary velocity profile.
-This advantage helps in situations like engineering design optimization.
-Traditionally, design optimization relies on sets of experiments to conduct parameter sweeps and find optimal parameters or geometries for products.
+Data-driven learning in CFD is well established and has been applied to practical engineering.
+Recent studies in this area focused on how to improve the accuracy, training efficiency, generalizability (i.e., the capability to predict unseen data accurately).
 
-Given the stated benefits of PINN, enthusiasts have endeavored to show PINN's potential in real-world applications by reporting success stories of solving simple CFD problems with PINNs. 
-However, despite the optimism shown in the literature, important information concerning the feasibility of PINN in practical applications is often missing from these success stories.
-For example, few reports discuss the required computing resources, the computational performance, the convergence, or the error analysis of PINN.
-PINN suffers from performance and solvability issues due to the need for high-order automatic differentiation and multi-objective nonlinear optimization.
-For example, solving a second-order nonlinear differential equation requires at least three back-propagation passes for automatic differentiation (two for derivatives against model inputs and one for gradients against model parameters).
-The training process needs to reduce all the residuals of differential equations, initial conditions, and boundary conditions.
-Fluid flows are sensitive nonlinear dynamical systems in which a small change or error in inputs may produce a very different flow field.
-So to get correct solutions, the optimization in PINN must minimize the loss to values extremely close to zero, further compromising the method's solvability and performance.
+\subsection*{Data-free learning in CFD}
 
-This paper provides our not-so-successful PINN story as a lesson learned to readers.
-Our story includes two computational experiments as case studies to benchmark the PINN method's accuracy and computational performance.
-The first case study, a Taylor-Green vortex, worked out, though not to our satisfaction.
-We will discuss the performance of PINN using this case study.
-The second case study, flow over a cylinder, did not even result in a physical solution.
-We will discuss the frustration we encountered with PINN in this case study.
+Given the strong connection between CFD and PDEs, solving PDEs using neural networks and without given data is another popular research topic in recent years.
+To simply put (see chapter \ref{chap:pinn} for details), a neural network model is used to approximate the solutions of PDEs.
+The model is a mathematical model, so the derivatives of the model outputs with respect to model inputs can be obtained analytically or through automatic differentiation \cite{griewank_automatic_1988}.
+Once having mathematical expressions of the derivatives, we substitute them into the differential equations and get the residuals. 
+Finally, we determine the free parameters in the model by optimize/minimize the residuals.
+In other words, the model fits against PDEs rather than observed data, and hence it is called data-free.
+The workflow is similar to least square finite element methods (LSFEM \cite{jiang_least-squares_1998}) or collocation spectral methods \cite{trefethen_spectral_2000}.
+A brief comparison of the methods are described in section \ref{sec:pinn-diff}.
+Figure \ref{fig:pinn-workflow} shows a graphical demonstration of applying this workflow to solve the Navier-Stokes equations. 
 
-We built our PINN solver with the help of NVIDIA's Modulus library \cite{noauthor_modulus_nodate}.
-Modulus is a high-level Python package built on top of PyTorch that helps users develop PINN-based differential equation solvers.
-Also, in each case study, we also carried out simulations with our CFD solver, PetIBM \cite{chuang_petibm_2018}.
-PetIBM is a traditional solver using staggered-grid finite difference methods with MPI parallelization and GPU computing.
-PetIBM simulations in each case study served as baseline data.
-All cases' configurations, post-processing scripts, and required Singularity image definitions can be found at reference \cite{pi_yueh_chuang_2022_6592457}.
+Though only been popular recently, solving PDEs with neural networks can be dated back to early 90s.
+If we limit ourselves to forward problems, for example, in 1994, Dissanayake and Phan-Thien \cite{dissanayake_neural-network-based_1994} proposed using multilayer perceptron (MLP) networks (or called fully-connected neural networks) as the approximate solutions to PDEs and using the PDEs as the loss functions for model fitting.
+Lagaris et al. in 1998 \cite{lagaris_artificial_1998} also proposed a similar approach but with auxiliary models to enforce boundary conditions.
+McFall and his coworkers \cite{McFall2009,mcfall_solving_2010} further improved the enforcement of boundary conditions.
+Other types of neural network models, such as RBF (radial basis function) neural networks can be found in references \cite{li_numerical_2003,mai-duy_numerical_2001,demirkaya_direct_2008}, and \cite{li_integration_2010}.
+Takeuchi and Kosugi \cite{takeuchi_neural_1994}, on the other hand, rearranged a neural network as a finite-element method to solve both forward and inverse problems in electric field problems.
+Other attempts prior to the 2010s that solved PDEs with neural networks and under a data-free setting can be found in references \cite{yadav_introduction_2015}.
 
-This paper is structured as follows: the second section briefly describes the PINN method and an analogy to traditional CFD methods.
-The third and fourth sections provide our computational experiments of the Taylor-Green vortex in 2D and a 2D laminar cylinder flow with vortex shedding.
-Most discussions happen in the corresponding case studies.
-The last section presents the conclusion and discussions that did not fit into either one of the cases.
+Since mid-2010s, solving PDEs with neural networks suddenly became popular after the term {\it physics-informed neural networks} (PINNs) was coined by Raissi et al. \cite{raissi_physics-informed_2017}.
+The core concept of PINNs is the same as what Dissanayake and Phan-Thien proposed in 1994.
+Searching the keyword {\it physics-informed neural networks} with Google Scholar reveals a rapid growth from 60 results to 3,340 results in 2021.
+We believe this growth of interests in solving PDEs with neural networks can be attributed to the advance in computing technologies (e.g., GPU technology) and the easy access to these technologies.
+For example, on-demand cloud computing services make deep learning affordable for small research groups.
+And powerful Python ecosystem together with tools like TensorFlow and PyTorch reduce effort of code development.
+As developing code for PINNs has been made easy, it is natural for more researchers to devote their time in PINNs.
+
 % vim:ft=tex

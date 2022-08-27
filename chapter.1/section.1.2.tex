@@ -1,60 +1,119 @@
 %! TEX root = main.tex
+\subsection*{Data-driven and data-free physics-informed neural networks (PINNs)}
 
-Deep learning usually refers to the model fitting process of artificial neural networks with two or more hidden layers.
-To simply put, a neural network model maps inputs to final outputs through several linear and nonlinear mappings, local filtering, and recurrent events.
-The temporary outputs at the intermediate mapping steps are called hidden layers.
-The elements in hidden layers are called neurons.
-For example, if the result of a nonlinear mapping is a one-dimensional vector with ten elements, then we call it a hidden layer with ten neurons.
-When the coefficients in mapping operators are unknown, we rely on model fitting to determine the coefficients.
-In the area of neural networks, the process of modeling fitting is called learning or training.
-We can also interpret many other neural network components with the terminology of traditional numerical methods, which are familiar to CFD practitioners.
-For example, local filtering is like local smoothing or stencil operations, while recurrent events are similar to time-marching schemes.
-Readers can find a brief illustration of neural network models in Appendix~\ref{section:neural-network-models} and complete introductions in~\cite{nielsen_neural_2015, goodfellow_deep_2016}.
+To our knowledge, PINNs is an ambiguous term that has no authoritative definitions.
+It is an umbrella term that includes all learning types that involve using PDEs in loss functions.
 
-Neural network modeling differs from traditional modeling techniques (e.g., linear/logistic regression, support vector machines, etc.) in that neural networks are universal approximators.
-The universal approximation theorem~\cite{nielsen_neural_2015, hornik_approximation_1991} indicates that neural networks can approximate any continuous functions to arbitrary precision.
-It implies the possibility of the constructing accurate approximated solutions to Navier-Stokes equations or other flow governing equations.
-The theorem, however, does not tell us how to construct such approximations.
-It remains unclear how to correctly choose, for example, the coefficients of mapping operators, the number of hidden layers, and the number of neurons in a neural network to achieve the desired precision.
+When Raissi et al. \cite{raissi_physics-informed_2017,raissi_physics_2017,raissi_physics-informed_2019} coined the term PINNs, they only distinguished two types of applications: {\it data-driven solutions of nonlinear partial differential equations} and {\it data-driven discovery of nonlinear partial differential equations}.
+These two terms actually refer to forward and inverse problems.
+In the same work, the term {\it data} in {\it data-driven} does not necessarily mean observed data (either experimental or computational).
+For example, the test case of the Burger's equation in section 2.1 of \cite{raissi_physics-informed_2017} does not use any data from experiments or other numerical solvers.
+The {\it data} in this example refers to the values of boundary conditions (BCs) and initial conditions (ICs) at selected collocation points.
+As BCs and ICs are given and are part of PDEs' specification, from our viewpoint, these data do not carry the exactly same meaning as those in section \ref{sec:overview} in this thesis.
+The mentioned example of Burger's equation in the work of Raissi et al. should be classified as a data-free approach per the description in section \ref{sec:overview}.
 
-Nevertheless, neural networks being universal approximators gives CFD practitioners a tool to tackle complicated flow problems.
-We can solve the Navier-Stokes equations by assuming the solution is a neural network, $f: (\Theta; X)\mapsto Y$.
-$X$ and $Y$ are hyperspaces containing all possible spatial-temporal coordinates and flow primitive variables, respectively.
-$\Theta$ represents the coefficients in the neural network $f$.
-The model training process tries to find a set of $\Theta$ that minimizes the residuals when we substitute $f$ into the Navier-Stokes equations.
-The universal approximation theorem states that, as long as the network has enough neurons, and as long as the exact solution exists, $f$ should approximate the exact solution reasonably.
-Hence, we should be able to find such a set of $\Theta$ that gives almost zero residuals.
-Raissi et al.\@~\cite{raissi_physics-informed_2019} coined a term to describe this type of neural network applications: physics-informed neural networks (PINN).
-Appendix~\ref{section:pinn} gives a concise walk-through of the PINN method.
+Under the classification in section \ref{sec:overview}, the work of Raissi et al. is actually a data-driven surrogate modeling with extra loss terms from governing PDEs.
+Adding PDEs to the loss functions helps regulate or constrain the predictions of unseen data.
+For example, if we have observed data at time $t_1$, $t_2$, $\cdots$, $t_{N_t}$ and spatial coordinates $\vec{x}_1$, $\vec{x}_2$, $\cdots$, $\vec{x}_{N_x}$, conventional data-driven approaches usually have inferior prediction accuracy for points not among these spatial-temporal coordinates.
+Especially that because fluid flow is a sensitive and instable dynamical system, the predictions for $t < t_1$ and $t > t_{N_t}$ may deviate from the physics even qualitatively.
+Adding PDEs to the training objectives helps in such situations.
 
-The first key factor to the PINN method is automatic differentiation.
-Automatic differentiation algorithms are computer realization of the chain rule of calculus.
-When substituting $f$ into the Navier-Stokes equations, automatic differentiation calculates the derivatives of velocity and pressure with respect to spatial-temporal coordinates.
-Derivatives are always exact (i.e., no truncation errors) and do not need any discretization in these algorithms.
-Reference~\cite{griewank_automatic_1988} provides a detailed introduction to automatic differentiation.
-Appendix~\ref{section:automatic-differentiation} has a toy problem to demonstrate how automatic differentiation works.
+In the remaining of this thesis, following the description in section \ref{sec:overview}, we will use {\it data-driven} to denote the use of experimental data or data generated by numerical solvers, and {\it data-free} refers situations when no experimental nor extra numerical data are involved. 
 
-The second essential component in the PINN method is the nonlinear optimization during the training process.
-The training process solves a system of nonlinear equations, $NS{\left(f\left(\Theta; \vec{x}^i\right)\right)}+r_{BC/IC}=0,~\forall \vec{x}^i\in X_T$, where $X_T$ represents all training points, $NS{\left(\dots\right)}$ the Navier-Stokes equations, and $r_{BC/IC}$ the residuals of boundary/initial conditions.
-A way to solve nonlinear equations is through minimizing the least square sums of residuals, that is, we are finding a set of parameters $\theta=\arg\min\limits_{\Theta}\,\left(\sum\limits_{i}{\left[NS\left(f\left(\Theta;\vec{x}^i\right)\right)\right]}^2+r_{BC/IC}^2\right)$.
-Please refer to Appendix~\ref{section:pinn} for a better mathematical representation of the problem.
-Mainstream optimization methods to find $\theta$ are based on gradient-descent.
-These methods are first-order and converge slowly, but they are robust and require less computer memory.
-Gradient-descent-based methods, however, usually can only find local minimum residuals unless the hypersurface of residuals is a convex.
-Unfortunately, the hypersurface of residuals in the PINN method is not convex.
-For day-to-day neural network applications, local minimum residuals may be good enough.
-However, for solving the Navier-Stokes equations, a local minimum may not be good enough and can even give a deviated solution.
-The instinct is that, for example, if the residual is not small enough, it may imply the divergence is not free.
-This posts a difficulty when solving $\theta$ for the Navier-Stokes equations. 
-The more complicated the exact solution (if it exists) is, the more difficult it is to find $\theta$~\cite{zhu_physics-constrained_2019}.
+Raissi et al. did not distinguish the difference between {\it data-driven} and {\it data-free} as we do.
+In PINNs, the treatment of observed data is the same to the treatment of Dirichlet BCs and ICs.
+Under their PINNs, it is even possible to have no BCs and ICs.
+One can just use observed data and governing PDEs to train the neural networks and build surrogate models.
+Under this consideration, data-free PINNs in our terminology are just a special case of data-driven PINNs when no external data exists.
+Hence, Raissi et al. used {\it data-driven} throughout their work, though some test cases are actually {\it data-free} in our classification.
 
-In addition to solving the governing PDEs of flow problems with neural networks, there are other ways to utilize neural networks in CFD\@.
-We roughly categorize other applications into three types:
-\begin{enumerate}
-    \item Constructing surrogate models or solving inverse problems.
-    \item Improving traditional CFD solvers in either performance or accuracy.
-    \item Improving utilities used in CFD simulation workflows.
-\end{enumerate}
-We will not cover these applications in this project but will identify some representative literature for reference.
+When no observed data exist, and when BCs and ICs are used in training, the PINNs becomes the same as the one proposed by Dissanayake and Phan-Thien \cite{dissanayake_neural-network-based_1994}.
+Moreover, the goal of PINNs is changed from constructing surrogate models to solving PDEs.
+If the goal is to solve PDEs rather than just to create a surrogate model, most importantly, the BCs and ICs of PDEs do carry different meanings than observed data.
+Observed data are allowed to and usually do have noise and fluctuations.
+On the other hand, BCs and ICs are parts of PDEs, they should be met strictly.
+So while we allow the model predictions to deviate from observations to some degree, we want the model predictions on both spatial and temporal boundaries to exactly match the BCs and ICs.
+In terms of optimization, as we will discuss later, BCs and ICs are hard constraints, and observed data are simply objective.
+Therefore, we believe it is necessary to exclude BCs and ICs from {\it data} and distinguish data-free and data-driven PINNs.
 
+Most articles of PINNs in the recent years do not distinguish the two, either.
+For example, references \cite{wang_understanding_2021,krishnapriyan_characterizing_2021,wang_when_2022} are about data-free PINNs and their capability in solving PDEs.
+On the contrary, reference \cite{cai_physics-informed_2021} focuses on data-driven PINNs, and all test cases in this work are applications of data-driven PINNs.
+While data-driven PINNs serve as methods for surrogate modeling, data-free PINNs are numerical methods for solving PDE/ODE solvers, meaning they are potential alternatives to mainstream CFD solvers, such as those using finite-difference, finite-volume, and finite-element methods.
+
+In this work, we will focus on data-free PINNs.
+Prior to the work of Raissi et al., there was no specific name for methods solving PDEs with neural network.
+Therefore, in our work, we use data-free PINNs to refer to all methods of this type.
+
+\subsection*{Literature review of data-free PINNs}
+
+As mentioned previously, data-free PINNs can be traced back to at least 1994 \cite{dissanayake_neural-network-based_1994}.
+In earlier studies, regardless of the networks' architectures, the derivatives of the model outputs with respect to model inputs were analytical.
+It is the major reason that these studies could only use simple network architectures and smooth nonlinear activation functions. 
+Activation functions are limited to those with smooth derivatives and simple expressions such as the sigmoid function.
+For example, Dissanayake and Phan-Thien \cite{dissanayake_neural-network-based_1994} used MLP networks with 2-hidden layers, up to 10 neurons per layer, and the sigmoid function.
+Lagaris' test cases \cite{lagaris_artificial_1998} were done with an MLP network with only one hidden layer and 10 neurons per layer.
+Mai-Duy and Tran-Cong\cite{mai-duy_numerical_2001}, Li et al. \cite{li_numerical_2003}, Demirkaya et al. \cite{demirkaya_direct_2008}, and Wang et al. \cite{wang_meshless_2015} used RBF networks, which can be seen as a single-layer MLP network of RBF neurons and are easy to obtain the analytical derivatives.
+McFall and his coworkers \cite{McFall2009,mcfall_solving_2010} used a single-layer MLP with up to 50 neurons.
+
+We believe the limitation on the network architectures also limited the test cases used in these studies.
+Among these earlier studies, only \cite{demirkaya_direct_2008,mcfall_solving_2010,wang_meshless_2015} showed applications to the Navier-Stokes equations for simple simulations (mostly 2D Poiseuille flow). 
+Other works mentioned here tested their proposed methods with much simpler PDEs (e.g., 1D or 2D Poisson equations) and hinted the possibility of applications in flow problems.
+
+More recently, automatic differentiation has been explicitly mentioned in literature, for example (\cite{berg_unified_2018,sirignano_dgm:_2018,dockhorn_discussion_2019,raissi_physics-informed_2017,raissi_physics-informed_2019,jin_nsfnets_2020,lu_deepxde:_2021,cai_physics-informed_2021}).
+Using automatic differentiation makes it possible to approximate PDE solutions with more complicated neural network architectures.
+Sirignano and Spiliopoulos \cite{sirignano_dgm:_2018} proposed an architecture similar to long short-term networks (LSTMs \cite{hochreiter_long_1997}).
+Due to the recurrent nature of LSTMs, it is not practical, if not impossible, to obtain the analytical forms of the derivatives for this model either through manual derivation or computer symbolic derivations.
+Studies that used MLP networks, on the other hand, were able to increase the complexity of the model by increasing the number of hidden layers and neurons.
+Architectures with up to 10 hidden layers and 300 neurons per layer were used by the work of Jin et al. \cite{jin_nsfnets_2020}.
+
+Another key component for data-free PINNs is the training process (a.k.a. model fitting).
+The free parameters are determined through optimizing/minimizing the PDE residuals.
+However, PDE solutions are bounded to ICs or/and BCs.
+One can deem ICs and BCs as hard constraints when optimizing PDE residuals.
+Earlier works of data-free PINNs converted this constrained problem to an unconstrained one by treating an approximate PDE solution as superposition of a nonhomogeneous-BC function and a solution under homogeneous BCs.
+The nonhomogeneous-BC function is defined so that it meets the boundary conditions and initial conditions at collocation points on spatial-temporal boundaries.
+The solution under homogeneous BCs, on the other hand, is further decoupled into the multiplication of a length function and a neural network.
+The length function guarantees that the outputs of the neural network always diminish on Dirichlet boundaries and that the derivatives in normal directions always diminish on Neumann boundaries.
+Lagaris \cite{lagaris_artificial_1998} showed an example of how to design such a length function and the nonhomogeneous-BC function for rectangular computational domains.
+McFall and Mahan \cite{McFall2009} further proposed to use thin plane splines (TPSs) for both the nonhomogeneous-BC functions and the length functions in non-rectangular domains.
+They further tested the proposed approach on the steady Navier-Stokes equations (steady boundary layer simulations and 2D Poiseuille flow). 
+Note that TPSs are considered a type of RBFs, and one can classify the TPS method as an RBF neural network.
+That says McFall and his coworkers' work can be extended to using other neural network architectures to model the length functions and nonhomogeneous-BC functions.
+These studies, however, did not investigate applications in initial-boundary value problems.
+Moreover, it has not been proved in theory nor extensively shown in experiments that claimed-to-be general length functions and nonhomogeneous-BC functions (like TPSs) can be applied to other PDEs and applications.
+These functions may be problem-specific.
+
+If we treat ICs and BCs as soft constraints, the training becomes a multi-objective optimization with each condition being an objective (i.e., a loss function).
+A straightforward approach is to treat the residuals from BCs and ICs as losses and use weighted sum of all losses to obtain a single loss. 
+An alternative viewpoint of the weighted sum of losses is to deem it as a special case of penalty function methods in constrained optimization.
+The penalty functions are the residuals of ICs and BCs.
+As other penalty method functions, this approach is considered to converge slower \cite{rudd_constrained_2014}.
+However, most recent studies of PINNs (both data-free and data-driven) adopted this approach.
+Using weighted sum of losses offers the simplicity in terms of mathematical expressions and programming.
+
+Constant weights of one can be used in all terms in the weighted sum of losses (i.e., simply summing all losses), as seen in \cite{lagaris_artificial_1998,sirignano_dgm:_2018,dockhorn_discussion_2019}.
+Though constant weights other than one can be used, no established guideline exists to assist in deciding proper values.
+Jin et al. \cite{jin_nsfnets_2020} and Wang et al. \cite{wang_understanding_2021} proposed annealing loss algorithms to dynamically change the weight of each loss term during training.
+These adaptive weights are determined using the magnitudes of losses' gradients with respect to model parameters.
+It also involves the moving average of the weights from the current and previous iterations. 
+
+To resolve the issues of problem-specific length and nonhomogeneous-BC functions in the first approach or the slow convergence in the second approach, Rudd and his coworkers \cite{rudd_constrained_2014,rudd_constrained_2015} solved the optimization problem in data-free PINNs with a constrained backpropagation method.
+The hard constraints from BCs and ICs are satisfied during the training in this method.
+This method, however, has not been widely tested and adopted by other researchers.
+
+After converting to unconstrained problems, the actual optimization is usually done with methods based on gradient-descent and in a batched approach. 
+Adam \cite{kingma_adam_2017} is the most popular optimizer nowadays in the literature of PINNs.
+Nevertheless, Krishnapriyan et al. \cite{krishnapriyan_characterizing_2021} reported that L-BFGS performed significantly better than Adam for unknown reasons.
+In \cite{jin_nsfnets_2020}, for example, Jin et al. also used L-BFGS to finalize the training.
+However, even though L-BFGS needs much less computer memory than its origin, BFGS, it may still be impractical to use it in real-world problems due to the problem sizes.
+And, to our knowledge, batch training is not well established for L-BFGS.
+L-BFGS memorizes gradients from several past iterations.
+So when the loss function's hyperplane changes at each iteration due to using different batches of data, the stored information of past gradients in L-BFGS may be problematic at the current iteration.
+
+As for the nonlinear activation functions, to our best knowledge, it is still an unexplored area in data-free PINNs.
+Most studies used either the sigmoid function or the hyperbolic tangent function without giving solid justifications.
+Li et al. \cite{li_integration_2010} in 2010 proposed using wavelet functions for the activation.
+However, their method has not received wide attention so far.
+Moreover, no comparison or justification were given for why or how wavelet functions were better choices.
 % vim:ft=tex
