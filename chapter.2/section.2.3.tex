@@ -1,0 +1,208 @@
+%! TEX root = main.tex
+This section shows cases for V\&V (verification and validation).
+As PetIBM is a baseline in PINNs benchmarks, its correctness must be confirmed.
+The cases shown here include 2D and 3D Taylor-Green vortex, 2D cylinder flows, 3D flow around a sphere, and 3D flow around an inclined flat plate.
+Taylor-Green vortex are verification cases, while others are validation cases.
+
+\subsection*{Convergence test of 2D Taylor-Green vortex at $Re=100$}
+
+The Taylor-Green vortex (TGV) represents a family of flows with a specific form of analytical initial flow conditions in both 2D and 3D.
+Specifically, 2D TGV problems with periodic boundary conditions have closed-form analytical solutions, and hence they usually serve as standard verification cases for CFD solvers. 
+Here we used the following 2D Taylor-Green vortex to examine the order of convergence:
+\begin{equation}\label{eq:tgv}
+    \left\{
+        \begin{aligned}
+            u(x, y, t) &= V_0\cos(\frac{x}{L})\sin(\frac{y}{L})\exp(-2\frac{\nu}{L^2}t) \\
+            v(x, y, t) &= - V_0 \sin(\frac{x}{L})\cos(\frac{y}{L})\exp(-2\frac{\nu}{L^2}t) \\
+            p(x, y, t) &= -\frac{\rho}{4}V_0^2\left(cos(\frac{2x}{L}) + cos(\frac{2y}{L})\right)\exp(-4\frac{\nu}{L^2}t)
+        \end{aligned}
+    \right.
+\end{equation}
+
+\noindent $V_0$ represents the peak (and also the lowest) velocity at $t=0$;
+$L$ is a scaling factor in the spatial domain;
+$\nu$ and $\rho$ are kinematic viscosity and density, respectively.
+$u$ and $v$ denote the velocity components in $x$ and $y$ directions.
+$p$ is the pressure.
+The periodic boundary conditions are applied to $x=-L\pi$, $x=L\pi$, $y=-L\pi$, and $y=L\pi$.
+As shown in the analytical solutions, the flow patterns do not change spatially, and only the amplitudes decay exponentially in time.
+
+We used the following parameters for all our computational experiments: $V_0=L=\rho=1.0$ and $\nu=0.01$.
+These parameters correspond to a Reynolds number of $Re=100$.
+
+As TGV problem only has periodic boundary conditions, there is no boundary discretization error in PetIBM that will taint the overall spatial convergence.
+A 2nd-order grid convergence in space should therefore be expected.
+The time marching schemes are Adams-Bashforth for the convection and Crank-Nicolson for the diffusion, so a 2nd-order convergence in time should also be observed.
+Overall, the spatial-temporal convergence should be the 2nd-order.
+Hence, in this part we simply conducted a convergence test on spatial-temporal space for  convenience and simplicity.
+The $L_2$ spatial-temporal error in this work is defined as:
+\begin{equation}\label{eq:spt-err-def}
+    \begin{aligned}
+    L_{2,sp-t} \equiv &\sqrt{\int\limits_{x} \int\limits_{y} \int\limits_{t} \lVert f - f_{ref} \rVert^2 \diff x \diff y \diff t} \\
+    = &
+    \sqrt{\frac{L_x L_y T}{N_x N_y N_t}\sum\limits_{i=1}^{N_x}\sum\limits_{j=1}^{N_y}\sum\limits_{k=1}^{N_t}\left(f^{(i, j, k)} - f_{ref}^{(i, j, l)}\right)^2}
+    \end{aligned}
+\end{equation}
+$N_x$, $N_y$, and $N_t$ represent the number of cells in $x$, $y$, and $t$ axis.
+$f$ is the flow quantity of our interest, and $f_{ref}$ is the corresponding analytical solution.
+The superscript $(i, j, k)$ denotes the value at the $(i, j, k)$ point in the discretized spatial-temporal space.
+And the characteristic cell size in a spatial-temporal sense is simply $\sqrt[3]{\frac{1}{N_x N_y N_t}}$, meaning the characteristic number of cells is $\sqrt[3]{N_x N_y N_t}$.
+
+We ran simulations with $2^{n} \times 2^{n}$ cells for $i=4, 5, \dots, 10$.
+The simulations ran from $t=0$ up to $t=100$, and we output the transient results every $2$ seconds of $t$.
+The time step size $\Delta t$ did not follow a fixed refinement ratio.
+Rather, it was refined based on maximum allowed CFL number and whether it was a factor of $2$ (to output transient results).
+The corresponding time step sizes were $\Delta t = 1.25e-1, 8e-2, 4e-2, 2e-2, 1e-2, 5e-3, 1.25e-3$.
+The linear solvers for both velocity and pressure systems were solved with BiCGSTAB (biconjugate gradient stabilized method).
+The velocity and the pressure systems respectively used a block Jacobi preconditioner and an algebraic multigrid preconditioner from AmgX.
+At each time step, both solvers stopped when preconditioned residual reached $1e-14$.
+The hardware used contains 5 physical cores of Intel E5-2698 v4 and 1 V100 GPU.
+
+\begin{figure}[H]
+    \includegraphics[width=0.75\linewidth]{tgv-2d-re100/petibm-tgv-2d-re100-convergence}
+    \caption{PetIBM, 2D TGV, $Re=100$: spatial-temporal grid convergence}
+    \label{fig:petibm-tgv2d-re100-conv}
+\end{figure}
+
+Figure \ref{fig:petibm-tgv2d-re100-conv} shows the grid convergence results.
+Both $u$ and $v$ velocity follow an expected 2nd-order convergence before machine truncation errors become non-trivial at the $1024 \times 1024$ grid.
+However, the pressure field does not follow such a nice convergence pattern.
+After examining the log files, we determined that the cause was that AmgX did not solve the pressure systems to the tolerance we defined.
+AmgX has a hard-coded stop mechanism when relative residuals (relative to the residual before the 1st iteration in a Krylov solver) reach the machine precision.
+So while we configured the tolerance to be $1e-14$, the final preconditioned residuals of the pressure systems did not match this value.
+On the other hand, the velocity systems were solved to the requested tolerance.
+
+As we determined the cause of the deviated convergence in pressure was irrelevant to the numerical method implementation, we conclude that the 2D TGV verification was a success.
+
+\subsection*{Verification of 3D Taylor-Green vortex at $Re=1600$}
+
+3D TGV problems have closed-form initial conditions but do not have closed-form analytical solutions.
+These 3D TGV problems differ from 2D TGV cases due to the transition to turbulence.
+Hence, it serves as a standard benchmark for turbulence simulations.
+For example, see the campaign described in \cite{noauthor_1st_2012}. 
+In this verification, we compared the results to the other published simulation data \cite{debonis_solutions_2013}.
+
+The initial condition used was
+\begin{equation}\label{eq:tgv3d-ic}
+    \left\{
+    \begin{aligned}
+        u &=V_{0} \sin \left(\frac{x}{L}\right) \cos \left(\frac{y}{L}\right) \cos \left(\frac{z}{L}\right) \\
+        v &=-V_{0} \cos \left(\frac{x}{L}\right) \sin \left(\frac{y}{L}\right) \cos \left(\frac{z}{L}\right) \\
+        w &=0 \\
+        p &=\frac{\rho V_{0}^{2}}{16}\left(\cos \left(\frac{2 x}{L}\right)+\cos \left(\frac{2 y}{L}\right)\right)\left(\cos \left(\frac{2 z}{L}\right)+2\right)
+    \end{aligned}
+    \right.
+\end{equation}
+We used $\rho = V_0 = L = 1$ and $\nu=0.000625$, corresponding to $Re \equiv \frac{V_0 L}{\nu} = 1600$.
+Note the computational domain is $-L\pi$ to $L\pi$ for all three directions.
+
+Due to the hardware required for high-resolution 3D DNS simulations for turbulence flow, we didn't run the simulation with the spatial resolution suggested by \cite{noauthor_1st_2012}.
+Our spatial resolution was $N_x=N_y=N_z=256$ with $\Delta t=0.01$.
+The simulation ran up to $t=20$.
+The hardware used was 128 physical CPU cores of AMD EPYC 7742 and 4 A100 GPUs (the 80GB variant).
+It required about 250GB memory in total, and the run time was 37 minutes.
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[b]{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{tgv-3d-re1600/mean-kinetic-energy}
+        \caption{Mean kinetic energy}
+        \label{fig:petibm-tgv3d-re1600-mean-energy}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{tgv-3d-re1600/mean-kinetic-energy-dissipation-rate}
+        \caption{Mean kinetic energy dissipation rate}
+        \label{fig:petibm-tgv3d-re1600-mean-energy-dissp}
+    \end{subfigure}
+    \caption{PetIBM, 3D TGV, $Re=1600$: validations}
+    \label{fig:petibm-tgv3d-re1600-val}
+\end{figure}
+
+The result in figure \ref{fig:petibm-tgv3d-re1600-val} shows that the mean kinetic energy qualitatively match the reference data provided in \cite{noauthor_1st_2012} and \cite{debonis_solutions_2013}.
+However, obvious mismatch exists in the mean kinetic energy dissipation rate.
+In addition to the lower spatial resolution, another likely source of error may be in the post-processing, rather than in the numerical method implementation.
+We calculated the dissipation rate using enstrophy, which requires several steps of post-processing due to the use of a staggered grid.
+First, we applied the curl operator to the velocity that are defined on the staggered grid, and the reuslting vorticity was also distributed in a staggered fashion.
+Next, we applied the linear interpolation operator and collected values from staggered grid points to cell centers.
+Finally, we integrated the cell-centered vorticity using a simple 1st-order numerical integration.
+Hence, we suspected that the error seen in the energy dissipation rate was largely contributed by the post-processing.
+
+Even some results from the campaign of \cite{noauthor_1st_2012} and \cite{debonis_solutions_2013} show this level of mismatch in the dissipation rate.
+Therefore, we conclude the 3D TGV verification at this point.
+We don't claim that the PetIBM's result match the reference data.
+However, at least it does not show any concerning problems in the comparison, either.
+
+\subsection*{Validation and verification of 2D Cylinder flows}
+
+In this work, a total of three different 2D cylinder flows were simulated: $Re=40$, $Re=100$, and $Re=200$.
+They correspond to the stable, 2D instability, and 2D to 3D transitioning regimes in Williamson's stability categorization \cite{williamson_vortex_1996}. 
+The cases of $Re=40$ and $Re=200$ were used for benchmarking PINNs.
+Their results and V\&V can be found in chapter \ref{chap:pinn-cases}.
+Here in this section, we verify and validate our numerical solutions with $Re=100$ only.
+
+The computational domain was $[-15, 35]\times[-25, 25]$ with a spatial discretization of $510 \times 298$.
+Gridlines were stretched so that the cell size around the cylinder is about $\Delta x = \Delta y \approx 0.01\bar{6}$.
+The time step size was $\Delta t = 0.01$.
+The freestream condition of $u_{\infty}=1$ and $v_{\infty}=0$ were applied to the inlet, top, and bottom boundaries, while the outlet was convective BC, and the no-slip BC was applied on the cylinder surface.
+The IC was $u_0=1$.
+The configurations of the linear solvers in the velocity and the pressure systems were the same to those described in 2D TGV cases.
+In addition, this case has an extra forcing system (equation \eqref{eq:dibpm-order2-2}), and it was solved using LU decomposition on CPUs through distributed SuperLU.
+The hardware used was a node with 6 cores of intel i7-5930K and 1 K40 GPU.
+It took about 10 minutes to finish the simulation.
+
+\input{tables/cylinder-2d-re100/back-suction-coefficient.tex}
+\input{tables/cylinder-2d-re100/drag-lift-coeff.tex}
+
+\begin{figure}[H]
+    \includegraphics[width=0.95\linewidth]{cylinder-2d-re100/petibm-cylinder-2d-re100-val}
+    \caption{PetIBM, 2D cylinder, $Re=100$: drag, lift, and pressure coefficients}
+    \label{fig:petibm-cylinder-2d-re100-val}
+\end{figure}
+
+Table \ref{table:cylinder-2d-re100-cpb} shows the validation of the back suction coefficient, $C_{pb}$ (i.e., the surface pressure coefficient) against experimental data.
+The drag coefficient and Strouhal number ware verified with other publish numerical and shown in table \ref{table:cylinder-2d-re100-comparison-cd}.
+Figure \ref{fig:petibm-cylinder-2d-re100-val} shows the drag and lift coefficient with respect to time and the distribution of surface pressure coefficients.
+The latter was verified against another published simulation result.
+
+We determined that the V\&V for 2D cylinder flow at $Re=100$ a success.
+
+\subsection*{Validation of 3D flow around a sphere}
+
+We validate the simulation results of 3D sphere flows at different Reynolds numbers.
+These Reynolds numbers are $Re=50, 100, 150, 200, 250, 300$.
+All cases used the same computational domain, $[-10, 10] \times [-10, 10] \times [-10, 10]$, and the time step size $\Delta t=0.004$.
+The corresponding grid sizes are $272 \times 82 \times 82$.
+The BCs, ICs, and the linear solver configurations are the same as those in 2D cylinder flow at $Re=100$.
+
+\begin{figure}[H]
+    \includegraphics[width=0.6\linewidth]{sphere-3d/drag_coefficient}
+    \caption[PetIBM, 3D sphere: drag coefficient validation]{
+        PetIBM, 3D sphere: drag coefficient validation \cite{clift_bubbles_2013,roos_experimental_1971}
+    }
+    \label{fig:petibm-sphere3d-drag-val}
+\end{figure}
+
+Figure \ref{fig:petibm-sphere3d-drag-val} shows the validation results against experimental data \cite{clift_bubbles_2013,roos_experimental_1971}.
+We believe it is proper to call the validation of 3D sphere flow a success.
+
+\subsection*{Validation of 3D flow around an inclined flat plate}
+
+Lastly, we validate the solver using a 3D flow over an inclined flat plate at $Re=100$.
+We tested with several AoA (angle of attack) and validated the results against the experimental data from \cite{taira_unsteadiness_2007}.
+All cases had the same computational domain, $[-4, 6.1] \times [-5, 5] \times [-5, 5]$.
+And the flat plate was located at $(0.1, 1, 1)$
+The spatial discretization is $192 \times 56 \times 86$, and the time step $\Delta t$ is $0.01$.
+The BCs, ICs, and the linear solver configurations are the same as those in 2D cylinder flow at $Re=100$.
+
+\begin{figure}[H]
+    \includegraphics[width=0.6\linewidth]{plate-3d-re100/force_coefficients}
+    \caption{PetIBM, 3D plate: drag and lift coefficient validation}
+    \label{fig:petibm-plate3d-drag-lift-val}
+\end{figure}
+
+Figure \ref{fig:petibm-plate3d-drag-lift-val} shows that the experimental data matches our numerical simulation well.
+
+% vim:ft=tex

@@ -1,23 +1,289 @@
 %! TEX root = main.tex
-PetIBM is a C++ library with ready-to-use application codes to solve the two- and three-dimensional incompressible Navier-Stokes equations on fixed structured Cartesian grids with an immersed-boundary method (IBM).
-PetIBM runs on distributed-memory architectures and can be used to compute the flow around multiple moving rigid immersed boundaries (with prescribed kinematics).
 
-In the IBM framework, a collection of Lagrangian markers defines the immersed boundary (where boundary conditions are enforced) and the fluid equations are solved over the extended domain (including the body domain).
-The Eulerian mesh remains unmodified when computing the flow around multiple moving immersed bodies, which removes the need for remeshing at every time step.
-PetIBM discretizes the fluid equations using a second-order finite-difference scheme, various optional time-integrators, and a fully discrete projection method (\cite{perot_1993}).
-It implements two immersed-boundary algorithms: the immersed-boundary projection method (\cite{taira_colonius_2007}) and its decoupled version (\cite{li_et_al_2016}).
+Immersed-boundary methods solve fluid flow problems with the presence of solids by adding a body-force term to the Navier-Stokes equations.
+This body-force term mimics the interface between fluid and solids.
+Depending on the chosen formulations and schemes, the solids may be either rigid or deformable.
+They can be stationary objects, objects moving under prescribed motions, or objects moving under feedback forces from fluid.
+Different immersed-boundary methods may use different formulations for this body-force term to model the fluid-solid interfaces.
 
-Other open-source software packages offer immersed-boundary solvers: for example, IBAMR (\cite{griffith_et_al_2007}, \cite{bhalla_et_al_2013}) is a long-standing C++ library with MPI parallelization that also provides adaptive mesh refinement.
-It can handle deforming immersed bodies and has been used in a variety of scenarios, including cardiac fluid dynamics, swimming, insect flight, and others.
-PetIBM and IBAMR use different immersed-boundary schemes, however. We developed PetIBM to work with the immersed-boundary projection method, which is based on the fully discrete formulation of Perot on staggered grids and thus eliminates the need for pressure boundary conditions, which have caused many headaches for CFD practitioners (\cite{gresho_sani_1987}, \cite{sani_gresho_1994}).
-PetIBM features an operator-based design, providing routines to create and manipulate discrete operators (e.g., gradient, divergence, Laplacian, convection, diffusion, etc.), so it can be used as a toolbox for researching new solution methods.
-It is also capable of using graphics processing unit (GPU) architectures, a feature missing from other software, as far as we know.
-A previous project implementing immersed-boundary methods on GPU architecture is cuIBM (\cite{krishnan_et_al_2017}), but it is limited to two-dimensional problems that fit on a single GPU device.
+To be more precise, this forcing term models the force applied to the fluid by solids.
+As this forcing term is part of the fluid governing equations defined in Eulerian coordinate systems, it is resolved on the same computational grid of the fluid, and solid-fluid interfaces are not anymore boundaries of the fluid's computational domain.
+In other words, body-fitting meshes are unnecessary.
+A benefit of such an approach is that a structured grid can be applied to solve flow problems with the presence of an object with complex geometry.
 
-PetIBM is written in C++ and relies on the PETSc library (\cite{petsc_1997}, \cite{petsc_user_ref_2017}) for data structures and parallel routines to run on memory-distributed architectures.
-PetIBM can solve one or several linear systems on multiple distributed CUDA-capable GPU devices with the NVIDIA AmgX library and AmgXWrapper (\cite{chuang_barba_2017}).
-The software package includes extended documentation as well as many examples to guide users.
+Consider a fluid problem with a fluid-solid interface.
+$\Omega$ and $\Gamma$ corresponding to the whole domain of our interest and the fluid-solid interface.
+The fluid-solid interface may be moving when viewing from a fixed coordinate system.
+Given a time $t$ and a spatial coordinate $\vec{x}$ in an Eulerian coordinate system defined in $\Omega$, we can write the following Navier-Stokes equations for incompressible flow and the immersed-boundary projection method (IBPM):
+\begin{subequations}\label{eq:mod-ns}
+    \begin{align}[left=\empheqlbrace\,]
+        &\pdiff{\vec{u}}{t} + \left(\vec{u} \cdot \nabla\right) \vec{u}
+            =
+            -\frac{1}{\rho}\nabla p + \frac{1}{Re} \nabla^2 \vec{u} + 
+            \int\limits_{\Gamma} \vec{f}\left(\vec{\xi}\left(s, t \right), t\right) \delta\left(\vec{\xi}\left(s, t\right)-\vec{x}\right)\diff {\Gamma} 
+            \label{eq:mod-ns-momentum} \\
+        &\nabla \cdot \vec{u} = 0 \label{eq:mod-ns-cont}\\
+        &\int\limits_{\Omega} \vec{u}\left(\vec{x}, t\right) \delta \left(\vec{x}-\vec{\xi}\left(s, t\right)\right)\diff\Omega
+            =
+            \vec{u}_{\Gamma}\left(s, t\right)
+            \label{eq:mod-ns-body-vel}
+    \end{align}
+\end{subequations}
 
-PetIBM has already been used to generate results published in \cite{mesnard_barba_2017}, a full replication of a study on the aerodynamics of a gliding snake species (\cite{krishnan_et_al_2014}).
-PetIBM is currently used to compute the three-dimensional flow of a gliding-snake model on the cloud platform Microsoft Azure.
+$\vec{u}$, $p$, $Re$, and $\rho$ are the velocity vector, pressure, Reynolds number, and fluid density, respectively.
+$\vec{u}$ and $p$ are functions of $\vec{x}$ and $t$.
+Though $\rho$ and viscosity can also be functions of $\vec{x}$ and $t$ for incompressible flow, we simply treat them as a constant in this work.
+$s$ denotes the coordinate in a Lagrangian coordinate system defined on $\Gamma$.
+For example, such a Lagrangian coordinate system is a curve in 2D problems, and a single scalar $s$ is enough to represent a coordinate on the interface.
+$\vec{\xi}(s, t)$ is the coordinate in the Eulerian coordinate system that correspond to a Lagrangian coordinate $s$ on $\Gamma$ and at time $t$.
+$\vec{u}_\Gamma$ represents the velocity of the fluid-solid interface.
+Note $\vec{u}_\Gamma$ is a concept from the viewpoint of Lagrangian coordinate system.
+$\vec{f}$ is the vector of force applied on fluid due to the presence of the fluid-solid interface.
+It is defined in $\Omega$ and the Eulerian coordinate system, so it is a function of $\vec{x}$ and $t$.
+
+$\delta$ is the Dirac delta function, i.e., $\delta(\vec{\xi}-\vec{x})$ equals to $1$ when $\vec{\xi} = \vec{x}$ and equals to $0$ otherwise.
+With this Dirac delta function, the last term in \eqref{eq:mod-ns-momentum} is non-zero only at $\vec{x}$ that corresponds to the fluid-solid interface.
+In other words, one can also write separate momentum equations without using the Dirac function:
+\begin{equation}
+\left\{
+    \begin{array}{ll}
+        \pdiff{\vec{u}}{t} + \left(\vec{u} \cdot \nabla\right) \vec{u}
+            = -\frac{1}{\rho}\nabla p + \frac{1}{Re} \nabla^2 \vec{u}\text{,} & \vec{x} \notin \Gamma \\
+        \pdiff{\vec{u}}{t} + \left(\vec{u} \cdot \nabla\right) \vec{u}
+            = -\frac{1}{\rho}\nabla p + \frac{1}{Re} \nabla^2 \vec{u} + \vec{f}\left(\vec{x}, t \right)\text{,} & \vec{x} \in \Gamma \\
+    \end{array}
+\right. 
+\end{equation}
+It's clear now that only $\vec{x}$ exactly on fluid-solid interfaces is under the influence of the added body force.
+
+The same logic applies to \eqref{eq:mod-ns-body-vel}.
+In continuous space, equation \eqref{eq:mod-ns-body-vel} simply means $\vec{u}\left(\vec{x}, t\right)=\vec{u}_\Gamma\left(s, t\right)$ for $\vec{x} \in \Gamma$ and when $\vec{x}=\vec{\xi}\left(s, t\right)$.
+It means the flow velocity on $\Gamma$ must satisfy the no-slip condition.
+As $\Gamma$ is not a boundary of $\Omega$, this no-slip condition can not be specified as a boundary condition and hence is included in \eqref{eq:mod-ns}.
+
+Though the integrals in the last term of \eqref{eq:mod-ns-momentum} and \eqref{eq:mod-ns-body-vel} seem unnecessary, having the integral or not makes difference when applying discretization in numerical methods.
+Because we are not using body-fitting mesh, and the fluid-solid interface is arbitrary, it is almost impossible to have computational nodes located exactly on $\Gamma$.
+Hence, to capture the effect of the interface, the delta function needs to be relaxed, i.e., $\delta \ne 0$ for $\lVert \vec{\xi}-\vec{x} \rVert$ smaller than a certain predefined tolerance.
+Or, it can be made to some smooth function that approaches to zero when $\lVert \vec{\xi}-\vec{x} \rVert$ approaches infinity.
+This kind of delta function is called regularized Dirac delta function.
+And using a regularized delta function makes the fluid-solid interface duffuse: if we plot the integral in the last term of equation \eqref{eq:mod-ns-momentum} on a discretized 2D Cartesian grid of $\Omega$, the $\Gamma$ will look like a band, rather than a curve.
+
+In PetIBM, we use the following regularized Dirac function:
+\begin{equation}\label{eq:regularized-dirac}
+    \delta\left(r\right)=\left\{
+        \begin{array}{ll}
+            \frac{1}{6 \Delta r}\left[
+                5-3 \frac{r}{\Delta r}-\sqrt{-3\left(1-\frac{r}{\Delta r}\right)^{2}+1}
+            \right] & \text { for } 0.5 \Delta r \le r \le 1.5 \Delta r \\
+            \frac{1}{3 \Delta r}\left[
+                1+\sqrt{-3\left(\frac{r}{\Delta r}\right)^{2}+1}
+            \right] & \text { for }r \le 0.5 \Delta r \\
+            0 & \text { otherwise }
+        \end{array}
+    \right.
+\end{equation}
+where $r \equiv \lVert\vec{\xi}-\vec{x}\rVert_2$, and $\Delta r$ is a user-provided parameter to determine the effective range of the regularized Dirac function.
+
+The next step is to discretize the governing equations.
+The IBPM is based on the following block-matrix system that can be generated from most discretization and time marching schemes:
+\begin{equation}\label{eq:block-sys-ns}
+    \begin{bmatrix}
+        A & G & H \\
+        D & 0 & 0 \\
+        E & 0 & 0
+    \end{bmatrix}
+    \begin{bmatrix}
+        \vec{u}^{n+1} \\
+        \vec{p}^{n+1} \\
+        \vec{f}^{n+1}
+    \end{bmatrix}
+    =
+    \begin{bmatrix}
+        \vec{\gamma}^n \\
+        0 \\
+        \vec{u}_\Gamma^{n+1}
+    \end{bmatrix}
+    +
+    \begin{bmatrix}
+        \vec{bc}_1 \\
+        \vec{bc}_2 \\
+        0
+    \end{bmatrix}
+\end{equation}
+where $A$, $G$, and $D$ correspond to the $\frac{1}{\Delta t}I+\alpha\frac{1}{Re}L$, gradient, and divergence operators of a given spatial discretization. 
+$L$ is the Laplacian operator, and $alpha$ is a coefficient that depends on chosen time marching scheme for the diffusion term.
+$H$ and $E$ are the operator from substituting equation \eqref{eq:regularized-dirac} into equation \eqref{eq:mod-ns} and the discretizing the forcing terms and \eqref{eq:mod-ns-body-vel}.
+Note that only matrix $A$ is a square matrix, while others are not.
+Superscript $n+1$ and $n$ denote the $n+1$-th and $n$-th time steps.
+$\vec{\gamma}^n$ represents the results of explicit terms from the selected time marching schemes.
+Though having a superscript $n$, $\vec{\gamma}^n$ can actually depend on solutions from $n-1$, $n-2$, and so on, depending on the schemes.
+$\vec{bc}+1$ and $\vec{bc}_2$ are the artifacts that generated from eliminating BCs from operators.
+
+Reference \cite{taira_immersed_2007} shows an example of how these operators are actually defined using staggered Cartesian grid for spatial discretization, Adams-Bashforth for marching the convection term, and Crank-Nicolson for marching the diffusion term can be found in \cite{taira_immersed_2007}.
+Here we will continue on assuming we already have these operators to save space, and we can focus on the solution scheme of this block matrix system using the decoupled IBPM of reference \cite{li_efficient_2016}.
+
+Equation \ref{eq:block-sys-ns} is indefinite and difficult to solve.
+To solve such a system, in decoupled IBPM, we define the following composite matrices and composite vectors: 
+\begin{equation}\label{eq:composites}
+    \begin{gathered}
+        \bar{A} \equiv \begin{bmatrix} A & H \\ E & 0 \end{bmatrix};\
+        \bar{G} \equiv \begin{bmatrix} G \\ 0 \end{bmatrix};\
+        \bar{D} \equiv \begin{bmatrix} D & 0 \end{bmatrix}
+        \\
+        \vec{q}^{n+1} \equiv \begin{bmatrix} \vec{u}^{n+1} \\ \vec{f}^{n+1} \end{bmatrix};\
+        \bar{\vec{\gamma}}_1 \equiv \begin{bmatrix} \vec{\gamma}^n + \vec{bc}_1 \\ \vec{u}_\Gamma^{n+1}\end{bmatrix};\
+        \bar{\vec{\gamma}}_2 \equiv \vec{bc}_2
+    \end{gathered}
+\end{equation}
+The original block system in \eqref{eq:block-sys-ns} can be re-arranged to:
+\begin{equation}
+    \begin{bmatrix}
+        \bar{A} & \bar{G} \\
+        \bar{D} & 0
+    \end{bmatrix}
+    \begin{bmatrix}
+        \vec{q}^{n+1} \\
+        \vec{p}^{n+1}
+    \end{bmatrix}
+    =
+    \begin{bmatrix}
+        \bar{\vec{\gamma}}_1 \\
+        \bar{\vec{\gamma}}_2
+    \end{bmatrix}
+\end{equation}
+
+The next step is to apply two successive block-LU decompositions.
+The first block-LU decomposition decouples the pressure field from the new unknown $\vec{q}^{n+1}$:
+\begin{equation}
+    \begin{bmatrix}
+        \bar{A} & 0 \\
+        \bar{D} & -\bar{D}\bar{A}^{-1}\bar{G}
+    \end{bmatrix}
+    \begin{bmatrix}
+        I & \bar{A}^{-1}\bar{G} \\
+        0 & I
+    \end{bmatrix}
+    \begin{bmatrix}
+        \vec{q}^{n+1} \\
+        \vec{p}^{n+1}
+    \end{bmatrix}
+    =
+    \begin{bmatrix}
+        \bar{A} & 0 \\
+        \bar{D} & -\bar{D}\bar{A}^{-1}\bar{G}
+    \end{bmatrix}
+    \begin{bmatrix}
+        \vec{q}^* \\
+        \vec{p}^{n+1}
+    \end{bmatrix}
+    =
+    \begin{bmatrix}
+        \bar{\vec{\gamma}}_1 \\
+        \bar{\vec{\gamma}}_2
+    \end{bmatrix}
+\end{equation}
+which leads to the following sequence of operations:
+\begin{subequations}
+    \begin{align}
+        & \bar{A} \vec{q}^* = \bar{\vec{\gamma}}_1\label{eq:dibpm-lu1-1} \\
+        & \bar{D}\bar{A}^{-1}\bar{G} \vec{p}^{n+1} = \bar{D} \vec{q}^* - \bar{\vec{\gamma}}_2\label{eq:dibpm-lu1-2} \\
+        & \vec{q}^{n+1} = \vec{q}^* - \bar{A}^{-1}\bar{G} \vec{p}^{n+1}\label{eq:dibpm-lu1-3}
+    \end{align}
+\end{subequations}
+Notice the zero submatrices in $\bar{G}$ and $\bar{D}$, equations \eqref{eq:dibpm-lu1-2} and \eqref{eq:dibpm-lu1-3} can be split to:
+\begin{subequations}
+    \begin{align}
+        & D\bar{A}_{00}^{-1}G \vec{p}^{n+1} = \bar{D} \vec{u}^* - \bar{\vec{\gamma}}_2\label{eq:dibpm-lu1-4} \\
+        & \vec{u}^{n+1} = \vec{u}^* - \bar{A}_{00}^{-1}\bar{G} \vec{p}^{n+1}\label{eq:dibpm-lu1-5} \\
+        & \vec{f}^{n+1} = \vec{f}^* - \bar{A}_{10}^{-1}\bar{G} \vec{p}^{n+1}\label{eq:dibpm-lu1-6}
+    \end{align}
+\end{subequations}
+where $\bar{A}_{00}^{-1}$ and $\bar{A}_{10}^{-1}$ are the upper-left and lower-left submatrices in $\bar{A}^{-1}$.
+The composite operator $\bar{A}$ is still indefinite, and step \eqref{eq:dibpm-lu1-1} is also tough to solve directly.
+Therefore, a second block-LU decomposition is applied to solve $\vec{q}^{*}$ in \eqref{eq:dibpm-lu1-1}:
+\begin{equation}
+    \begin{bmatrix}
+        A & 0 \\
+        E & -EA^{-1}H
+    \end{bmatrix}
+    \begin{bmatrix}
+        I & A^{-1}H \\
+        0 & I
+    \end{bmatrix}
+    \begin{bmatrix}
+        \vec{u}^* \\
+        \vec{f}^*
+    \end{bmatrix}
+    =
+    \begin{bmatrix}
+        A & 0 \\
+        E & -EA^{-1}H
+    \end{bmatrix}
+    \begin{bmatrix}
+        \vec{u}^{* *} \\
+        \vec{f}^*
+    \end{bmatrix}
+    =
+    \begin{bmatrix}
+        \vec{\gamma}^n + \vec{bc}_1 \\
+        \vec{u}_\Gamma^{n+1}
+    \end{bmatrix}
+\end{equation}
+and we end up with the following sequence:
+\begin{subequations}
+    \begin{align}
+        & A u^{* *} = \vec{\gamma}^n + \vec{bc}_1\label{eq:dibpm-lu2-1} \\
+        & EA^{-1}H \vec{f}^* = E \vec{u}^{* *} - \vec{u}_\Gamma^{n+1}\label{eq:dibpm-lu2-2} \\
+        & \vec{u}^* = \vec{u}^{* *} - A^{-1}H \vec{f}^*\label{eq:dibpm-lu2-3}
+    \end{align}
+\end{subequations}
+The order of solving is then:
+\begin{subequations}
+    \begin{align}
+        & A u^{* *} = \vec{\gamma}^n + \vec{bc}_1\label{eq:dibpm-order1-1} \\
+        & EA^{-1}H \vec{f}^* = E \vec{u}^{* *} - \vec{u}_\Gamma^{n+1}\label{eq:dibpm-order1-2} \\
+        & \vec{u}^* = \vec{u}^{* *} - A^{-1}H \vec{f}^*\label{eq:dibpm-order1-3}\\
+        & D\bar{A}_{00}^{-1}G \vec{p}^{n+1} = \bar{D} \vec{u}^* - \bar{\vec{\gamma}}_2\label{eq:dibpm-order1-4} \\
+        & \vec{u}^{n+1} = \vec{u}^* - \bar{A}_{00}^{-1}\bar{G} \vec{p}^{n+1}\label{eq:dibpm-order1-5} \\
+        & \vec{f}^{n+1} = \vec{f}^* - \bar{A}_{10}^{-1}\bar{G} \vec{p}^{n+1}\label{eq:dibpm-order1-6}
+    \end{align}
+\end{subequations}
+
+Note that because $A$ has a format of $\frac{1}{\Delta t}I + \alpha \frac{1}{Re}L$, the Talyor series expansion of $A^{-1}$ is
+\begin{equation}\label{eq:approx-A-inv}
+    A^{-1} = \Delta t \sum\limits_{i=0}^{\infty} \left(-1\right)^{n}\left(\frac{\alpha\Delta t}{Re}\right)^n L^n
+\end{equation}
+And similarly, we can reformat $\bar{A}$ to a structure of $\frac{1}{\Delta t}I + S$ so that the inverse of $\bar{A}$ has a Taylor series expansion of
+\begin{equation}\label{eq:approx-A-bar-inv}
+    \bar{A}^{-1} = \Delta t \sum\limits_{i=0}^{\infty}\left(-1\right)^{n}\Delta t^n S^n
+\end{equation}
+where
+\begin{equation}
+    S = \begin{bmatrix}
+        \frac{\alpha \Delta t}{Re}L & H \\
+        E & -\frac{1}{\Delta t}I
+    \end{bmatrix}
+\end{equation}
+
+In order to speed up the solving process, in the solution workflow, we can replace $A^{-1}$ and $\bar{A}^{-1}$ with truncated Taylor series expansions.
+The most common approach is to use only the first-order approximation, i.e., use only the first term in the series expansions.
+That is, $A^{-1} \approx \Delta t I$ and $\bar{A}^{-1} \approx \Delta t I$, where $I$ denotes the identity matrix with a corresponding dimension. ($A$ and $\bar{A}$ have different dimensions.)
+Further, under the first-order approximation, the submatrices $\bar{A}_{00}^{-1}$ and $\bar{A}_{10}^{-1}$ can be found to be $\Delta t I$ and $0$.
+
+The following is the actual solution workflow under the first-order approximation:
+\begin{subequations}\label{eq:dibpm-first-order}
+    \begin{align}
+        & A u^{* *} = \vec{\gamma}^n + \vec{bc}_1\label{eq:dibpm-order2-1} \\
+        & \Delta t EH \vec{f}^{n+1} = E \vec{u}^{* *} - \vec{u}_\Gamma^{n+1}\label{eq:dibpm-order2-2} \\
+        & \vec{u}^* = \vec{u}^{* *} - \Delta t H \vec{f}^{n+1}\label{eq:dibpm-order2-3}\\
+        & \Delta t DG \vec{p}^{n+1} = \bar{D} \vec{u}^* - \bar{\vec{\gamma}}_2\label{eq:dibpm-order2-4} \\
+        & \vec{u}^{n+1} = \vec{u}^* - \Delta t \bar{G} \vec{p}^{n+1}\label{eq:dibpm-order2-5}
+    \end{align}
+\end{subequations}
+
+Using higher-order approximation for $A^{-1}$ and $\bar{A}^{-1}$ is achievable through the Taylor series expansions in \eqref{eq:approx-A-inv} and \eqref{eq:approx-A-bar-inv}.
+However, the resulting linear systems in \eqref{eq:dibpm-order1-2} and \eqref{eq:dibpm-order1-4} may not be sparse due to the power of operators in the Taylor series expansions.
+
+In this section, we only described the specific solver (decoupled IBPM) we used to create the baseline data for benchmarking PINNs.
+For other available solvers in PetIBM, please refer to the documentation in \cite{chuang_petibm:_2018}.
 % vim:ft=tex
