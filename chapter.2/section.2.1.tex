@@ -190,12 +190,12 @@ which leads to the following sequence of operations:
         & \vec{q}^{n+1} = \vec{q}^* - \bar{A}^{-1}\bar{G} \vec{p}^{n+1}\label{eq:dibpm-lu1-3}
     \end{align}
 \end{subequations}
-Notice the zero submatrices in $\bar{G}$ and $\bar{D}$, equations \eqref{eq:dibpm-lu1-2} and \eqref{eq:dibpm-lu1-3} can be split to:
+Noticing the zero submatrices in $\bar{G}$ and $\bar{D}$, we can split equations \eqref{eq:dibpm-lu1-2} and \eqref{eq:dibpm-lu1-3} to:
 \begin{subequations}
     \begin{align}
-        & D\bar{A}_{00}^{-1}G \vec{p}^{n+1} = \bar{D} \vec{u}^* - \bar{\vec{\gamma}}_2\label{eq:dibpm-lu1-4} \\
-        & \vec{u}^{n+1} = \vec{u}^* - \bar{A}_{00}^{-1}\bar{G} \vec{p}^{n+1}\label{eq:dibpm-lu1-5} \\
-        & \vec{f}^{n+1} = \vec{f}^* - \bar{A}_{10}^{-1}\bar{G} \vec{p}^{n+1}\label{eq:dibpm-lu1-6}
+        & D\bar{A}_{00}^{-1}G \vec{p}^{n+1} = D \vec{u} - \vec{bc}_2\label{eq:dibpm-lu1-4} \\
+        & \vec{u}^{n+1} = \vec{u}^* - \bar{A}_{00}^{-1}G \vec{p}^{n+1}\label{eq:dibpm-lu1-5} \\
+        & \vec{f}^{n+1} = \vec{f}^* - \bar{A}_{10}^{-1}G \vec{p}^{n+1}\label{eq:dibpm-lu1-6}
     \end{align}
 \end{subequations}
 where $\bar{A}_{00}^{-1}$ and $\bar{A}_{10}^{-1}$ are the upper-left and lower-left submatrices in $\bar{A}^{-1}$.
@@ -243,9 +243,9 @@ The order of solving is then:
         & A u^{* *} = \vec{\gamma}^n + \vec{bc}_1\label{eq:dibpm-order1-1} \\
         & EA^{-1}H \vec{f}^* = E \vec{u}^{* *} - \vec{u}_\Gamma^{n+1}\label{eq:dibpm-order1-2} \\
         & \vec{u}^* = \vec{u}^{* *} - A^{-1}H \vec{f}^*\label{eq:dibpm-order1-3}\\
-        & D\bar{A}_{00}^{-1}G \vec{p}^{n+1} = \bar{D} \vec{u}^* - \bar{\vec{\gamma}}_2\label{eq:dibpm-order1-4} \\
-        & \vec{u}^{n+1} = \vec{u}^* - \bar{A}_{00}^{-1}\bar{G} \vec{p}^{n+1}\label{eq:dibpm-order1-5} \\
-        & \vec{f}^{n+1} = \vec{f}^* - \bar{A}_{10}^{-1}\bar{G} \vec{p}^{n+1}\label{eq:dibpm-order1-6}
+        & D\bar{A}_{00}^{-1}G \vec{p}^{n+1} = D \vec{u}^* - \vec{bc}_2\label{eq:dibpm-order1-4} \\
+        & \vec{u}^{n+1} = \vec{u}^* - \bar{A}_{00}^{-1}G \vec{p}^{n+1}\label{eq:dibpm-order1-5} \\
+        & \vec{f}^{n+1} = \vec{f}^* - \bar{A}_{10}^{-1}G \vec{p}^{n+1}\label{eq:dibpm-order1-6}
     \end{align}
 \end{subequations}
 
@@ -276,13 +276,13 @@ The following is the actual solution workflow under the first-order approximatio
         & A u^{* *} = \vec{\gamma}^n + \vec{bc}_1\label{eq:dibpm-order2-1} \\
         & \Delta t EH \vec{f}^{n+1} = E \vec{u}^{* *} - \vec{u}_\Gamma^{n+1}\label{eq:dibpm-order2-2} \\
         & \vec{u}^* = \vec{u}^{* *} - \Delta t H \vec{f}^{n+1}\label{eq:dibpm-order2-3}\\
-        & \Delta t DG \vec{p}^{n+1} = \bar{D} \vec{u}^* - \bar{\vec{\gamma}}_2\label{eq:dibpm-order2-4} \\
-        & \vec{u}^{n+1} = \vec{u}^* - \Delta t \bar{G} \vec{p}^{n+1}\label{eq:dibpm-order2-5}
+        & \Delta t DG \vec{p}^{n+1} = D \vec{u}^* - \vec{bc}_2\label{eq:dibpm-order2-4} \\
+        & \vec{u}^{n+1} = \vec{u}^* - \Delta t G \vec{p}^{n+1}\label{eq:dibpm-order2-5}
     \end{align}
 \end{subequations}
 
-Using higher-order approximation for $A^{-1}$ and $\bar{A}^{-1}$ is achievable through the Taylor series expansions in \eqref{eq:approx-A-inv} and \eqref{eq:approx-A-bar-inv}.
-However, the resulting linear systems in \eqref{eq:dibpm-order1-2} and \eqref{eq:dibpm-order1-4} may not be sparse due to the power of operators in the Taylor series expansions.
+Using higher-order approximations for $A^{-1}$ and $\bar{A}^{-1}$ is achievable through the Taylor series expansions in \eqref{eq:approx-A-inv} and \eqref{eq:approx-A-bar-inv}.
+However, the resulting linear systems in \eqref{eq:dibpm-order1-2} and \eqref{eq:dibpm-order1-4} may not be sparse due to the exponential terms in the Taylor series expansions.
 
 In this section, we only described the specific solver (decoupled IBPM) we used to create the baseline data for benchmarking PINNs.
 For other available solvers in PetIBM, please refer to the documentation in \cite{chuang_petibm:_2018}.

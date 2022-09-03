@@ -14,7 +14,7 @@ Data-driven deep learning can be naively thought as a much more complicated vers
 Fundamentally, we want to find a mathematical model that best fits some observed data.
 However, in deep learning, the model is not linear anymore.
 The models are now deep neural networks and has much more free parameters (compared to only two parameters in linear models) that need to be determined during regression process.
-The regression process, which is called training in deep learning context or called model fitting in engineering, determines the values of free parameters by minimize the distance between observations and predictions (i.e., the outputs of the models).
+The regression process, which is called training in deep learning context or called model fitting in engineering, determines the values of free parameters by minimizing the distance between observations and predictions (i.e., the outputs of the models).
 Once the free parameters are determined, the model can be used as an interpolator to reconstruct the missing data or an extrapolator to predict quantities outside the boundary of observations.
 
 As data fitting has been long existed in engineering, a straightforward application of deep learning in CFD is data-driven surrogate modeling.
@@ -34,7 +34,7 @@ Given the strong connection between CFD and PDEs, solving PDEs using neural netw
 To simply put (see chapter \ref{chap:pinn} for details), a neural network model is used to approximate the solutions of PDEs.
 The model is a mathematical model, so the derivatives of the model outputs with respect to model inputs can be obtained analytically or through automatic differentiation \cite{griewank_automatic_1988}.
 Once having mathematical expressions of the derivatives, we substitute them into the differential equations and get the residuals. 
-Finally, we determine the free parameters in the model by optimize/minimize the residuals.
+Finally, we determine the free parameters in the model by optimizing/minimizing the residuals.
 In other words, the model fits against PDEs rather than observed data, and hence it is called data-free.
 The workflow is similar to least square finite element methods (LSFEM \cite{jiang_least-squares_1998}) or collocation spectral methods \cite{trefethen_spectral_2000}.
 A brief comparison of the methods are described in section \ref{sec:pinn-diff}.
@@ -50,7 +50,7 @@ Other attempts prior to the 2010s that solved PDEs with neural networks and unde
 
 Since mid-2010s, solving PDEs with neural networks suddenly became popular after the term {\it physics-informed neural networks} (PINNs) was coined by Raissi et al. \cite{raissi_physics-informed_2017}.
 The core concept of PINNs is the same as what Dissanayake and Phan-Thien proposed in 1994.
-Searching the keyword {\it physics-informed neural networks} with Google Scholar reveals a rapid growth from 60 results to 3,340 results in 2021.
+Searching the keyword {\it physics-informed neural networks} with Google Scholar reveals a rapid growth from 60 results in 2017 to 3,340 results in 2021.
 We believe this growth of interests in solving PDEs with neural networks can be attributed to the advance in computing technologies (e.g., GPU technology) and the easy access to these technologies.
 For example, on-demand cloud computing services make deep learning affordable for small research groups.
 And powerful Python ecosystem together with tools like TensorFlow and PyTorch reduce effort of code development.
