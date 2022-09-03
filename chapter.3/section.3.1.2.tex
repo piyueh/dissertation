@@ -1,49 +1,43 @@
 %! TEX root = main.tex
 
-For readers with a background in numerical methods for partial differential equations, we would like to make an analogy between traditional numerical methods and PINN.
+Compared to solving $N_\Theta$ nonlinear equations directly, an optimization problem of \eqref{eq:total-residual} or \eqref{eq:total-residual-weighted} allows us to use any numbers of spatial-temporal points.
+That is, there is no limitation on the magnitude of $N_{PDE}$, $N_{BC}$, and $N_{IC}$.
+This eases the need of computational resources.
+In data-free PINNs, these spatial-temporal points are called training points or training data.
+They are spatial-temporal coordinates where we evaluate the residuals of PDEs, IC, and BCs.
+While training points may be generated manually and intentionally positioned at desired locations (just like meshing in conventional CFD simulations), it is more common to generate them by selecting coordinates randomly using a uniform density function. 
 
-In obtaining strong solutions to differential equations, we can describe the solution workflows of most numerical methods with five stages:
+The ability to use arbitrary numbers of training points helps in the generalizability of a trained PINNs model.
+When more training points are involved in \eqref{eq:residual-norms} and hence \eqref{eq:total-residual-weighted}, the minimal residuals are achieved at more locations in the domain. 
+Ultimately, with unlimited training points evenly distributed in the domain, the optimization of the discretized residuals in \eqref{eq:residual-norms} becomes optimization of the continuous residual functions in \eqref{eq:residuals}. 
+And the resulting optimal parameters, $\vec{\theta}$, will make $G$ a more accurate approximation solution to the whole domain of $\Omega$ and $t\in[0, T]$.
 
-1. *Designing the approximate solution with undetermined parameters*
-2. *Choosing proper approximation for derivatives*
-3. *Obtaining the so-called modified equation by substituting approximate derivatives into the differential equations and initial/boundary conditions*
-4. *Generating a system of linear/nonlinear algebraic equations*
-5. *Solving the system of equations*
+More points also mean more computational cost.
+To reduce the cost, a batched training is utilized.
+For example, if using an iterative optimization method (such as the gradient-descent or Adam optimizer), we can always generate a new batch of training points for a new iteration to evaluate the discretized residuals.
+After a significant number of iterations, the total number of training points involved in optimization will also be significant.
+Once the model is trained, theoretically, it is therefore capable of giving accurate predictions at any locations and times.
 
-For example, to solve $\nabla U^2(x)=s(x)$, the most naive spectral method \cite{trefethen_spectral_2000} approximates the solution with $U(x)\approx G(x)=\sum\limits_{i=1}^{N}c_i\phi_i(x)$, where $c_i$ represents undetermined parameters, and $\phi_i(x)$ denotes a set of either polynomials, trigonometric functions, or complex exponentials.
-Next, obtaining the first derivative of $U$ is straightforward—we can just assume $U^{\prime}(x)\approx G^{\prime}(x)=\sum\limits_{i=1}^{N}c_i \phi_i^{\prime}(x)$.
-The second-order derivative may be more tricky.
-One can assume $U^{\prime\prime}(x)\approx G^{\prime\prime}=\sum\limits_{i=1}^{N}c_i \phi_i^{\prime\prime}(x)$.
-Or, another choice for nodal bases (i.e., when $\phi_i(x)$ is chosen to make $c_i\equiv G(x_i)$) is $U^{\prime\prime}(x)\approx \sum\limits_{i=1}^{N}c_i G^{\prime}(x_i)$.
-Because $\phi_i(x)$ is known, the derivatives are analytical.
-After substituting the approximate solution and derivatives in to the target differential equation, we need to solve for parameters $c_1,\cdots,c_N$.
-We do so by selecting $N$ points from the computational domain and creating a system of $N$ linear equations:
+In practice, however, it is not a cheap task if thousands or even more random points have to be generated on the fly at each iteration.
+We instead generated a fixed amount of training points before the optimization and only used a batch of them in each iteration.
+For example, to use $N_{PDE}$ points to evaluate the PDE residuals at each iteration, we may generate $N_{PDE}\times 1000$ points in advance and divide them into $1000$ batches.
+If we run an optimizer for 1 million iterations, each batch is repeated every 1000 iterations.
 
-\begin{equation}\label{eq:spectral-linear-sys}
-    \begin{bmatrix}
-        \phi_1^{\prime\prime}(x_1) & \cdots & \phi_N^{\prime\prime}(x_1) \\
-        \vdots & \ddots & \vdots \\
-        \phi_1^{\prime\prime}(x_N) & \cdots & \phi_N^{\prime\prime}(x_N)
-    \end{bmatrix}
-    \begin{bmatrix}
-        c_1 \\ \vdots \\ c_N
-    \end{bmatrix}
-    - 
-    \begin{bmatrix}
-        s(x_1) \\ \vdots \\ s(x_N)
-    \end{bmatrix}
-    = 0
+Theoretically, each batch should have similar statistical properties and hence give a similar gradient vector under fixed model parameters.
+That is
+\begin{equation}
+\left.\nabla_\theta r(\Theta) \right|_{\vec{x}, t \in \mathcal{X}_1} \sim
+\left.\nabla_\theta r(\Theta) \right|_{\vec{x}, t \in \mathcal{X}_2} \sim
+\cdots
 \end{equation}
+where $\mathcal{X}_i$ for $i=1,2,\cdots$ represents the $i$-th batch of the training points.
+These gradients are used to update $\vec{\theta}$ in iterative optimization methods.
+In other words, the hyperplane of $r(\Theta)$ is expected not to change significantly from iteration to iteration when using different batches of points to evaluate it.
+However, whether this statement is true may depend on the number of points in each batch: the number of points should be big enough to have similar statistical properties across different batches.
 
-Finally, we determine the parameters by solving this linear system.
-Though this example uses a spectral method, the workflow also applies to many other numerical methods, such as finite difference methods, which can be reformatted as a form of spectral method.
-
-With this workflow in mind, it should be easy to see the analogy between PINN and conventional numerical methods.
-Aside from using much more complicated approximate solutions, the major difference lies in how to determine the unknown parameters in the approximate solutions.
-While traditional methods solve the zero-residual conditions, PINN relies on searching the minimal residuals.
-A secondary difference is how to approximate derivatives.
-Conventional numerical methods use analytical or numerical differentiation of the approximate solutions, and the PINN methods usually depends on automatic differentiation.
-This difference may be minor as we are still able to use analytical differentiation for simple network architectures with PINN.
-However, automatic differentiation is a major factor affecting PINN's performance.
+In PINNs, as the training points are randomly sampled from the computational space-time domain, it means the number of points in a batch should be big enough to cover all over the domain.
+Otherwise, for example, if one batch mostly covers the inflow region of a cylinder flow, while the next batch covers mostly the wake region behind the cylinder, then the hyperplane of the PDE residuals will change significantly.
+And this change of the hyperplane from iteration to iteration may slow down the convergence.
+In the later benchmarks, we would like to examine the effect of batch sizes, i.e., number of points in each batch. 
 
 % vim:ft=tex

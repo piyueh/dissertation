@@ -1,0 +1,91 @@
+%! TEX root = main.tex
+To evaluate the derivatives of $G$, the PINN method relies on automatic differentiation.
+Automatic differentiation algorithms record how a numeric value is calculated and then apply the chain rule to determine that value's derivatives with respect to its inputs.
+For example, assume a piece of code evaluates the following calculation:
+\begin{equation}\label{eq:graph-example}
+ y = \left.{e^{\left(x_1x_2-\sin{\left(x_2\right)}\right)}+3x_1}\right|_{\begin{subarray}{l}x_1=1.2 \\ x_2=0.5\end{subarray}} = 4.72\dots
+\end{equation}
+On computers, the calculation is realized by a sequence of basic unary and binary operations on numeric values.
+Automatic differentiation algorithms record such a sequence in a computational graph as illustrated in figure~\ref{fig:automatic-differentiation-forward}.
+
+\begin{figure}[H]
+    \Centering
+    \begin{minipage}[c]{0.4\textwidth}
+        \includegraphics[width=\linewidth]{figs/automatic-differentiation-forward.tikz}
+    \end{minipage}%
+    \begin{minipage}[c]{0.5\textwidth}
+        \scriptsize
+        \singlespacing
+        \begin{equation*}
+            \begin{aligned}
+                &v_0 = \mathrm{assign}\left(1.2\right) \\
+                &v_1 = \mathrm{assign}\left(0.5\right) \\
+                &v_2 = \mathrm{assign}\left(3\right) \\
+                &v_3 = \mathrm{multiply}\left(v_2, v_0\right)  = 3 \times 1.2 = 3.6 \\
+                &v_4 = \mathrm{multiply}\left(v_0, v_1\right) = 1.2 \times 0.5 = 0.6 \\
+                &v_5 = \sin\left({v_1}\right) = \sin\left(0.5\right) = 0.479\dots \\
+                &v_6 = \mathrm{negate}\left(v_5\right) = -0.479\dots \\
+                &v_7 = \mathrm{add}\left(v_4, v_6\right) = 0.12\dots \\
+                &v_8 = \exp\left({v_7}\right) = 1.128\dots \\
+                &v_9 = \mathrm{add}\left(v_3, v_8\right) = 4.728\dots
+            \end{aligned}
+        \end{equation*}
+    \end{minipage}
+    \caption{Computational graph of equation~\ref{eq:graph-example}}%
+    \label{fig:automatic-differentiation-forward}
+\end{figure}
+
+It is relatively easy to evaluate the derivatives of unary and binary functions with respect to their inputs.
+Combining this fact and the chain rule, automatic differentiation evaluates:
+\begin{equation}\label{eq:reverse-graph-example}
+    \left\{
+        \begin{array}{ll}
+            d_9 = \pdiff{v_9}{v_9} = 1 & \\
+            d_i = \pdiff{v_9}{v_i}
+                = \sum\limits_{p\in P(i)}\pdiff{v_9}{v_p}\pdiff{v_p}{v_i}
+                = \sum\limits_{p\in P(i)}d_p\pdiff{v_p}{v_i}, & \text{for }i=8, 7, \ldots, 1, 0
+        \end{array}
+    \right.
+\end{equation}
+The set $P(i)$ denotes the parents of node $i$ in the reversed computational graph.
+For example, as shown in figure~\ref{fig:automatic-differentiation-backward}, the parents of node $1$ are $4$ and $5$.
+Any derivatives with respect to $v_1$ have contributions from nodes $4$ and $5$.
+Note that we evaluate equation~\ref{eq:reverse-graph-example} in a reversed order, $i=9, 8, 7, \ldots$, so that $d_p$ ($\forall p\in P(i)$) are ready when evaluating any $d_i$.
+See figure~\ref{fig:automatic-differentiation-backward} for the backward calculation.
+
+\begin{figure}[hbt!]
+    \begin{minipage}{0.4\textwidth}
+        \includegraphics[width=\linewidth]{figs/automatic-differentiation-backward.tikz}
+    \end{minipage}%
+    \begin{minipage}{0.5\textwidth}
+        \scriptsize
+        \singlespacing
+        \begin{equation*}
+            \begin{aligned}
+                d_9& = \pdiff{v_9}{v_9} = 1 & d_8& = d_9 \pdiff{v_9}{v_8} = 1 \\[-2pt]
+                d_7& = d_8 \pdiff{v_8}{v_7} = 1.128\dots & d_6& = d_7 \pdiff{v_7}{v_6} = 1.128\dots \\[-2pt]
+                d_5& = d_6 \pdiff{v_6}{v_5} = -1.128\dots & d_4& = d_7 \pdiff{v_7}{v_4} = 1.128\dots \\[-2pt]
+                d_3& = d_9 \pdiff{v_9}{v_3} = 1 & d_2& = d_3 \pdiff{v_3}{v_2} = 1.2
+            \end{aligned}
+        \end{equation*}%
+        \begin{equation*}
+            \begin{aligned}
+                d_1& = d_4 \pdiff{v_4}{v_1} + d_5 \pdiff{v_5}{v_1} = d_4v_0 + d_5\cos(v_1) = 0.36\dots = \pdiff{y}{x_2} \\
+                d_0& = d_4 \pdiff{v_4}{v_0} + d_3 \pdiff{v_3}{v_0} = d_4v_1+d_3v_2 = 3.56\dots = \pdiff{y}{x_1}
+            \end{aligned}
+        \end{equation*}
+    \end{minipage}
+    \caption{Computational graph of automatic differentiation of equation~\ref{eq:graph-example}}%
+    \label{fig:automatic-differentiation-backward}
+\end{figure}
+
+Given that $v_9=y$, $v_0=x_1$ and $v_1=x_2$, once the backward calculation reaches $i=0$ and $i=1$, we automatically obtain $\pdiff{y}{x_1}$ and $\pdiff{y}{x_2}$.
+Please refer to~\cite{griewank_automatic_1988} for a detailed introduction to automatic differentiation algorithms.
+
+No matter how complicated a mathematical expression is (like a neural network $G$), it is always broken down to a sequence of simple binary or unary operations.
+And hence automatic differentiation guarantees the exact derivatives in terms of this sequence of unary and binary computation.
+
+The automatic differentiation is used to evaluate the derivatives of $G$'s outputs with respect to its inputs.
+Also, it is used to evaluate the derivatives of the residuals with respect to model parameters, i.e., $\nabla_{\Theta} r(\Theta)$.
+The latter is used by optimizers in the optimization process.
+% vim:ft=tex

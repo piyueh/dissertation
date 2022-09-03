@@ -1,85 +1,263 @@
 %! TEX root = main.tex
+Consider the incompressible Navier-Stokes equations in a spatial domain of $\vec{x}\in\Omega$ and a time range of $t\in[0, T]$:
+\begin{subequations}\label{eq:orig-ns}
+    \begin{align}[left=\empheqlbrace\,]
+        &\pdiff{\vec{u}}{t} + \left(\vec{u} \cdot \nabla\right) \vec{u}
+            =
+            -\frac{1}{\rho}\nabla p + \frac{1}{Re} \nabla^2 \vec{u}
+            \label{eq:orig-ns-momentum} \\
+        &\nabla \cdot \vec{u} = 0 \label{eq:orig-ns-cont}
+    \end{align}
+\end{subequations}
+A solution to the Navier-Stokes equations is subject to IC and BCs:
+\begin{equation}\label{eq:orig-ns-ic}
+    \left\{
+        \begin{array}{l}
+            \vec{u}(\vec{x}, t=0) = \vec{u}_0(\vec{x}) \\
+            p(\vec{x}, t=0) = p_0(\vec{x}) \\
+        \end{array}
+    \right.
+    \text{,\ \ for }
+    \vec{x} \in \Omega
+\end{equation}
+and
+\begin{equation}\label{eq:orig-ns-bc}
+    \left\{
+        \begin{aligned}
+            &\vec{u}(\vec{x}, t) = \vec{u}_{bc}(\vec{x}, t) \\
+            &p(\vec{x}, t) = p_{bc}(\vec{x}, t)
+        \end{aligned}
+        \text{,\ \ for }
+        \vec{x} \in \Gamma_{bc}
+        \text{ and }
+        t \in [0, T]
+    \right.
+\end{equation}
+We only list the Dirichlet BCs to save space and for the simplicity, as the treatment of Neumann BCs does not differ from treating PDEs in PINNs.
 
-The basic form of the PINN method (\cite{raissi_physics-informed_2019,cai_physics-informed_2021}) starts from approximating $\vec{U}$ and $p$ with a neural network:
-\begin{equation}\label{eq:neural-network}
+In the method of PINNs, the first step is to approximate the solutions of \eqref{eq:orig-ns} with a neural network model.
+Says, the network model is named $G$, of which the inputs are spatial coordinates $\vec{x}\equiv\begin{bsmallmatrix}x & y & z\end{bsmallmatrix}^\mathsf{T}$, time $t$, and a set of free parameters $\Theta$ that we need to determine later:
+\begin{equation}\label{eq:G-network}
     \begin{bmatrix}
-        \vec{U} \\ p
-    \end{bmatrix}(\vec{x}, t)
+        \vec{u}(\vec{x}, t) \\ p(\vec{x}, t)
+    \end{bmatrix}
     \approx
     G(\vec{x}, t; \Theta)
+    =
+    \begin{bmatrix}
+        G^{\vec{u}} \\
+        G^p
+    \end{bmatrix}
+    =
+    \begin{bmatrix}
+        G^u \\
+        G^v \\
+        G^w \\
+        G^p
+    \end{bmatrix}
 \end{equation}
-Here we use a single network that predicts both pressure and velocity fields.
-It is also possible to use different networks for them separately.
-Later in this work, we will use $G^U$ and $G^p$ to denote the predicted velocity and pressure from the neural network.
-$\Theta$ at this point represents the free parameters of the network.
+where $\vec{u}\equiv\begin{bsmallmatrix}u & v & p\end{bsmallmatrix}^\mathsf{T}$ is the velocity vector, and $p$ is the pressure.
+In \eqref{eq:G-network}, we use a single network to predict both pressure and velocity fields.
+Though it is possible to use separate networks for different fields, we keep \eqref{eq:G-network} this way for simplicity.
+Also, later in this work, we will use $G^{\vec{u}}$, $G^u$, $G^v$, $G^w$, and $G^p$ to denote the predicted velocity vector, components, and pressure from $G$.
+In this section we will focus on the solution workflow \cite{dissanayake_neural-network-based_1994,lagaris_artificial_1998,cai_physics-informed_2021} and leave the mathematical expression of neural netwrok models to section \ref{sec:mlp}.
 
-To determine the free parameters, $\Theta$, ideally, we hope the approximate solution gives zero residuals for equations (\ref{eq:continuity}), (\ref{eq:momentum}), and (\ref{eq:ic-and-bc}).
-That is
+The next step is to approximate the derivatives required for the differential equations.
+For example, the continuity equation $\nabla \cdot \vec{u} = \pdiff{u}{x} + \pdiff{v}{y} + \pdiff{w}{z}$ requires the approximations for the 1st-order derivatives of velocity.
+A possible approach is to rely on numerical differentiation.
+For example, using finite difference, $\pdiff{u}{x}$ can be
+\begin{equation*}
+    \pdiff{u}{x} \approx \frac{G^u(x+\Delta x, \cdots)-G^u(x-\Delta x, \cdots)}{2\Delta x} 
+\end{equation*}
+As the model $G$ is continuous and not defined on discretized space, $x$ can be arbitrary coordinates in the domain.
+And $\Delta x$ is a user-provided scalars as there is no grid.
+However, we will not proceed with numerical differentiation. 
+Being a continuous model and having a well-defined mathematical expression, $G$ gives us two more reasonable options.
 
-\begin{equation}\label{eq:residuals}
+The first option is to obtain analytical derivatives through symbolic differentiation or manual derivation.
+For example, a very simple MLP network for a steady 2D flow may look like
+\begin{equation}\label{eq:explicit-toy-mlp}
     \begin{aligned}
-        & r_{1}(\vec{x}, t; \Theta) \equiv \nabla \cdot G^{U} = 0 \\
-        & r_{2}(\vec{x}, t; \Theta) \equiv \frac{\partial G^{U}}{\partial t}+(G^{U} \cdot \nabla) G^{U}+\frac{1}{\rho} \nabla G^p -\nu \nabla^{2} G^{U} - \vec{g} =0 \\
-        & r_{3}(\vec{x}; \Theta) \equiv G^{U}_{t=0}-\vec{U}_0 = 0 \\
-        & r_{4}(\vec{x}, t; \Theta) \equiv G^{U}-\vec{U}_\Gamma = 0,\ \forall \vec{x} \in \Gamma \\
-        & r_{5}(\vec{x}, t; \Theta) \equiv G^{p}-p_\Gamma = 0,\ \forall \vec{x} \in \Gamma \\
+    &\begin{bmatrix}
+        u &
+        v &
+        p
+    \end{bmatrix}^\mathsf{T}
+    \approx
+    \begin{bmatrix}
+        G^u &
+        G^v &
+        G^p
+    \end{bmatrix}^\mathsf{T}
+    =
+    G(x, y; \Theta) \\
+    = 
+    &\begin{bmatrix}
+    c_{11} \cos{\left(a_{11}x + a_{12}y + b_1\right)} + 
+      c_{12} \cos{\left(a_{21}x + a_{22}y + b_2\right)} \\
+    c_{21} \cos{\left(a_{11}x + a_{12}y + b_1\right)} + 
+      c_{22} \cos{\left(a_{21}x + a_{22}y + b_2\right)} \\
+    c_{31} \cos{\left(a_{11}x + a_{12}y + b_1\right)} + 
+      c_{32} \cos{\left(a_{21}x + a_{22}y + b_2\right)} \\
+    \end{bmatrix}
+    \end{aligned}
+\end{equation}
+where $a_{ij}$, $b_i$, and $c_{ki}$ for $i,j=1,2$ and $k=1,2,3$ are free parameters in the model and belong to $\Theta$.
+This MLP network is said to have one hidden layer with 2 neurons per layer, and it uses cosine for the activation function.
+(Note it is uncommon to use cosine for the activation in real applications.)
+We will formally introduce the definitions of these terms and the MLP's matrix form in section \ref{sec:mlp}.
+Given the expression of \eqref{eq:explicit-toy-mlp}, we are able to derive the derivatives.
+Such as
+\begin{equation}
+    \begin{aligned}
+    \pdiff{u}{x}
+    \approx
+    \pdiff{G^u}{x}
+    =
+    a_{11}c_{11}\cos\left(a_{11}x + a_{12}y + b_1\right) + a_{21}c_{12}\cos\left(a_{21}x + a_{22}y + b_2\right)
+    \end{aligned}
+\end{equation}
+And the same applies to all higher-order derivatives.
+
+Analytical derivatives were used in earlier literature when the networks might be just slightly more complicated than the one shown in \eqref{eq:explicit-toy-mlp}.
+When the neural network models become more and more complicated, analytical derivatives become much less feasible if not impossible.
+Even modern hardware and symbolic differentiation software is not able to derive the analytical derivatives when $G$ has tens of thousands of free parameters and when the activation is not as simple as a cosine function.
+
+Modern deep learning, instead, relies on the second option: automatic differentiation \cite{griewank_automatic_1988}.
+Automatic differentiation is based on the chain rule and gives exact derivatives (exact with respect to actual computer intrinsic operations).
+Section \ref{sec:ad} will talk about the fundamental concept of automatic differentiation.
+At this point, we can just treat the automatic differentiation as a black box function that returns exact derivatives.
+It requires less computing resource than symbolic differentiation and provides more accurate derivatives than numerical differentiation.
+
+Moving on to the next step, once we obtain the desired derivatives, we substitute these derivatives in to the governing PDEs, IC, and BCs.
+For example, substituting $G$ and corresponding derivatives to \eqref{eq:orig-ns}, \eqref{eq:orig-ns-ic}, \eqref{eq:orig-ns-bc}, we get several residual functions
+\begin{equation}\label{eq:residuals}
+    \begin{array}{ll}
+        \left\{
+            \begin{array}{l}
+            \hat{\vec{r}}_{m}(\vec{x}, t; \Theta) \equiv \frac{\partial G^{\vec{u}}}{\partial t}+(G^{\vec{u}} \cdot \nabla) G^{\vec{u}}+\frac{1}{\rho} \nabla G^p -\nu \nabla^{2} G^{\vec{u}} \\
+            \hat{r_{c}}(\vec{x}, t; \Theta) \equiv \nabla \cdot G^{\vec{u}} 
+            \end{array}
+        \right. &
+        \forall
+        \left\{
+            \begin{array}{l}
+                \vec{x} \in \Omega \\ t \in [0, T]
+            \end{array}
+        \right. \\
+        \left\{
+            \begin{array}{l}
+            \hat{\vec{r}}_{ic,\vec{u}}(\vec{x}; \Theta) \equiv G^{\vec{u}}(\vec{x}, t=0)-\vec{u}_0(\vec{x}) \\
+            \hat{r}_{ic,p}(\vec{x}; \Theta) \equiv G^{p}(\vec{x}, t=0)-p_0(\vec{x})
+            \end{array}
+        \right. &
+        \forall
+        \vec{x} \in \Omega \\
+        \left\{
+            \begin{array}{l}
+            \hat{\vec{r}}_{bc,\vec{u}}(\vec{x}, t; \Theta) \equiv G^{\vec{u}}-\vec{u}_{bc} \\
+            \hat{r}_{bc,p}(\vec{x}, t; \Theta) \equiv G^{p}-p_{bc}
+            \end{array}
+        \right. &
+        \forall
+        \left\{
+            \begin{array}{l}
+                \vec{x} \in \Gamma_{bc} \\ t \in [0, T]
+            \end{array}
+        \right.
+    \end{array}
+\end{equation}
+We omitted $\vec{x}$, $t$, and $\Theta$ in $G$ to make the expression cleaner. 
+Residual vectors $\hat{\vec{r}}_i$ and residual scalar $\hat{r}_i$, where $i$ denotes different residual sources, are functions of $\vec{x}$, $t$, and $\Theta$.
+They are zero anywhere in the domain of interest only when the approximation solution $G$ perfectly fits in \eqref{eq:orig-ns}, \eqref{eq:orig-ns-ic}, and \eqref{eq:orig-ns-bc}.
+
+The final step is to find a set of parameters $\vec{\theta}=\begin{bsmallmatrix}\theta_1 & \theta_2 & \cdots\end{bsmallmatrix}^\mathsf{T}$ that makes all residuals zero, i.e., when $\Theta=\vec{\theta}$, $G$ perfectly fits into \eqref{eq:orig-ns}, \eqref{eq:orig-ns-ic}, and \eqref{eq:orig-ns-bc}.
+$\vec{\theta}$ then represents the common zero roots of all the residual functions in \eqref{eq:residuals} for all $\vec{x} \in \Omega$, $\vec{x} \in \Gamma_{bc}$, and $t\in[0, T]$.
+
+Assume there are a total of $N_\Theta$ free parameters.
+If residual functions in (\ref{eq:residuals}) are not complicated, and if $N_\Theta$ is small enough, we may numerically find the zero roots by solving a system of $N_\Theta$ nonlinear equations.
+Such a system of nonlinear equations may be generated by enforcing the zero-residual conditions only on a set of $N_\Theta$ spatial-temporal points, i.e., $N_\Theta$ pairs of $\vec{x}$ and $t$.
+However, this approach rarely results in an easy-to-solve system given that $G$ is usually complicated and $N_\Theta$ is large.
+Even for the toy model like \eqref{eq:explicit-toy-mlp}, the first-order derivatives are non-trivial.
+If we further consider higher-order derivatives and the native nonlinearity in the PDEs, even this toy model results in a complicated nonlinear system. 
+We do not even know if zero roots exist for this nonlinear system.
+
+We instead relax the condition in PINNs.
+We do not seek the zero roots of \eqref{eq:residuals} but just hope the desired set of parameters, $\theta$, makes the residuals sufficiently close to zero.
+Also, note that the residuals functions in \eqref{eq:residuals} are continuous in the domain and time range of our interest.
+To make the optimization easier, we also limit ourselves to find the minimal residuals at some spatial-temporal coordinates only, rather than asking for minimal residuals everywhere in the continuous space-time domain. 
+In other words, the resulting optimization problem tries to find $\vec{\theta}$ that gives the minimal residuals on some spatial-temporal points.
+
+Assume we have picked $N_{PDE}$ spatial-temporal points from $\vec{x}\in\Omega$ and $t\in[0, T]$, $N_{IC}$ points in $\Omega$ but with a fixed time $t=0$, and $N_{BC}$ points from $\vec{x} \in \Gamma_{bc}$ and $t\in[0, T]$.
+We define the residuals at these points as \\
+\begin{equation}\label{eq:residual-norms}
+    \begin{aligned}
+        & r_{m}(\Theta) \equiv \sum\limits_{i=1}^{N_{PDE}} \lVert\frac{\partial G_i^{\vec{u}}}{\partial t}+(G_i^{\vec{u}} \cdot \nabla) G_i^{\vec{u}}+\frac{1}{\rho} \nabla G_i^p -\nu \nabla^{2} G_i^{\vec{u}} \rVert^2 \\
+        & r_{c}(\Theta) \equiv \sum\limits_{i=1}^{N_{PDE}} ( \nabla \cdot G_i^{\vec{u}} )^2 \\
+        & r_{ic,\vec{u}}(\Theta) \equiv \sum\limits_{i=1}^{N_{IC}} \lVert G^{\vec{u}}(\vec{x}_i, t=0)-\vec{u}_0(\vec{x}_i) \rVert^2 \\
+        & r_{ic,p}(\Theta) \equiv \sum\limits_{i=1}^{N_{IC}} ( G^{p}(\vec{x}_i, t=0)-p_0(\vec{x}_i) )^2 \\
+        & r_{bc,\vec{u}}(\Theta) \equiv \sum\limits_{i=1}^{N_{BC}} \lVert G_i^{\vec{u}}-\vec{u}_{bc} \rVert^2 \\
+        & r_{bc,p}(\Theta) \equiv \sum\limits_{i=1}^{N_{BC}} ( G_i^{p}-p_{bc} )^2
    \end{aligned}
 \end{equation}
+where $\begin{bsmallmatrix}G_i^{\vec{u}} & G_i^p\end{bsmallmatrix}^\mathsf{T} = G(\vec{x}_i, t_i; \Theta)$, and $\lVert\cdot\rVert$ denotes $l_2$ norms.
 
-And the set of desired parameter, $\Theta=\theta$, is the common zero root of all the residuals.
+One approach to interpret the optimization problem is
+\begin{equation}\label{eq:hard-constraint-loss}
+    \begin{aligned}
+    &\vec{\theta} = \operatorname*{arg\,min}\limits_{\Theta} \left[r_m(\Theta) + r_c(\Theta)\right] \\
+    \text{ subject to } &r_{ic,\vec{u}}=r_{ic,p}=r_{bc,\vec{u}}=r_{bc,p}=0
+    \end{aligned}
+\end{equation}
+This is a constrained optimization problem.
+Only residuals from PDEs are relaxed, and residuals from BCs and IC must be exactly zero.
+Though exactly satisfied BCs and IC sound attractive, optimization with hard constraints is much more difficult than unconstrained optimization.
+And optimization methods may not be general enough for arbitrary types of BCs and arbitrary computational domains.
+This approach was used in, for example, \cite{lagaris_artificial_1998,McFall2009,mcfall_solving_2010,berg_unified_2018} for limited types of PDEs and applications.
 
-The derivatives of $G$ with respect to $\vec{x}$ and $t$ are usually obtained using automatic differentiation. 
-Nevertheless, it is possible to use analytical derivatives when the chosen network architecture is simple enough, as reported by early-day literature \cite{lagaris_artificial_1998,Li2003}.
-
-If residuals in (\ref{eq:residuals}) are not complicated, and if the number of the parameters, $N_\Theta$, is small enough, we may numerically find the zero root by solving a system of $N_\Theta$ nonlinear equations generated from a suitable set of $N_\Theta$ spatial-temporal points.
-However, the scenario rarely happens as $G$ is usually highly complicated and $N_\Theta$ is large.
-Moreover, we do not even know if such a zero root exists for the equations in (\ref{eq:residuals}).
-
-Instead, in PINN, the condition is relaxed.
-We do not seek the zero root of (\ref{eq:residuals}) but just hope to find a set of parameters that make the residuals sufficiently close to zero.
-Consider the sum of the $l_2$ norms of residuals:
-
+Alternatively, most recent reports of PINNs used soft constraints, that is
 \begin{equation}\label{eq:total-residual}
-    r(\vec{x}, t; \Theta=\theta) \equiv \sum\limits_{i=1}^{5} \lVert r_i(\vec{x}, t; \Theta=\theta) \rVert^2,\ \forall \left\{\begin{array}{l}x \in \Omega \\ t\in[0, T]\end{array}\right.
+    \vec{\theta} = \operatorname*{arg\,min}\limits_{\Theta} \left[
+        r_m(\Theta) + r_c(\Theta) + r_{ic,\vec{u}}(\Theta) + r_{ic,p}(\Theta) + r_{bc,\vec{u}}(\Theta) + r_{bc,p}(\Theta)
+    \right]
 \end{equation}
+Though the optimized $\vec{\theta}$ does not guarantee that IC and BCs are satisfied, \eqref{eq:total-residual} is easier to solve and to be generalized to different PDEs, BCs, or applications.
+In the terminology of optimization, \eqref{eq:total-residual} is called the loss function or objective.
+And residuals from different sources are called loss terms.
 
-The $\theta$ that makes residuals closest to zero (or even equal to zero if such $\theta$ exists) also makes (\ref{eq:total-residual}) minimal because $r(\vec{x}, t; \Theta) \ge 0$.
-In other words,
-
-\begin{equation}\label{eq:objective}
-    \theta = \operatorname*{arg\,min}\limits_{\Theta} r(\vec{x}, t; \Theta)\,\ \forall \left\{\begin{array}{l}x \in \Omega \\ t\in[0, T]\end{array}\right.
+In practice, a more general form of \eqref{eq:total-residual} is
+\begin{equation}\label{eq:total-residual-weighted}
+    \begin{aligned}
+        \vec{\theta}
+        &=
+        \operatorname*{arg\,min}\limits_{\Theta} r(\Theta)  \\
+        &=
+        \operatorname*{arg\,min}\limits_{\Theta} \sum \alpha_i r_i(\Theta)
+    \end{aligned}
 \end{equation}
+where $i$ denotes different loss terms in \eqref{eq:residual-norms}.
+Each loss term is weighted before being aggregated to the final loss.
+To our best knowledge, nevertheless, there is not yet a standard or guideline for how to properly configure $\alpha_i$.
+And it is common to see $\alpha_i=1$ in literature.
 
-This poses a fundamental difference between the PINN method and traditional CFD schemes, making it potentially more difficult for the PINN method to achieve the same accuracy as the traditional schemes.
-We will discuss this more in section 3.
-Note that in practice, each loss term on the right-hand-side of equation (\ref{eq:total-residual}) is weighted.
-We ignore the weights here for demonstrating purpose. 
+If there exists zero roosts that make all residuals in \eqref{eq:residual-norms} zero, then a perfect optimization method will find them from either \eqref{eq:hard-constraint-loss}, \eqref{eq:total-residual}, or \eqref{eq:total-residual-weighted}.
+This hope is surely unrealistic.
+First, zero roots' existence is not guaranteed.
+Second, the hyperplane of the aggregated loss, $r(\Theta)$, in the vector space of $\Theta$ is usually neither convex nor concave, making it difficult to find the global minimum.
+Even a simple 1D linear Burger's equation with an MLP of around 7,850 free model parameters shows a complicated hyperplane of $r(\Theta)$ \cite{krishnapriyan_characterizing_2021}.
+While finding zero roots or the global minimum on the hyperplane of $r(\Theta)$ is difficult, practitioners of PINNs just assume the local minimums of $r(\Theta)$ are good and small enough.
 
-To solve (\ref{eq:objective}), theoretically, we can use any number of spatial-temporal points, which eases the need of computational resources, compared to finding the zero root directly.
-Gradient-descent-based optimizers further reduce the computational cost, especially in terms of memory usage and the difficulty of parallelization.
-Alternatively, Quasi-Newton methods may work but only when $N_\Theta$ is small enough.
+This poses a fundamental difference between conventional CFD schemes and PINNs: the former seeks exact zero roots to make residuals zero, while the latter just {\it hopes} to make residuals as small as possible.
+It is thus reasonable to doubt PINNs' accuracy compared to conventional schemes.
 
-However, even though equation (\ref{eq:objective}) may be solvable, it is still a significantly expensive task.
-While typical data-driven learning requires one back-propagation pass on the derivatives of the loss function, here automatic differentiation is needed to evaluate the derivatives of $G$ with respect to $\vec{x}$ and $t$.
-The first-order derivatives require one back-propagation on the network, while the second-order derivatives present in the diffusion term $\nabla^2 G^U$ require an additional back-propagation on the first-order derivatives' computational graph. 
-Finally, to update parameters in an optimizer, the gradients of $G$ with respect to parameters $\Theta$ requires another back-propagation on the graph of the second-order derivatives.
-This all leads to a very large computational graph.
-We will see the performance of the PINN method in the case studies.
+Nevertheless, finding optimized $\vec{\theta}$ concludes the workflow of data-free PINNs for solving PDEs.
+Figure \ref{fig:pinn-workflow} shows a graphical illustration of the workflow.
 
-In summary, when viewing the PINN method as supervised machine learning, the inputs of a network are spatial-temporal coordinates, and the outputs are the physical quantities of our interest.
-The loss or objective functions in PINN are governing equations that regulate how the target physical quantities should behave. 
-The use of governing equations eliminates the need for true answers.
-A trivial example is using Bernoulli's equation as the loss function, i.e., $loss=\frac{u^2}{2g}+\frac{p}{\rho g}-H_0+z(x)$, and a neural network predicts the flow speed $u$ and pressure $p$ at a given location $x$ along a streamline.
-(The gravitational acceleration $g$, density $\rho$, energy head $H_0$, and elevation $z(x)$ are usually known and given.)
-Such a loss function regulates the relationship between predicted $u$ and $p$ and does not need true answers for the two quantities.
-Unlike Bernoulli’s equation, most governing equations in physics are usually differential equations (e.g., heat equations).
-The main difference is that now the PINN method needs automatic differentiation to evaluate the loss.
-Regardless of the forms of governing equations, spatial-temporal coordinates are the only data required during training.
-Hence, throughout this paper, training data means spatial-temporal points and does not involve any true answers to predicted quantities.
-(Note in some literature, the PINN method is applied to applications that do need true answers, see \cite{cai_physics-informed_2021}. These applications are out of scope here.)
+\begin{figure}[H]
+    \includegraphics[width=\linewidth]{figs/pinn.tikz} 
+    \caption{A graphical demonstration of workflow in PINNs}
+    \label{fig:pinn-workflow}
+\end{figure}
 
-\begin{equation}\label{eq:silu}
-    \operatorname{SiLU}(x)=\frac{x}{1+\exp({-x})}
-\end{equation}
-
+The optimization process is done with the Adam optimizer \cite{kingma_adam_2017} in this work together with a batched approach described in the next section.
 % vim:ft=tex

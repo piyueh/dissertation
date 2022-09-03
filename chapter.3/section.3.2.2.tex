@@ -1,0 +1,24 @@
+%! TEX root = main.tex
+
+When dealing with periodic boundary conditions, to calculate the loss (i.e., $\vec{r}_{bc,\vec{u}}$ and $\vec{r}_{bc, p}$), one possible approach is to define the loss terms as the difference in the values between the pair of the corresponding boundaries.
+For example, assume we have a periodic BC on $x=0$ and $x=L$.
+We define
+\begin{equation}\label{eq:naive-periodic-bc}
+    \begin{aligned}
+    &r_{bc,\vec{u}}(\Theta) = \sum\limits_{i=1}^{N_{BC}} \lVert G^{\vec{u}}(\vec{x}_{0,i}, t_i; \Theta) - G^{\vec{u}}(\vec{x}_{L,i}, t_i; \Theta) \rVert^2\\
+    &r_{bc,p}(\Theta) = \sum\limits_{i=1}^{N_{BC}} ( G^{p}(\vec{x}_{0,i}, t_i; \Theta) - G^{p}(\vec{x}_{L,i}, t_i; \Theta) )^2
+    \end{aligned}
+\end{equation}
+where $\vec{x}_{0,i}$ and $\vec{x}_{L,i}$ are spatial coordinates on the plane of $x=0$ and $x=L$, respectively.
+And coordinate components of $y$ and $z$ in $\vec{x}_{0,i}$ and $\vec{x}_{L,i}$ should match.
+
+Modulus provides an alternative approach to handle periodic BCs.
+Consider a pair of periodic BCs on $x=x_1$ and $x=x_2$.
+We notice that $\sin(2\pi\frac{x-x_1}{x_2-x_1})$ and  $\cos(2\pi\frac{x-x_1}{x_2-x_1})$ have a period of $x_2-x_1$.
+Hence, we expand the inputs of $G$ to
+\begin{equation}\label{eq:periodic-G}
+    G = G(\sin(2\pi\frac{x-x_1}{x_2-x_1}), \cos(2\pi\frac{x-x_1}{x_2-x_1}), y, z, t; \Theta)
+\end{equation}
+If component $y$ or $z$ also has periodic BCs, they are converted as well following the same logic.
+In the present work, the periodic BCs are handled using this approach.
+% vim:ft=tex
