@@ -134,8 +134,7 @@ Aside from that the shedding does not continue after $t=140$ in the data-driven 
 Surely there were no training points before $t=125$ during the training.
 However, one reason for using data-driven PINNs is to have a better prediction capability on new data that were not seen before.
 In other word, we expected PINNs to have a satisfying extrapolation capability.
-That is why we integrate the PDEs into the model fitting process: using the governing equations to regulate the model's behavior and produce a physical prediction on unseen data.
-If data-driven PINNs do not perform well on extrapolation but can only handle interpolation problems, then regular data-only machine learning may even do better than data-driven PINNs.
+If data-driven PINNs do not perform well on extrapolation but can only handle interpolation problems, then its advantage over regular data-only machine learning may need more examination.
 
 We must emphasize that while there are too many configurations and settings to try, our benchmark on data-driven PINNs may be very limited and naive.
 Our focus in this work is still the data-free PINNs in solving PDEs.
