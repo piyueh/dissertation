@@ -243,9 +243,9 @@ And it is common to see $\alpha_i=1$ in literature.
 If there exists zero roosts that make all residuals in \eqref{eq:residual-norms} zero, then a perfect optimization method will find them from either \eqref{eq:hard-constraint-loss}, \eqref{eq:total-residual}, or \eqref{eq:total-residual-weighted}.
 This hope is surely unrealistic.
 First, zero roots' existence is not guaranteed.
-Second, the hyperplane of the aggregated loss, $r(\Theta)$, in the vector space of $\Theta$ is usually neither convex nor concave, making it difficult to find the global minimum.
-Even a simple 1D linear Burger's equation with an MLP of around 7,850 free model parameters shows a complicated hyperplane of $r(\Theta)$ \cite{krishnapriyan_characterizing_2021}.
-While finding zero roots or the global minimum on the hyperplane of $r(\Theta)$ is difficult, practitioners of PINNs just assume the local minimums of $r(\Theta)$ are good and small enough.
+Second, the hypersurface of the aggregated loss, $r(\Theta)$, in the vector space of $\Theta$ is usually neither convex nor concave, making it difficult to find the global minimum.
+Even a simple 1D linear Burger's equation with an MLP of around 7,850 free model parameters shows a complicated hypersurface of $r(\Theta)$ \cite{krishnapriyan_characterizing_2021}.
+While finding zero roots or the global minimum on the hypersurface of $r(\Theta)$ is difficult, practitioners of PINNs just assume the local minimums of $r(\Theta)$ are good and small enough.
 
 This poses a fundamental difference between conventional CFD schemes and PINNs: the former seeks exact zero roots to make residuals zero, while the latter just {\it hopes} to make residuals as small as possible.
 It is thus reasonable to doubt PINNs' accuracy compared to conventional schemes.

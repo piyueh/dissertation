@@ -36,6 +36,8 @@ This results in a system of linear equations:
 Solving this linear system determines the values of $\theta_i$ and conclude the solving workflow of this naive spectral method.
 The obtained $\theta_i$ guarantees that the residuals are zero at least on the $N$ chosen $x$ coordinates.
 
+Though this example uses a spectral method, the workflow also applies to many other numerical methods, such as finite difference methods, which can be reformatted as a form of spectral method.
+
 Alternatively, some numerical methods solve $\theta_i$ through finding the values that minimize the square of the residual across the whole $x$ domain:
 \begin{equation}\label{eq:least-square-fem}
     \begin{aligned}
@@ -101,11 +103,33 @@ Moreover, a proper choice of $\phi_i$ can make the coefficient matrix in \eqref{
 Finally, $\Theta=\{\theta_1,\cdots\theta_N\}$ is determined.
 In this approach, the obtained $\theta_i$ guarantees that the integrated residual over the whole domain is minimal, but it does not guarantee a zero residual unless $r(x; \Theta) = \sum\limits_{i=1}^{N}\theta_i \frac{\diff^2 \phi_i(x)}{\diff x^2} - s(x)$ has zero roots with respect to $\Theta$ for any given $x$.
 
-Though this example uses a spectral method, the workflow also applies to many other numerical methods, such as finite difference methods, which can be reformatted as a form of spectral method.
+If we replace the integral in \eqref{eq:least-square-fem} with a Monte-Carlo numerical integration:
+\begin{equation}\label{eq:least-square-monte-carlo}
+    \begin{aligned}
+        \begin{bmatrix}
+            \theta_1 \\ \vdots \\ \theta_N
+        \end{bmatrix}
+        & =
+        \operatorname*{arg\,min}\limits_{\theta_i}
+        \int\limits_{x}\left[r(x; \Theta)\right]^2\diff x \\
+        &\approx
+        \operatorname*{arg\,min}\limits_{\theta_i}
+        \frac{L_x}{N}\sum\limits_{m=1}^{N}\left[r(x_m; \Theta)\right]^2 \\
+        & =
+        \operatorname*{arg\,min}\limits_{\theta_i}
+        \sum\limits_{m=1}^{N}\left[\sum\limits_{i=1}^{N}\theta_i \frac{\diff^2 \phi_i(x_m)}{\diff x^2} - s(x_m)\right]^2
+    \end{aligned}
+\end{equation}
+where $L_x$ is the computational domain, and $N$ is the number of random points sampled from the computational domain.
+We can see that \eqref{eq:least-square-monte-carlo} is actually the loss function in PINNs (equations \eqref{eq:residual-norms} and \eqref{eq:total-residual}) tailored to this specific example.
+(The BCs are omitted from the beginning of this example for simplicity.)
+Equations \eqref{eq:least-square-fem}-\eqref{eq:spetral-least-equare} are called least-square finite-element methods (least-square FEMs).
+This shows PINNs can be seen as a type of global least-square FEMs.
 
-With this workflow in mind, we can see the analogy between PINN and conventional numerical methods.
-The major difference lies in how to determine the free parameters in the approximate solutions.
-While traditional methods solve systems of linear equations (either \eqref{eq:spectral-linear-sys} or \eqref{eq:spetral-least-equare}), PINNs rely on searching the minimal residuals on a complicated hyperplane of residuals iteratively.
+With the spectral and least-square finite element methods in mind, we can see the analogy between PINNs and conventional numerical methods.
+Especially when comparing to the least-square FEMs, their workflows are very close.
+The main difference is that PINNs replace the analytical integration with a Monte-Carlo numerical integration.
+Further, while the least-square FEMs solve zero-slope conditions to find the minimum residuals, PINNs rely on searching the minimal residuals on a complicated hypersurface of residuals iteratively.
 It is due to the complexity and the nonlinearity of the models in PINNs, where neither solving zero-residual conditions on selected points nor solving zero-slope conditions can reduce problems to a linear system. 
 
 The second difference is how to approximate derivatives.

@@ -32,12 +32,12 @@ That is
 \end{equation}
 where $\mathcal{X}_i$ for $i=1,2,\cdots$ represents the $i$-th batch of the training points.
 These gradients are used to update $\vec{\theta}$ in iterative optimization methods.
-In other words, the hyperplane of $r(\Theta)$ is expected not to change significantly from iteration to iteration when using different batches of points to evaluate it.
+In other words, the hypersurface of $r(\Theta)$ is expected not to change significantly from iteration to iteration when using different batches of points to evaluate it.
 However, whether this statement is true may depend on the number of points in each batch: the number of points should be big enough to have similar statistical properties across different batches.
 
 In PINNs, as the training points are randomly sampled from the computational space-time domain, it means the number of points in a batch should be big enough to cover all over the domain.
-Otherwise, for example, if one batch mostly covers the inflow region of a cylinder flow, while the next batch covers mostly the wake region behind the cylinder, then the hyperplane of the PDE residuals will change significantly.
-And this change of the hyperplane from iteration to iteration may slow down the convergence.
+Otherwise, for example, if one batch mostly covers the inflow region of a cylinder flow, while the next batch covers mostly the wake region behind the cylinder, then the hypersurface of the PDE residuals will change significantly.
+And this change of the hypersurface from iteration to iteration may slow down the convergence.
 In the later benchmarks, we would like to examine the effect of batch sizes, i.e., number of points in each batch. 
 
 % vim:ft=tex

@@ -40,7 +40,7 @@ We follow the same approach in this work.
 $A^k$ and $\vec{b}^k$ are the free parameters we want to determine in the optimization step (i.e., equation \eqref{eq:total-residual-weighted}).
 $N_l$ and $N_n$ are also parameters that control the complexity and accuracy of an MLP network.
 However, they are determined by users rather than by optimization.
-This type of parameters is called hyperparameters--they are not counted into the degree of freedoms of a mathematical model.
+This type of parameters is called hyperparameters--they are not counted into the degree of freedom of a mathematical model.
 
 The element-wise nonlinear functions $\sigma_{k}$ are also pre-determined by users.
 Theoretically, they can be different functions across different $k$.
@@ -86,6 +86,12 @@ Equation \eqref{eq:weighted-norm-mlp-formula} does not actually alter the archit
 Theoretically, either using \eqref{eq:mlp-formula} or \eqref{eq:weighted-norm-mlp-formula}, a perfect optimization scheme should find $A^k$ and $\operatorname{diag}\left(\vec{w}_g^{k-1}\right) \operatorname{diag}\left(\vec{w}_n^{k-1}\right)^{-1} W^{k-1}$ equivalent.
 However, real-world is far from perfect, and Salimans and Kingma \cite{salimans_weight_2016} found using the expression of \eqref{eq:weighted-norm-mlp-formula} speeds up the convergence when using 1st-order optimization schemes, such as the basic gradient-descent and Adam.
 
-
-
+The weight-normalization variant of the MLP networks has the following formula to calculate the total number of free parameters:
+\begin{equation}\label{eq:dof-calculator}
+    DoF =
+     N_{n} \left(N_{in} + 2\right) + 
+    N_{n} \left(N_{n} + 2 \right) \left(N_l-1\right) +
+     N_{out}\left(N_{n} + 1\right)
+\end{equation}
+where $DoF$ means the degree of freedom, which is another term for the number of free parameters.
 % vim:ft=tex
