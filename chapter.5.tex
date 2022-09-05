@@ -1,0 +1,130 @@
+%! TEX root = main.tex
+
+\section{Discussion}
+
+In this section, we would like to discuss on the items we listed in section \ref{sec:aims}.
+
+\subsection*{Cost-performance ratios}
+
+From the benchmarks in chapter \ref{chap:pinn-cases}, our first impression is the time cost or time-to-solution of PINNs.
+Even for simple cases like the Taylor-Green vortex, the run times of PINN cases are in hours, while those of PetIBM cases (figure \ref{fig:petibm-tgv-spatial-temporal-error}) are in seconds.
+If we consider the time cost under the same solution error level, PetIBM only needs less than 20 seconds to achieve the same error level of the most accurate PINN case (at about $L_{2,sp-t}=8e-2$, according to figure \ref{fig:tgv2d-re100-err-vs-time}).
+If we only consider the time required to reach an acceptable converged solution, the gap in the time cost is still significant.
+For example, from figure \ref{fig:nl3-nn256-npts4096-loss-err-hist}, if the solution converged at the 200,000th iteration, the time-to-solution is still $1.5$ hours, which can not compete with PetIBM's $20$ seconds.
+
+Another example is the $Re=200$ cylinder flow.
+From figure \ref{fig:cylinder-re200-train-hist}, if the unsteady PINN converged at the 500,000th iteration, it still needs about $15$ hours and can not compete with PetIBM's $1.7$ hours.
+Not to mention that the PetIBM case ran on a GPU that is 7 years older than the one used by the unsteady PINN.
+Moreover, PetIBM's accuracy is much higher than the unsteady PINN's because PetIBM solved the PDE residual down to $1e-14$, while the unsteady PINN's final PDE residual is about $1e-4$.
+At least for forward problems, qualitatively speaking, PINNs' cost-performance ratios are significantly inferior to PetIBM and most conventional numerical PDE schemes.
+
+We believe the high cost of PINNs comes from automatic differentiation.
+As discussed at the end of section \ref{sec:pinn-diff}, when solving PDEs with PINNs, automatic differentiation is used to get higher-order derivatives, making the computational graph grow exponentially.
+Also, it means the computational cost and memory requirement may grow exponentially.
+
+\subsection*{Convergence}
+
+As for the convergence, networks with higher model complexity do reduce the errors.
+We found that increasing the number of hidden layers and doubling the number of neurons reduce errors similarly in our benchmarks.
+Furthermore, increasing the number of hidden layers may be a better option because it needs fewer new model parameters and hence less extra computational cost.
+
+However, lacking a metric to measure model complexity, we failed to study how model complexity influences errors quantitatively.
+It also harms engineering practice. 
+First, we cannot estimate the required model complexity during the planning phase of a project.
+Second, missing a quantitative convergence relationship also complicates the V\&V of PINN-based simulation software
+Grid convergence tests are a standard tool to verify the code implementation of a numerical scheme.
+Without known convergence properties, only solution verification is available (aside from low-level unit tests).
+However, comparing the simulation results to the known solutions is not an efficient verification method for PINNs.
+As we have seen from our benchmarks, PINNs often exhibit non-trivial errors due to the difficulty in optimization.
+Therefore, when comparing the results to a known solution and when discrepancy happens, we do not know if the discrepancy comes from imperfect optimization, not-complicated-enough models, or unknown bugs in the code implementation.
+
+\subsection*{Scalability}
+
+We expected PINNs to show high weak-scaling efficiency, and we did observe an overall efficiency of over 90\%.
+The excellent weak scaling comes from the fact that most of the time, each GPU or MPI process does not communicate with others.
+Theoretically, processes and GPUs only go through one all-reduce operation to obtain averaged gradients in each iteration.
+Weak scaling is an ideal approach to increase the per-batch and total numbers of training points.
+
+However, as shown by the benchmarks in this work, increasing per-batch training points does not improve convergence nor help achieve higher accuracy.
+Of course, we do not claim our computational experiments to be exhaustive.
+In addition, we carried out experiments on the latest GPU with a massive memory.
+We presume that when using older GPUs with limited memory, a complicated neural network and its associated automatic differentiation may take a large portion of the memory, leaving insufficient space to host even the minimal required number of training points.
+In such a case, the good weak scaling may be valuable.
+
+In terms of strong scaling, our benchmarks show an unsatisfying speedups and efficiency.
+We acknowledge our strong-scaling experiments may not be objective enough as the actual total work loading was not evenly distributed to each GPU.
+If the work loading can be naively decoupled into a network's contribution and training points' contribution, our strong scaling experiments only distributed the contribution from the training points, while the network's contribution was duplicated to each GPU.
+However, at this point, we are not aware a fair way to test PINNs' strong scaling.
+We consider this as a limitation in our work.
+
+In terms of strong scaling, our benchmarks show unsatisfying speedups and efficiency.
+We acknowledge that our strong-scaling experiments may not be objective enough as the total work loading was not evenly distributed to each GPU.
+If the work loading can be naively decoupled into a network's contribution and training points' contribution, our strong scaling experiments only distributed the contribution from the training points, and the network's contribution was duplicated to each GPU.
+However, at this point, we are not aware of a fair way to test PINNs' strong scaling.
+We consider this a limitation in our work.
+
+\subsection*{Training strategies}
+
+We have tested annealing loss aggregation, cyclical learning rate, stochastic weight averaging (SWA), and nonlinear conjugate-gradient (CG) optimizer.
+Unfortunately, we consider that none of these attempts show a significant effect.
+
+However, we used the cyclical learning rate in later benchmarks of cylinder flows because of its theoretical capability to escape saddle points and local minimums.
+Based on our previous experiments, the cyclical learning rate behaves like the exponential learning rate without much performance penalty in the worst scenario.
+
+Regarding the nonlinear CG, though the results of our experiments did not support our optimism, we still see it as a potential alternative to Adam as long as we treat each CG iteration the same as an Adam iteration.
+It means each CG iteration needs to evaluate the aggregated loss on a new batch of data, which may be problematic, as described in section 4.1.6.3. 
+However, we did not confirm this speculation in this work.
+Given CG's high efficiency, it may be worth more study in the future.
+
+\subsection*{Flow Problems with Instability}
+
+Our test with 2D cylinder flow at $Re=200$ does not show vortex shedding. 
+Even if we train a PINN model in a data-driven fashion by feeding data from PetIBM, the shedding only exists in the time range when PetIBM data exist.
+Beyond this time range, the data-driven PINN quickly returns to flow without shedding.
+
+The predicted drag and lift coefficients support that the unsteady PINN converges to a steady state solution.
+As non-shedding flow might still be possible in a perfect world without any perturbation, we refrain from calling the result unphysical.
+However, we believe it is not the missing perturbation that makes the flow steady; otherwise, the data-driven case should have shown continuous vortex shedding even after the time when no PetIBM data is available.
+The actual reason for the absence of the vortex shedding is still unknown to us.
+Due to the limited resources, we could not test with more flow problems with instability.
+
+Another point worth discussing is the generalizability of data-driven PINNs.
+Our experiment shows that this data-driven PINN does not perform well in predicting data it never saw during training (i.e., $t \in [0, 125]$ for this specific case).
+As described in section \ref{sec:pinn-2d-cylinder-re200-results}, if data-driven PINNs can only perform interpolation-style prediction, then their applications may be limited to flow reconstructions.
+Moreover, their advantage over regular data-only machine learning may need more benchmarking.
+
+According to Cai et al. \cite{cai_physics-informed_2021}, data-driven PINNs are valuable when only sparse data points exist, such as the point measurements from physical experiments.
+This application may be worth more tests in the future for data-driven PINNs.
+
+\subsection*{Cost on Non-computing Tasks}
+
+In real-world numerical simulations, the time cost includes the whole simulation workflow, which covers pre-processing and post-processing.
+For in-house solvers, it may also include the time required for code development and maintenance.
+
+For forward problems, the PINN method is slower than traditional CFD methods based on our experience.
+However, when considering pre-/post-processing, the overall time cost may be different.
+People tend to ignore the pre-/post-processing's time cost.
+Labors and computational times required for pre-/post-processing highly depend on the solvers.
+For example, unstructured-grid CFD solvers require much more labor and computational time during pre-processing.
+These invisible time costs of numerical solvers accumulate and become significant to applications requiring parameter sweeps.
+So when it comes to applications like the geometry design of a fluid flow-related product, the PINN method may not necessarily be slower than traditional CFD solvers.
+
+Another view of this topic is the time cost of developing a new solver. 
+Because of the popularity of deep learning, programming tools for deep learning received much attention and got improvement frequently.
+For example, with Modulus' help, we were able to develop a PINN solver in hundreds of lines of Python code.
+As most of the components in a PINN solver are from well-developed third-party libraries and have a wide range of users, their quality and performance are guaranteed to some degree.
+Moreover, as providers keep developing new computing hardware for deep learning applications, these third-party libraries often adopt and are tuned for new hardware quickly.
+As the interface remains the same, users do not have to rewrite their code but can still enjoy the high performance of the new hardware.
+
+On the contrary, a traditional CFD solver like PetIBM has thousands or more lines of C++ code and requires a non-trivial time to test and maintain.
+It took us years to reach a stable version of PetIBM.
+While PetIBM also relies on some third-party libraries, due to the size of the user base, these third-party libraries do not get new improvements as frequently as those Python-based deep learning libraries.
+From this viewpoint, PINNs may have advantages over traditional CFD solvers in terms of the time cost of code development.
+
+\section{Conclusion}
+
+Our benchmarks show that PINNs may still have a long way to go until being suitable for practical engineering problems.
+Our computational experiments also bring out more interesting and potential future research directions.
+They may not be a well-qualified tool for engineering practice, but it is a new area of research full of open questions and challenges waiting for people to tackle.
+
+% vim:ft=tex
