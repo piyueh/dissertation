@@ -1,0 +1,33 @@
+\begin{table}[hbt!]
+\centering
+\singlespacing
+\caption[
+    PINNs, 2D TGV, $Re=100$: strong scaling performance for $(N_l, N_n, N_{bs})=(2, 32, 65536)$ and $(3, 128, 65536)$
+]{
+    Strong scaling performance for $(N_l, N_n, N_{bs})$ $=$ $(2, 32, 65536)$ and $(3, 128, 65536)$.%
+    Time costs denote the wall time required to finish 400k training iterations in hours.%
+    Efficiency here stands for strong scaling efficiency in $\%$.%
+    The aggregated losses were those at the last iteration.%
+    The $L_{2,sp-t}$ errors were the overall spatial-temporal errors at the last training iteration.%
+}
+\label{table:strong-scaling-perf}
+\begin{tabular}{lcccccccc}
+\toprule
+ & \multicolumn{4}{c}{(2, 32, 65536)} & \multicolumn{4}{c}{(3, 128, 65536)} \\
+\cmidrule(rl){2-5} \cmidrule(rl){6-9}
+\multicolumn{1}{r}{GPUs} & 1 & 2 & 4 & 8 & 1 & 2 & 4 & 8 \\
+\midrule
+Time cost & 10.69 &  6.82 &  5.57 &  4.95 & 14.79 &  8.12 &  7.23 &  6.32 \\
+\addlinespace
+Speedup & 1.0x & 1.6x & 1.9x & 2.2x & 1.0x & 1.8x & 2.0x & 2.3x \\
+\addlinespace
+Efficiency & 100 & 78 & 48 & 27 & 100 & 91 & 51 & 29 \\
+\addlinespace
+Loss & 1.2e-03 & 1.5e-03 & 1.0e-03 & 2.1e-03 & 5.1e-06 & 5.2e-06 & 6.7e-06 & 5.3e-06 \\
+\addlinespace
+$L_{2,sp-t}$, $u$ & 1.4e-01 & 1.6e-01 & 1.5e-01 & 1.7e-01 & 1.1e-02 & 1.6e-02 & 1.2e-02 & 8.9e-03 \\
+\addlinespace
+$L_{2,sp-t}$, $v$ & 1.4e-01 & 1.6e-01 & 1.5e-01 & 1.8e-01 & 1.0e-02 & 1.7e-02 & 1.2e-02 & 9.6e-03 \\
+\bottomrule
+\end{tabular}
+\end{table}

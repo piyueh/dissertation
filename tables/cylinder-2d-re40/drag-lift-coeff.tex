@@ -1,0 +1,35 @@
+\begin{table}[hbt!]
+    \singlespacing
+    \begin{threeparttable}[b]
+        \begin{tabular}{lccc}
+            \toprule
+            & $C_D$ & $C_{D_p}$ & $C_{D_f}$ \\
+            \midrule
+            $(6, 512, 6400)$, steady & 1.62 & 1.07 & 0.55 \\
+            $(6, 512, 6400)$, unsteady & 1.63 & 1.02 & 0.61 \\
+            $(6, 512, 6400)$, large cycle, steady & 1.62 & 1.07 & 0.55 \\
+            $(6, 512, 6400)$, large cycle, unsteady & 1.53 & 0.96 & 0.57 \\
+            $(6, 512, 25600)$, large cycle, steady & 1.62 & 1.06 & 0.55 \\
+            $(6, 512, 25600)$, large cycle, unsteady & 1.60 & 1.06 & 0.55 \\
+            PetIBM & 1.63 & 1.02 & 0.61 \\
+            Rosetti et al., 2012\cite{rosetti_urans_2012}\tnote{1} & 1.74\pm 0.09 & n/a & n/a \\
+            Rosetti et al., 2012\cite{rosetti_urans_2012}\tnote{2} & 1.61 & n/a & n/a \\
+            Sen et al., 2009\cite{sen_steady_2009}\tnote{2} & 1.51 & n/a & n/a \\
+            Park et al., 1988\cite{park_numerical_1998}\tnote{2} & 1.51 & 0.99 & 0.53 \\
+            Tritton, 1959\cite{tritton_experiments_1959}\tnote{1} & 1.48--1.65 & n/a & n/a \\
+            Grove et al., 1964\cite{grove_experimental_1964}\tnote{1} & n/a & 0.94 & n/a \\
+            \bottomrule
+        \end{tabular}%
+        \begin{tablenotes}
+            \footnotesize
+            \item [1] Experimental result
+            \item [2] Simulation result
+        \end{tablenotes}
+        \caption[PINNs, 2D Cylinder, $Re=40$: validation of drag coefficients]{%
+            Validation of drag coefficients.%
+            $C_D$, $C_{D_p}$, and $C_{D_f}$ denote the coefficients of total drag, pressure drag, %
+            and friction drag, respectively.%
+        }%
+        \label{table:cylinder-2d-re40-comparison-cd}
+    \end{threeparttable}
+\end{table}%

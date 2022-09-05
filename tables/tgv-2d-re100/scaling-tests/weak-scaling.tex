@@ -1,0 +1,31 @@
+\begin{table}[hbt!]
+\centering
+\singlespacing
+\caption[
+    PINNs, 2D TGV, $Re=100$: weak scaling performance for $(N_l, N_n, N_{bs})=(2, 32, 8192)$ and $(3, 128, 8192)$
+]{
+    Weak scaling performance for $(N_l, N_n, N_{bs})$ $=$ $(2, 32, 8192)$ and $(3, 128, 8192)$.%
+    Time costs denote the wall time required to finish 400k training iterations in hours.%
+    Efficiency here stands for weak scaling efficiency in $\%$.%
+    The aggregated losses are those at the last iteration.%
+    The $L_{2, sp-t}$ errors were the overall spatial-temporal errors at the last training iteration.%
+}
+\label{table:weak-scaling-perf}
+\begin{tabular}{lcccccccc}
+\toprule
+ & \multicolumn{4}{c}{(2, 32, 8192)} & \multicolumn{4}{c}{(3, 128, 8192)} \\
+\cmidrule(rl){2-5} \cmidrule(rl){6-9}
+\multicolumn{1}{r}{GPUs} & 1 & 2 & 4 & 8 & 1 & 2 & 4 & 8 \\
+\midrule
+Time cost &  4.51 &  4.89 &  4.92 &  4.95 &  5.77 &  6.28 &  6.29 &  6.32 \\
+\addlinespace
+Efficiency & 100 & 92 & 92 & 91 & 100 & 92 & 92 & 91 \\
+\addlinespace
+Loss & 2.2e-03 & 1.5e-03 & 1.2e-03 & 2.1e-03 & 6.7e-06 & 5.3e-06 & 5.5e-06 & 5.3e-06 \\
+\addlinespace
+$L_{2,sp-t}$, $u$ & 1.9e-01 & 1.5e-01 & 1.2e-01 & 1.7e-01 & 1.3e-02 & 1.3e-02 & 1.0e-02 & 8.9e-03 \\
+\addlinespace
+$L_{2,sp-t}$, $v$ & 1.9e-01 & 1.5e-01 & 1.3e-01 & 1.8e-01 & 1.1e-02 & 1.2e-02 & 1.1e-02 & 9.6e-03 \\
+\bottomrule
+\end{tabular}
+\end{table}
