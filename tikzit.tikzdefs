@@ -1,5 +1,9 @@
+\usepackage{tikz}
+\usetikzlibrary{backgrounds}
+\usetikzlibrary{arrows}
 \usepackage{amsmath}
 \usepackage{mathtools}
 \usepackage{relsize}
-\usetikzlibrary{shapes}
+\usepackage{makecell}
+\usetikzlibrary{shapes,shapes.geometric,shapes.misc}
 \DeclareMathOperator*{\argmin}{arg\,min} % thin space, limits underneath in displays

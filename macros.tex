@@ -10,17 +10,7 @@
 \NewDocumentCommand{\diff}{}{\mathop{}\!\symup{d}}
 
 % helper for partial differential terms
-\NewDocumentCommand{\pdiff}{o o O{}}{
-    \IfNoValueTF{#1}{
-        \partial
-    }{
-        \IfNoValueTF{#2}{
-            \partial #1
-        }{
-            \frac{\partial^{#3} #1}{\partial #2^{#3}}
-        }
-    }
-}
+\NewDocumentCommand{\pdiff}{mm}{\frac{\partial #1}{\partial #2}}
 
 % put two same-size but unrelated (i.e., not sharing the same caption) figures side-by-side
 \NewDocumentCommand{\twoindfigrow}{mmmmmm}{
