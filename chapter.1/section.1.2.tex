@@ -109,7 +109,7 @@ In \cite{jin_nsfnets_2020}, for example, Jin et al. also used L-BFGS to finalize
 However, even though L-BFGS needs much less computer memory than its origin, BFGS, it may still be impractical to use it in real-world problems due to the problem sizes.
 And, to our knowledge, batch training is not well established for L-BFGS.
 L-BFGS memorizes gradients from several past iterations.
-So when the loss function's hyperplane changes at each iteration due to using different batches of data, the stored information of past gradients in L-BFGS may be problematic at the current iteration.
+So when the loss function's hypersurface changes at each iteration due to using different batches of data, the stored information of past gradients in L-BFGS may be problematic at the current iteration.
 
 As for the nonlinear activation functions, to our best knowledge, it is still an unexplored area in data-free PINNs.
 Most studies used either the sigmoid function or the hyperbolic tangent function without giving solid justifications.

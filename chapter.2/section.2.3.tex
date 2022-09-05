@@ -38,9 +38,12 @@ Hence, in this part we simply conducted a convergence test on spatial-temporal s
 The $L_2$ spatial-temporal error in this work is defined as:
 \begin{equation}\label{eq:spt-err-def}
     \begin{aligned}
-    L_{2,sp-t} \equiv &\sqrt{\int\limits_{x} \int\limits_{y} \int\limits_{t} \lVert f - f_{ref} \rVert^2 \diff x \diff y \diff t} \\
+    L_{2,sp-t} \equiv &\sqrt{
+        \frac{1}{L_x L_y T}
+        \int\limits_{x} \int\limits_{y} \int\limits_{t} \lVert f - f_{ref} \rVert^2 \diff x \diff y \diff t
+    } \\
     = &
-    \sqrt{\frac{L_x L_y T}{N_x N_y N_t}\sum\limits_{i=1}^{N_x}\sum\limits_{j=1}^{N_y}\sum\limits_{k=1}^{N_t}\left(f^{(i, j, k)} - f_{ref}^{(i, j, l)}\right)^2}
+    \sqrt{\frac{1}{N_x N_y N_t}\sum\limits_{i=1}^{N_x}\sum\limits_{j=1}^{N_y}\sum\limits_{k=1}^{N_t}\left(f^{(i, j, k)} - f_{ref}^{(i, j, l)}\right)^2}
     \end{aligned}
 \end{equation}
 $N_x$, $N_y$, and $N_t$ represent the number of cells in $x$, $y$, and $t$ axis.
