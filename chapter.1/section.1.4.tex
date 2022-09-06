@@ -4,68 +4,68 @@ As discussed in the previous section, PINNs have several attractive advantages f
 However, the practicality of using PINNs in real applications may still be a question.
 Predictability and controllability, the two aspects of feasibility, have not been theoretically nor experimentally proved.
 
-In this work, we would like to conduct computational experiments to study the predictability and controllability regarding data-free PINNs in incompressible flow simulations.
-We are particularly interested in following properties:
+In this work, we would like to conduct computational experiments to study the predictability and controllability of data-free PINNs for incompressible flow simulations.
+We are particularly interested in the following properties:
 
 \begin{description}
     \item[Convergence]
-        Engineering concerns about the trade-off between cost and performance.
-        In terms of numerical simulations, it means whether we are able to get a better result if we are willing to spend more time and monetary cost (for better computing hardware), or whether we can reduce the cost if sacrifice in accuracy is allowed.
-        If quantitative relationship can not be deduced, we expect to have at least qualitative correlation established.
+        Engineering cares about the trade-off between cost and performance.
+        In terms of numerical simulations, it means whether we can get a better result if we are willing to spend more time and monetary cost or whether we can reduce the cost when sacrifice in accuracy is allowed.
+        If a quantitative relationship can not be deduced, we expect to have at least a qualitative correlation established.
     \item[Scalability]
-        In practical engineering, once we have preliminary cost and performance results from test runs (e.g., from low-resolution simulations, or only first few iterations under actual configuration), scalability helps in estimating required hardware resources to meet a given allowance of time cost, or vice versa. 
+        Once we have preliminary cost and performance results from test runs (e.g., from low-resolution simulations or only the first few iterations under actual configurations), scalability helps estimate the required hardware cost to meet a given time cost allowance or vice versa.
         We would like to investigate both the strong and weak scaling of data-free PINNs.
     \item[Cost-performance ratios]
         While scalability helps in cost estimation once we have some test runs, it is more important to ask whether we should use this specific method before even conducting test runs.
-        An understanding of PINNs' cost-performance ratios helps to determine whether PINNs should even be an option from the beginning at the planning phase of an engineering project.
+        Understanding PINNs' cost-performance ratios helps determine whether PINNs should even be an option from the beginning of an engineering project.
         Convergence and cost-performance ratios may be confusingly similar.
-        However, convergence only concerns the accuracy and model complexity (e.g., DoFs), it does not concern the computational work load per-unit model complexity (if it's measurable).
-        Neither does convergence provide information about the time and hardware requirement to finish a given work load.
-        As most reports in literature did not report or investigate deeper in the computational cost, we would like to examine PINNs from this perspective.
+        However, convergence only concerns the accuracy and model complexity (e.g., DoFs); it does not concern the computational work loading per-unit model complexity (if it is measurable).
+        Neither does convergence provide information about the time and hardware requirement to finish a given work loading.
+        As most reports in the literature did not report or investigate deeper in the computational cost, we would like to examine PINNs from this perspective.
         Here, computational costs include both time and computing hardware.
     \item[Training strategies]
-        Like that network architecture and hyperparameters are mostly random choices in literature, the training strategies (e.g., optimizers) seem to be in a similar situation.
+        Like network architecture and hyperparameters are predominantly random choices in literature, the training strategies (e.g., optimizers) seem to be in a similar situation.
         Take the use of L-BFGS as an example.
-        Only Krishnapriyan et al. \cite{krishnapriyan_characterizing_2021} reported that they used L-BFGS because it performed better for unknown reasons.
+        Only Krishnapriyan et al. \cite{krishnapriyan_characterizing_2021} reported using L-BFGS because it performed better for unknown reasons.
         Other reports that used L-BFGS did not even justify their choice.
-        Nor did these works reported the results of using other training strategies.
-        In this work, we would like to test with several training strategies to see how they affect the training.
-        These strategies include exponentially decaying LR (learning rate), cyclic LR, stochastic weight averaging, nonlinear conjugate gradient, and annealing loss aggregation.
+        Neither did these works report the results of using other training strategies.
+        In this work, we would like to test several training strategies to see how they affect the training.
+        These strategies include exponentially-decaying learning rate, cyclic learning rate, stochastic weight averaging, nonlinear conjugate gradient, and annealing loss aggregation.
     \item[Capability in problems with instability]
-        Lastly, in this work, we will examine the capability of data-free PINNs in solving flow problems with instability.
-        The chosen case is 2D cylinder flow, which is a standard benchmark for conventional CFD solvers.
-        If data-free PINNs are considered a potential alternative to these conventional solvers, then it is expected to at least produce physical solutions in this benchmark case.
+        We would like to examine the capability of data-free PINNs in solving flow problems with instability.
+        The chosen case is 2D cylinder flow---a standard benchmark for conventional CFD solvers.
+        If data-free PINNs are considered a potential alternative to conventional solvers, then it is expected to produce at least physical solutions in this benchmark case.
     \item[Cost on non-computing tasks]
-        In academia, it is not uncommon that researchers only consider the run time of a solver for time cost.
-        However, in practical engineering, code development and pre-/post-processing also contribute a significant portion of the cost of a project.
-        Given that human labors and associated time/monetary cost may be difficult to evaluate and be compared in an objective approach, we would like to share our subjective viewpoints on this topic in the chapter of discussion.
+        In academia, it is not uncommon for researchers to only consider a solver's run time as time cost.
+        However, in practice, code development and pre-/post-processing also contribute a significant portion to the cost of a project.
+        Given that human labor and associated time/monetary cost may be challenging to evaluate and to be compared in an objective approach, we would like to share our subjective viewpoints on this topic in the final discussion.
         As we are the developers of the PINNs solvers and the conventional CFD solver used in this work, our knowledge and experience should be able to justify our subjective claims.
 \end{description}
 
 A 2D Taylor-Green vortex problem was chosen for benchmarking convergence, scalability, cost-performance ratios, and training strategies.
 2D Taylor-Green vortex has periodic boundary conditions in both $x$ and $y$ directions, and its solution exponentially decays from the initial conditions.
-It is therefore a common benchmark case for conventional unsteady CFD solvers.
+It is, therefore, a typical benchmark for conventional unsteady CFD solvers.
 Its convergence and other numerical properties are not affected by the implementation and errors of boundary conditions, and the temporal error accumulation can be better analyzed with less pollution.
 
 As for the benchmark of flow with instability, we used two cylinder flow configurations: $Re=40$ and $Re=200$ ($Re$ denotes Reynolds number).
-2D cylinder flow at $Re=40$ does not have instability and have a steady solution.
-We used it as a verification to our PINN solver and confirm it is able to solve laminar flow with an object's presence.
-The actual benchmark is the one with $Re=200$.
-It does not have a steady solution, though eventual the flow should reach a periodic flow pattern, i.e., the flow pattern repeats after every certain time.
+2D cylinder flow at $Re=40$ does not have instability and has a steady solution.
+We used it to verify our PINN solver and confirm it can solve laminar flow with an object's presence.
+The actual benchmark is the one at $Re=200$.
+It does not have a steady solution, though eventually, the flow should reach a periodic flow pattern, i.e., the flow pattern repeats after every certain time.
 
 We built our PINN solver with the help of NVIDIA's Modulus library.
 Modulus is a high-level Python package built on top of PyTorch that helps users develop PINNs for differential equations.
 All source files of our work are open and available online.
 
-In addition, when we need to compare PINNs' results with conventional CFD solvers, we will use our in-house CFD solver, PetIBM \cite{chuang_petibm:_2018}.
+In addition, we used our in-house CFD solver, PetIBM \cite{chuang_petibm:_2018}, for result comparisons when needed.
 PetIBM is a conventional finite-difference solver with MPI parallelization and GPU computing.
 It is tailored for HPC clusters and GPU computing.
-Given PetIBM's performance (accuracy and computational cost), we believe it can represent most popular CFD solvers used in real-world applications.
-Hence, using PetIBM as a baseline gives us a sense how far from or how close to actual CFD applications PINNs are.
-For more details of PetIBM, please refer to chapter \ref{chap:petibm}.
+Given PetIBM's performance (accuracy and computational cost), we believe it can represent other popular CFD solvers used in real-world applications.
+Hence, using PetIBM as a baseline gives us a sense of how far from or close to actual CFD applications PINNs are.
+For more details on PetIBM, please refer to chapter \ref{chap:petibm}.
 
 Chapter \ref{chap:pinn} provides details of PINNs and the techniques/schemes we used in our benchmarks.
-The descriptions, results, and discussions can be found in chapter \ref{chap:pinn-cases}.
-Finally, discussions that don't fit into the sections of individual benchmarks can be found in chapter \ref{chap:discussion}.
+The descriptions, results, and discussions of the benchmarks can be found in chapter \ref{chap:pinn-cases}.
+Finally, the conclusion and discussions can be found in chapter \ref{chap:discussion}.
 
 % vim:ft=tex

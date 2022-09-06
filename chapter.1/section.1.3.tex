@@ -1,6 +1,6 @@
 %! TEX root = main.tex
 
-Data-free PINNs is still an ongoing research topic and poses many open questions.
+Data-free PINNs are still an ongoing research topic and pose many open questions.
 Nevertheless, they hold several advantages over traditional numerical methods (such as finite-volume) that are attractive to CFD practitioners in practical engineering.
 First, it is a mesh-free scheme.
 A mesh-free scheme benefits engineering problems in which fluid flows interact with objects of complicated geometries.
@@ -8,56 +8,57 @@ Simulating these fluid flows with traditional numerical methods usually requires
 Such meshes need time-consuming human intervention in the pre-processing stage before actual simulations.
 
 The second benefit of data-free PINNs is that the trained models approximate the governing equations' general solutions, meaning there is no need to solve the equations repeatedly for different flow parameters.
-For example, in tandem-cylinder flow simulations, if a neural network model also takes the distances of the cylinders as its inputs alongside spatial-temporal coordinates, the model can generate solutions with respect to different distances after single training session.
+For example, in tandem-cylinder flow simulations, if a neural network model also takes the distances between the cylinders as its inputs alongside spatial-temporal coordinates, the model can generate solutions for different distances after a single training session.
 This feature benefits engineering optimization.
-For example, in the tandem-cylinder example, the trained model can be used to determine the optimal distances so that heat transfer rates meet pre-defined specification.
-Conventional numerical methods, on the contrary, require several simulations (with each one covering one distance setting) to find the optimal setting.
+In the same tandem-cylinder example, the trained model can help determine the optimal distances and help heat transfer rates meet pre-defined specifications.
+Conventional numerical methods, on the contrary, require several simulations (with each one covering one distance configuration) to find the optimal setting.
 
 Data-free PINNs may be a potential solution to many engineering applications.
 However, whether its current development is ready for practical engineering is doubtful.
 
-Engineering solutions are always subject to some pre-defined specifications (e.g., minimum accuracy requirements) under certain constraints (e.g., time and monetary cost, existing tools and resources).
-We believe, to make a tool feasible for practical engineering, two crucial factors are the predictability and controllability of cost-performance relationship. 
-Being predictable means engineers at least have a sense of how much cost is needed to get desired performance.
-And being controllable means engineers can further control the resulting performance by systematically changing the cost.
+Engineering solutions are always subject to some pre-defined specifications (e.g., minimum accuracy requirements) under certain constraints (e.g., time and monetary cost, existing tools, and resources).
+To make a tool feasible for practical engineering, we believe two crucial factors are the predictability and controllability of the cost-performance relationship.
+Predictably means engineers know how much cost is needed to get the desired performance.
+Being controllable means engineers can further control the resulting performance by systematically changing costs.
 
-In terms of engineering applications of CFD, predictability and controllability concern about the computational cost and accuracy.
+We relate predictability and controllability to computational cost and accuracy for CFD applications.
 Computational cost includes run times and required hardware.
-For a given numerical method, computational cost is affected by the degrees of freedom (DoFs) and the scalability of the method.
-And the cost-accuracy relationship is dominated by the convergence properties of the method.
-With known convergence properties, given a preliminary results of some benchmark simulations on the target problem, engineers are able to predict how much extra degrees of freedom they need to lower down how much of the errors, meaning the accuracy is controllable.
-Further, with known scalability properties, engineers can determine what hardware resources and how much wall time they need.
+For a given numerical method, the computational cost is affected by the degrees of freedom (DoFs) and the scalability of the method.
+The convergence properties of the method dominate the cost-accuracy relationship.
+With known convergence properties, given a preliminary result of some benchmark simulations on the target problem, engineers can predict how many extra degrees of freedom they need to lower how much of the error level, meaning the accuracy is controllable.
+Additionally, with known scalability properties, engineers can determine what hardware resources and how much wall time they need.
 
-However, these properties in data-free PINNs, to our best knowledge, are still unclear and not yet being investigated in literature.
+However, to our best knowledge, these properties in data-free PINNs are still unclear and have not yet been investigated in the literature.
 Few reports studied either theoretically or experimentally the required computing resources, the computational performance, the convergence, or the error analysis of PINN.
 Not to mention that even how to configure the network architectures and hyperparameters is still an open question. 
 
-Since the earliest report of data-free PINNs in 1994, the configurations of neural network architectures has been some random choices based on authors' previous experience.
+Since the earliest report of data-free PINNs in 1994, the configurations of neural network architectures have been some random choices based on the researchers' previous experience.
 Even if one justifies the use of MLP networks with the universal approximation theory, the configurations of hyperparameters still seem to be random choices.
 For example, Dissanayake and Phan-Thien acknowledged that their hyperparameter configurations were merely random choices.
-Also, they did not notice significant difference in the accuracies of different architecture configurations.
-While Dissanayake and Phan-Thien's report in 1994 may be outdated, recently, Dockhorn in 2019 \cite{dockhorn_discussion_2019} showed that data-free PINNs do not have clear properties in terms of convergence, run time, scalability, and the property of deterministic.
+Also, they did not notice a significant difference in the accuracies of different architecture configurations.
+Dissanayake and Phan-Thien's report in 1994 may be outdated.
+However, recently in 2019, Dockhorn \cite{dockhorn_discussion_2019} showed that data-free PINNs do not have clear properties in terms of convergence, run time, scalability, and being deterministic.
 
-The model complexity of neural networks make them difficult for theoretical analyses.
-It may be the major reason the numerical properties of PINNs have not been widely studied.
-On the other hand, PINNs suffer from performance and solvability issues due to the need for high-order automatic differentiation and the constrained optimization.
+The model complexity of neural networks makes them difficult for theoretical analyses.
+It may be the main reason the numerical properties of PINNs have not been widely studied.
+On the other hand, PINNs suffer from performance and solvability issues due to the need for high-order automatic differentiation and constrained optimization.
 The potentially high computational cost to solve PDEs with PINNs may block researchers from conducting studies through computational experiments.
 
-In PINNs, automatic differentiation is a crucial component not only because it makes sophisticate models possible, but also because it plays a key role in computational cost.
+In PINNs, automatic differentiation is a crucial component not only because it makes sophisticated models possible but also because it plays a vital role in computational cost.
 Automatic differentiation is based on the chain rule of calculus, which backtracks each computing step that results in the current variable of interest.
 Increasing the order of derivatives will at least double the computational graph.
 So naively speaking, if the size of the computational graph from $x$ to $y$ is $N$, the size of the graph to evaluate $\frac{\partial^2 y}{\partial x^2}$ may be at least $4N$.
 This is just a minimum estimation.
 The actual graph size may be even higher due to many other factors.
 So unlike regular data-driven deep learning applications (in which only first-order derivatives of model parameters are required), solving PDEs may demand much more hardware resources because of the high-order derivatives with respect to spatial-temporal coordinates.
-And the gradients of model parameters will be one-order higher than the highest order of derivatives in PDEs because the loss function depends on the derivatives in PDEs. 
-Even until 2018, researchers \cite{sirignano_dgm:_2018} still used finite-difference to approximate derivatives of orders greater or equal to $2$.
-However, as automatic differentiation is exact, using finite-difference approximation to replace it might reduce the accuracy.
+Besides, the gradients of model parameters will be one-order higher than the highest order of derivatives in PDEs. 
+Even as recently as 2018, researchers \cite{sirignano_dgm:_2018} still used finite-difference to approximate derivatives of orders greater or equal to $2$.
+However, as automatic differentiation is exact, using a finite-difference approximation to replace it might reduce the accuracy.
 
 On the constrained optimization, when making BCs and ICs soft constraints (or using penalty function methods), the BCs and ICs are not guaranteed to be satisfied.
-However, fluid flows are sensitive nonlinear dynamical systems in which a small change or error in inputs may produce a very different flow field.
-How using soft constraints and the errors in BCs and ICs affect the flow solutions have not been investigated.
-Flow problems shown in current literature of data-free PINNs are problems without known instability, for example, 2D Poiseuille flow, lid-driven cavity flow, or Taylor-Green vortex.
-It is not clear if data-free PINNs are able to produce chaotic behaviors of flows when instability plays a key role.
+However, fluid flows are sensitive nonlinear dynamical systems in which a small change may produce a very different flow field.
+How soft constraints and the errors in BCs and ICs affect the flow solutions have not been investigated.
+Flow problems shown in the current literature of data-free PINNs are problems without known instability, for example, 2D Poiseuille flow, lid-driven cavity flow, or Taylor-Green vortex.
+It is unclear if data-free PINNs can produce chaotic flow behaviors when instability plays a key role.
 
 % vim:ft=tex
