@@ -40,7 +40,7 @@ We follow the same approach in this work.
 $A^k$ and $\vec{b}^k$ are the free parameters we want to determine in the optimization step (i.e., equation \eqref{eq:total-residual-weighted}).
 $N_l$ and $N_n$ are also parameters that control the complexity and accuracy of an MLP network.
 However, they are determined by users rather than by optimization.
-This type of parameters is called hyperparameters--they are not counted into the degree of freedom of a mathematical model.
+This type of parameters is called hyperparameters---they are not counted into the degree of freedom of a mathematical model.
 
 The element-wise nonlinear functions $\sigma_{k}$ are also pre-determined by users.
 Theoretically, they can be different functions across different $k$.
@@ -63,7 +63,7 @@ For example, \cite{sirignano_dgm:_2018} reported the success of using an LSTM-st
 
 Networks with higher complexity imply more expensive computational cost.
 Whether using complicated networks is worth it may be another open question in terms of cost-performance ratios. 
-Instead, in this work, we used a variant of MLP networks implemented in Modulus--a weight-normalization MLP \cite{salimans_weight_2016}:
+Instead, in this work, we used a variant of MLP networks implemented in Modulus---a weight-normalization MLP \cite{salimans_weight_2016}:
 \begin{equation}\label{eq:weighted-norm-mlp-formula}
     \begin{array}{ll}
         \vec{h}^0 \equiv \begin{bmatrix} \vec{x} \\ t \end{bmatrix} & \\

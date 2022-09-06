@@ -12,45 +12,4 @@
 % helper for partial differential terms
 \NewDocumentCommand{\pdiff}{mm}{\frac{\partial #1}{\partial #2}}
 
-% put two same-size but unrelated (i.e., not sharing the same caption) figures side-by-side
-\NewDocumentCommand{\twoindfigrow}{mmmmmm}{
-    \begin{figure}[hbt!]%
-        \floatbox{figure}[\textwidth]{%
-            \begin{subfloatrow}[2]
-                \floatbox{figure}[0.98\linewidth]{%
-                    \caption{#1}\label{#2}
-                }{%
-                    \includegraphics[width=\linewidth]{#3}%
-                }
-                \floatbox{figure}[0.98\linewidth]{%
-                    \caption{#4}\label{#5}%
-                }{%
-                    \includegraphics[width=\linewidth]{#6}%
-                }
-            \end{subfloatrow}
-        }{}
-    \end{figure}%
-}
-
-% put two same-size figures side-by-side
-\NewDocumentCommand{\twofigrow}{mmmmmmmm}{
-    \begin{figure}[hbt!]%
-        \floatbox{figure}[\textwidth]{%
-            \begin{subfloatrow}[2]
-                \floatbox{figure}[0.98\linewidth]{%
-                    \caption{#1}\label{#2}
-                }{%
-                    \includegraphics[width=\linewidth]{#3}%
-                }
-                \floatbox{figure}[0.98\linewidth]{%
-                    \caption{#4}\label{#5}%
-                }{%
-                    \includegraphics[width=\linewidth]{#6}%
-                }
-            \end{subfloatrow}
-        }{%
-            \caption{#7}\label{#8}
-        }
-    \end{figure}%
-}
 % vim:ft=tex

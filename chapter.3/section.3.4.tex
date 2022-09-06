@@ -10,7 +10,7 @@ When solving differential equations numerically, we can describe the solution wo
 \end{enumerate}
 
 For example, to solve $\frac{\diff^2 U(x)}{\diff x^2}=s(x)$, the most naive spectral method \cite{trefethen_spectral_2000} approximates the solution with $U(x)\approx G(x; \Theta)\equiv\sum\limits_{i=1}^{N}\theta_i\phi_i(x)$, where $\theta_i$ represents the free model parameters; $\phi_i(x)$ denotes a set of either polynomials, trigonometric functions, or complex exponentials; and $N$ is the number of terms in the approximation.
-Next, approximating the 1st-order derivative $\frac{\diff U(x)}{\diff x}$ is straightforward--we can assume $\frac{\diff U(x)}{\diff x} \approx \pdiff{G(x; \Theta)}{x}=\sum\limits_{i=1}^{N}\theta_i \frac{\diff \phi_i(x)}{\diff x}$.
+Next, approximating the 1st-order derivative $\frac{\diff U(x)}{\diff x}$ is straightforward---we can assume $\frac{\diff U(x)}{\diff x} \approx \pdiff{G(x; \Theta)}{x}=\sum\limits_{i=1}^{N}\theta_i \frac{\diff \phi_i(x)}{\diff x}$.
 The 2nd-order derivative may follow the same workflow: $\frac{\diff^2 U(x)}{\diff x^2} \approx \frac{\partial^2 G(x; \Theta)}{\partial x^2}=\sum\limits_{i=1}^{N}\theta_i \frac{\diff^2 \phi_i(x)}{\diff x^2}$.
 $\phi_i(x)$ is known, so the derivatives $\frac{\diff \phi_i(x)}{\diff x}$ and $\frac{\diff^2 \phi_i(x)}{\diff x^2}$ are analytical.
 

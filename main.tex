@@ -18,7 +18,11 @@
 \usepackage[overload]{empheq}
 \usepackage[protrusion=true, final]{microtype}
 \usepackage{xurl}  % break long URLs in References
+\usepackage{silence}  % hide some known warning
 \input{tikzit.tikzstyles}
+
+% hide some known warnings
+\WarningFilter*{latex}{Text page \thepage\space contains only floats}
 
 % bib file location; use only one single bib file
 \addbibresource{references.bib} 
@@ -139,7 +143,7 @@
         \label{sec:pinn-2d-tgv-training-strategy}
         \input{chapter.4/section.4.1.6.tex}
 
-    \section{Steady 2D Cylinder Flow: $Re=40$}
+    \section{Steady 2D Cylinder Flow: \texorpdfstring{$Re=40$}{re40}}
     \label{sec:pinn-2d-cylinder-re40}
 
         \subsection{Problem Description and Configurations}
@@ -150,7 +154,7 @@
         \label{sec:pinn-2d-cylinder-re40-results}
         \input{chapter.4/section.4.2.2.tex}
 
-    \section{Unsteady 2D Cylinder Flow: Vortex Shedding at $Re=200$}
+    \section{Unsteady 2D Cylinder Flow: Vortex Shedding at \texorpdfstring{$Re=200$}{re200}}
     \label{sec:pinn-2d-cylinder-re200}
 
         \subsection{Problem Description and Configurations}
