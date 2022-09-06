@@ -3,17 +3,17 @@
 Immersed-boundary methods solve fluid flow problems with the presence of solids by adding a body-force term to the Navier-Stokes equations.
 This body-force term mimics the interface between fluid and solids.
 Depending on the chosen formulations and schemes, the solids may be either rigid or deformable.
-They can be stationary objects, objects moving under prescribed motions, or objects moving under feedback forces from fluid.
+They can be stationary objects, objects moving under prescribed motions, or objects moving under feedback forces from the fluid.
 Different immersed-boundary methods may use different formulations for this body-force term to model the fluid-solid interfaces.
 
-To be more precise, this forcing term models the force applied to the fluid by solids.
-As this forcing term is part of the fluid governing equations defined in Eulerian coordinate systems, it is resolved on the same computational grid of the fluid, and solid-fluid interfaces are not anymore boundaries of the fluid's computational domain.
+To be more precise, this forcing term approximates the force applied to the fluid by solids.
+As this forcing term is part of the fluid governing equations defined in Eulerian coordinate systems, it is resolved on the same computational grid of the fluid, and solid-fluid interfaces are not boundaries of the fluid's computational domain anymore.
 In other words, body-fitting meshes are unnecessary.
 A benefit of such an approach is that a structured grid can be applied to solve flow problems with the presence of an object with complex geometry.
 
 Consider a fluid problem with a fluid-solid interface.
-$\Omega$ and $\Gamma$ corresponding to the whole domain of our interest and the fluid-solid interface.
-The fluid-solid interface may be moving when viewing from a fixed coordinate system.
+$\Omega$ and $\Gamma$ correspond to the whole domain of our interest and the fluid-solid interface.
+The fluid-solid interface may be moving when viewed from a fixed coordinate system.
 Given a time $t$ and a spatial coordinate $\vec{x}$ in an Eulerian coordinate system defined in $\Omega$, we can write the following Navier-Stokes equations for incompressible flow and the immersed-boundary projection method (IBPM):
 \begin{subequations}\label{eq:mod-ns}
     \begin{align}[left=\empheqlbrace\,]
@@ -30,19 +30,19 @@ Given a time $t$ and a spatial coordinate $\vec{x}$ in an Eulerian coordinate sy
     \end{align}
 \end{subequations}
 
-$\vec{u}$, $p$, $Re$, and $\rho$ are the velocity vector, pressure, Reynolds number, and fluid density, respectively.
+$\vec{u}$, $p$, $Re$, and $\rho$ are the velocity vector, pressure, Reynolds number, and fluid density.
 $\vec{u}$ and $p$ are functions of $\vec{x}$ and $t$.
 Though $\rho$ and viscosity can also be functions of $\vec{x}$ and $t$ for incompressible flow, we simply treat them as a constant in this work.
 $s$ denotes the coordinate in a Lagrangian coordinate system defined on $\Gamma$.
 For example, such a Lagrangian coordinate system is a curve in 2D problems, and a single scalar $s$ is enough to represent a coordinate on the interface.
 $\vec{\xi}(s, t)$ is the coordinate in the Eulerian coordinate system that correspond to a Lagrangian coordinate $s$ on $\Gamma$ and at time $t$.
 $\vec{u}_\Gamma$ represents the velocity of the fluid-solid interface.
-Note $\vec{u}_\Gamma$ is a concept from the viewpoint of Lagrangian coordinate system.
+Note $\vec{u}_\Gamma$ is a concept from the viewpoint of the Lagrangian coordinate system.
 $\vec{f}$ is the vector of force applied on fluid due to the presence of the fluid-solid interface.
 It is defined in $\Omega$ and the Eulerian coordinate system, so it is a function of $\vec{x}$ and $t$.
 
-$\delta$ is the Dirac delta function, i.e., $\delta(\vec{\xi}-\vec{x})$ equals to $1$ when $\vec{\xi} = \vec{x}$ and equals to $0$ otherwise.
-With this Dirac delta function, the last term in \eqref{eq:mod-ns-momentum} is non-zero only at $\vec{x}$ that corresponds to the fluid-solid interface.
+$\delta$ is the Dirac delta function, i.e., $\delta(\vec{\xi}-\vec{x})$ equals $1$ when $\vec{\xi} = \vec{x}$ and equals $0$ otherwise.
+With this Dirac delta function, the last term in \eqref{eq:mod-ns-momentum} is non-zero only at $\vec{x}$ corresponding to the fluid-solid interface.
 In other words, one can also write separate momentum equations without using the Dirac function:
 \begin{equation}
 \left\{
@@ -54,19 +54,19 @@ In other words, one can also write separate momentum equations without using the
     \end{array}
 \right. 
 \end{equation}
-It's clear now that only $\vec{x}$ exactly on fluid-solid interfaces is under the influence of the added body force.
+It is clear now that only $\vec{x}$ exactly on fluid-solid interfaces is under the influence of the added body force.
 
-The same logic applies to \eqref{eq:mod-ns-body-vel}.
+The same logic applies to the integral in \eqref{eq:mod-ns-body-vel}.
 In continuous space, equation \eqref{eq:mod-ns-body-vel} simply means $\vec{u}\left(\vec{x}, t\right)=\vec{u}_\Gamma\left(s, t\right)$ for $\vec{x} \in \Gamma$ and when $\vec{x}=\vec{\xi}\left(s, t\right)$.
 It means the flow velocity on $\Gamma$ must satisfy the no-slip condition.
 As $\Gamma$ is not a boundary of $\Omega$, this no-slip condition can not be specified as a boundary condition and hence is included in \eqref{eq:mod-ns}.
 
-Though the integrals in the last term of \eqref{eq:mod-ns-momentum} and \eqref{eq:mod-ns-body-vel} seem unnecessary, having the integral or not makes difference when applying discretization in numerical methods.
+Though the integrals in the last term of \eqref{eq:mod-ns-momentum} and \eqref{eq:mod-ns-body-vel} seem unnecessary, having the integral or not makes a difference when applying discretization in numerical methods.
 Because we are not using body-fitting mesh, and the fluid-solid interface is arbitrary, it is almost impossible to have computational nodes located exactly on $\Gamma$.
 Hence, to capture the effect of the interface, the delta function needs to be relaxed, i.e., $\delta \ne 0$ for $\lVert \vec{\xi}-\vec{x} \rVert$ smaller than a certain predefined tolerance.
-Or, it can be made to some smooth function that approaches to zero when $\lVert \vec{\xi}-\vec{x} \rVert$ approaches infinity.
+Alternatively, it can be made into some smooth function that approaches zero when $\lVert \vec{\xi}-\vec{x} \rVert$ approaches infinity.
 This kind of delta function is called regularized Dirac delta function.
-And using a regularized delta function makes the fluid-solid interface duffuse: if we plot the integral in the last term of equation \eqref{eq:mod-ns-momentum} on a discretized 2D Cartesian grid of $\Omega$, the $\Gamma$ will look like a band, rather than a curve.
+Using a regularized delta function makes the fluid-solid interface diffuse: if we plot the integral in the last term of equation \eqref{eq:mod-ns-momentum} on a discretized 2D Cartesian grid of $\Omega$, the $\Gamma$ will look like a band rather than a curve.
 
 In PetIBM, we use the following regularized Dirac function:
 \begin{equation}\label{eq:regularized-dirac}
@@ -82,7 +82,7 @@ In PetIBM, we use the following regularized Dirac function:
         \end{array}
     \right.
 \end{equation}
-where $r \equiv \lVert\vec{\xi}-\vec{x}\rVert_2$, and $\Delta r$ is a user-provided parameter to determine the effective range of the regularized Dirac function.
+where $r \equiv \lVert\vec{\xi}-\vec{x}\rVert$, and $\Delta r$ is a user-provided parameter to determine the effective range of the regularized Dirac function.
 
 The next step is to discretize the governing equations.
 The IBPM is based on the following block-matrix system that can be generated from most discretization and time marching schemes:
@@ -112,15 +112,16 @@ The IBPM is based on the following block-matrix system that can be generated fro
 \end{equation}
 where $A$, $G$, and $D$ correspond to the $\frac{1}{\Delta t}I+\alpha\frac{1}{Re}L$, gradient, and divergence operators of a given spatial discretization. 
 $L$ is the Laplacian operator, and $alpha$ is a coefficient that depends on chosen time marching scheme for the diffusion term.
-$H$ and $E$ are the operator from substituting equation \eqref{eq:regularized-dirac} into equation \eqref{eq:mod-ns} and the discretizing the forcing terms and \eqref{eq:mod-ns-body-vel}.
-Note that only matrix $A$ is a square matrix, while others are not.
+$H$ and $E$ are the operators from substituting equation \eqref{eq:regularized-dirac} into equation \eqref{eq:mod-ns} and discretizing the forcing terms and \eqref{eq:mod-ns-body-vel}.
+Only matrix $A$ is a square matrix, while others are not.
 Superscript $n+1$ and $n$ denote the $n+1$-th and $n$-th time steps.
 $\vec{\gamma}^n$ represents the results of explicit terms from the selected time marching schemes.
-Though having a superscript $n$, $\vec{\gamma}^n$ can actually depend on solutions from $n-1$, $n-2$, and so on, depending on the schemes.
-$\vec{bc}+1$ and $\vec{bc}_2$ are the artifacts that generated from eliminating BCs from operators.
+Though having a superscript $n$, $\vec{\gamma}^n$ can also depend on solutions from $n-1$, $n-2$, and so on, based on the chosen temporal schemes.
+$\vec{bc}_1$ and $\vec{bc}_2$ are the artifacts generated from eliminating BCs from operators.
 
-Reference \cite{taira_immersed_2007} shows an example of how these operators are actually defined using staggered Cartesian grid for spatial discretization, Adams-Bashforth for marching the convection term, and Crank-Nicolson for marching the diffusion term can be found in \cite{taira_immersed_2007}.
-Here we will continue on assuming we already have these operators to save space, and we can focus on the solution scheme of this block matrix system using the decoupled IBPM of reference \cite{li_efficient_2016}.
+Reference \cite{taira_immersed_2007} shows an example of how these operators are defined using a staggered Cartesian grid for spatial discretization, Adams-Bashforth for marching the convection term, and Crank-Nicolson for marching the diffusion term can be found in \cite{taira_immersed_2007}.
+Here, we assume we already have these operators to save space.
+We can focus on the solution scheme of this block matrix system using the decoupled IBPM in reference \cite{li_efficient_2016}.
 
 Equation \ref{eq:block-sys-ns} is indefinite and difficult to solve.
 To solve such a system, in decoupled IBPM, we define the following composite matrices and composite vectors: 
