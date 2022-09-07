@@ -11,7 +11,7 @@ Figure \ref{fig:cylinder-re200-train-hist} shows the convergence history of all 
 One sub-plot is for losses versus iterations, while the other one is against the run times.
 The plateaus we observed in the $Re=40$ cases also exist in the unsteady and data-driven cases here.
 The steady case does not show any sign of the plateau.
-The data-driven does not converge to a level of loss as small as that of the other two cases.
+The data-driven does not converge to a loss level as small as that of the other two cases.
 However, the aggregated loss of the data-driven case has extra data loss terms, so it is unclear at this point if all loss terms have higher values or only the data loss terms are higher. 
 
 Figure \ref{fig:cylinder-re200-drag-lift} shows the drag and lift coefficients versus simulation time.
@@ -46,7 +46,7 @@ To examine how the transient flow develops, below we show several snapshots of t
     \item Figures \ref{fig:cylinder-re200-contour-uv-t50} and \ref{fig:cylinder-re200-contour-pwz-t50}: flow at $t=50$. These figures further confirm that the unsteady PINN matches the PetIBM simulation before shedding.
     \item Figures \ref{fig:cylinder-re200-contour-uv-t140} and \ref{fig:cylinder-re200-contour-pwz-t140}: flow at $t=140$. At this point, the shedding already happened. And $t=140$ is the last snapshot we fed to the data-driven PINN for training. The flow from data-driven PINN shows that it at least is able to qualitatively capture the shedding, which is expected.
     \item Figures \ref{fig:cylinder-re200-contour-uv-t144} and \ref{fig:cylinder-re200-contour-pwz-t144}: flow at $t=144$. Just $4$ unit time from the last snapshot we fed to the data-driven PINN, the data-driven PINN has already stop generating new vortex. The existing vortex can be seen moving toward the boundary, and the wake is gradually recovering to the steady state wake.
-    \item Figures \ref{fig:cylinder-re200-contour-uv-t190} and \ref{fig:cylinder-re200-contour-pwz-t190}: flow at $t=190$. Flow field at this time further confirm the data-driven PINN's behavior is leaning toward that of the unsteady PINN, which is itself behaving like a steady state solver.
+    \item Figures \ref{fig:cylinder-re200-contour-uv-t190} and \ref{fig:cylinder-re200-contour-pwz-t190}: flow at $t=190$. Flow field at this time further confirm that the data-driven PINN's behavior is leaning toward that of the unsteady PINN, which is itself behaving like a steady state solver.
 \end{enumerate}
 
 \begin{figure}[hbt!]
@@ -133,7 +133,7 @@ At this point, we have not been able to determine the reason.
 Aside from that the shedding does not continue after $t=140$ in the data-driven PINN, we are also not satisfied with its predictions before $t=125$.
 Surely there were no training points before $t=125$ during the training.
 However, one reason for using data-driven PINNs is to have a better prediction capability on new data that were not seen before.
-In other word, we expected PINNs to have a satisfying extrapolation capability.
+In other words, we expected PINNs to have a satisfying extrapolation capability.
 If data-driven PINNs do not perform well on extrapolation but can only handle interpolation problems, then its advantage over regular data-only machine learning may need more examination.
 
 We must emphasize that while there are too many configurations and settings to try, our benchmark on data-driven PINNs may be very limited and naive.

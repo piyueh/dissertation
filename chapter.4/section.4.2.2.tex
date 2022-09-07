@@ -1,14 +1,14 @@
 %! TEX root = main.tex
 
-For steady cases, the PINN solver took about 25 hours to finish for $N_{bs}=25,600$ and 13.5 hours for $N_{bs}=6,400$.
-The steady PINN solver, on the other hand, took about 26 hours and 14.5 hours for $N_{bs}=25,600$ and $6,400$, respectively.
+For the steady cases, the PINN solver took about 25 hours to finish for $N_{bs}=25,600$ and 13.5 hours for $N_{bs}=6,400$.
+The unsteady PINN solver, on the other hand, took about 26 hours and 14.5 hours for $N_{bs}=25,600$ and $6,400$, respectively.
 The baseline PetIBM simulation was finished within 2 minutes.
 
 Figure \ref{fig:cylinder-2d-re40-loss-hist-steady} shows the convergence history of the aggregated losses for the steady cases, and figure \ref{fig:cylinder-2d-re40-loss-hist-unsteady} shows those for the unsteady cases.
 Each figure includes sub-figures for losses against iterations and run times.
 \begin{figure}[hbt!]
     \includegraphics[width=0.9\linewidth]{cylinder-2d-re40/loss-hist-steady}
-    \caption[
+    \caption[%
         PINNs, 2D Cylinder, $Re=40$: training history of steady solvers%
     ]{%
         PINNs, 2D Cylinder, $Re=40$: training history of steady solvers%
@@ -17,7 +17,7 @@ Each figure includes sub-figures for losses against iterations and run times.
 \end{figure}
 \begin{figure}[hbt!]
     \includegraphics[width=0.9\linewidth]{cylinder-2d-re40/loss-hist-unsteady}
-    \caption[
+    \caption[%
         PINNs, 2D Cylinder, $Re=40$: training history of unsteady solvers%
     ]{%
         PINNs, 2D Cylinder, $Re=40$: training history of unsteady solvers%
@@ -26,10 +26,10 @@ Each figure includes sub-figures for losses against iterations and run times.
 \end{figure}
 An interesting observation from figure \ref{fig:cylinder-2d-re40-loss-hist-steady} is the plateaus at the beginning of the training.
 Though without a proof, we suspect this trend reflects the escaping from saddle points.
-The large cyclical scheduling took more time to escape because it had fewer cycles under given iterations.
+The large cyclical schedule took more time to escape because it had fewer cycles under given iterations.
 Regardless of the difference at the beginning, all cases reaches the same level of losses eventually.
-And for the large cyclical scheduling, both $N_{bs}=6,400$ and $N_{bs}=25,600$ show similar convergence history in terms of iterations.
-This observation again proves our suspicion in the previous section that $N_{bs}$ does not have significant influence on the losses and errors..
+And for the large cyclical schedule, both $N_{bs}=6,400$ and $N_{bs}=25,600$ show similar convergence history in terms of iterations.
+This observation again proves our suspicion in the previous section that $N_{bs}$ does not have significant influence on the losses and errors.
 
 Figure \ref{fig:cylinder-2d-re40-loss-hist-unsteady} also shows plateaus at the beginning, though not as obvious as those for the steady cases.
 The convergence histories for the unsteady cases are also bumpier.
@@ -40,16 +40,16 @@ Nevertheless, all unsteady cases converged to a similar loss level.
 Figure \ref{fig:cylinder-2d-re40-contours} shows visual comparisons of the steady-state flow fields.
 \begin{figure}[hbt!]
     \includegraphics[width=\linewidth]{cylinder-2d-re40/contour-comparison}
-    \caption[
+    \caption[%
         PINNs, 2D Cylinder, $Re=40$: flow fields at steady state%
     ]{%
-        PINNs, 2D Cylinder, $Re=40$: flow fields at steady state%
-        For the unsteady PINN case, the solution was extracted from $t=20$.
-        The fields shown, from the top to bottom, are $u$, $v$, $p$, and vorticity $\omega_z$.
+        PINNs, 2D Cylinder, $Re=40$: flow fields at steady state. %
+        For the unsteady PINN case, the solution was extracted from $t=20$. %
+        The fields shown, from the top to bottom, are $u$, $v$, $p$, and vorticity $\omega_z$.%
     }%
     \label{fig:cylinder-2d-re40-contours}
 \end{figure}
-The results of steady PINN solver were obtained from the case of $N_{bs}=25,600$ with the large cyclical scheduling, and that of the unsteady solver was also obtained from the same $N_{bs}$ and scheduling.
+The results of steady PINN solver were obtained from the case of $N_{bs}=25,600$ with the large cyclical schedule, and that of the unsteady solver was also obtained from the same $N_{bs}$ and schedule.
 All three cases visually agree with each other, except for the vorticity.
 Note that vorticity is a product from post-processing for all three solvers.
 PetIBM relies on central difference to calculate the vorticity.
@@ -59,7 +59,7 @@ Figure \ref{fig:cylinder-2d-re40-drag-lift-time} gives the drag and lift coeffic
 We only plotted the results from the unsteady solver because the steady solvers do not have the time variable. 
 \begin{figure}[hbt!]
     \includegraphics[width=\linewidth]{cylinder-2d-re40/drag-lift-coeffs.png}
-    \caption[
+    \caption[%
         PINNs, 2D Cylinder, $Re=40$: drag and lift coefficients%
     ]{%
         PINNs, 2D Cylinder, $Re=40$: drag and lift coefficients%
@@ -77,20 +77,20 @@ Lastly, we compared the pressure coefficient ($C_p$) on the cylinder surface.
 Figure \ref{fig:cylinder-2d-re40-surface-cp-steady} shows the surface $C_p$ of the steady cases, and figure \ref{fig:cylinder-2d-re40-surface-cp-unsteady} shows that of the unsteady cases.
 \begin{figure}[hbt!]
     \includegraphics[width=0.9\linewidth]{cylinder-2d-re40/surface-pressure-steady}
-    \caption[
+    \caption[%
         PINNs, 2D Cylinder, $Re=40$: pressure coefficients on cylinder surface for steady solvers%
     ]{
-        PINNs, 2D Cylinder, $Re=40$: pressure coefficients on cylinder surface for steady solvers%
-        The data from Grove et al., 1964 are experimental, while others are computational.
+        PINNs, 2D Cylinder, $Re=40$: pressure coefficients on cylinder surface for steady solvers. %
+        The data from Grove et al., 1964 are experimental, while others are computational.%
     }%
     \label{fig:cylinder-2d-re40-surface-cp-steady}
 \end{figure}
 \begin{figure}[hbt!]
     \includegraphics[width=0.9\linewidth]{cylinder-2d-re40/surface-pressure-unsteady}
-    \caption[
+    \caption[%
         PINNs, 2D Cylinder, $Re=40$: pressure coefficients on cylinder surface for unsteady solvers%
     ]{
-        PINNs, 2D Cylinder, $Re=40$: pressure coefficients on cylinder surface for unsteady solvers%
+        PINNs, 2D Cylinder, $Re=40$: pressure coefficients on cylinder surface for unsteady solvers. %
         The data from Grove et al., 1964 are experimental, while others are computational.
     }%
     \label{fig:cylinder-2d-re40-surface-cp-unsteady}

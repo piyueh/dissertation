@@ -43,8 +43,8 @@ Only the aggregated loss of $(1, 32, 16384)$ obviously converged, and the other 
 However, if we examine the history of $L_{2,sp-t}$, $L_2@t=40$, and $L_2@t=80$, the trends of these errors do not show much potential for improvement.
 Especially from the case of $(3, 256, 4096)$, we see that the errors of $u$ does not change significantly after 200,000 iterations.
 More training iterations only improve the error at $t=0$.
-Note that the solution at $t=0$ is determined by the IC loss only, meaning the correct solution at $t=0$ is given to PINNs.
-The solutions of $t=40$ and $t=80$ are mainly affected by PDE loss, and the PINNs do not have correct solutions.
+Note that the solution at $t=0$ is determined by the IC losses only, meaning the correct solution at $t=0$ is given to PINNs.
+The solutions of $t=40$ and $t=80$ are mainly affected by PDE losses, and the PINNs do not have correct solutions.
 The results shown in these figures mean that PINNs in this benchmark are only able to learn well from where we already provide explicit and correct answers.
 PINNs do not perform well on solving the actual PDEs, where the solutions are unknown to them.
 And learning well on IC does not help in solving the PDEs.
@@ -83,17 +83,17 @@ And learning well on IC does not help in solving the PDEs.
 \end{figure}
 
 If we compare the run times, the case of $(2, 32, 65536)$ took the longest, about 10.5 hours.
-The case of $(1, 32, 16384)$ and $(3, 256, 4096)$ took about 3.8 and 3 hours, respectively,
-Intuitively speaking, this observation shows the run times is mainly dominated by the numbers of training points per batch, rather than the complexity of a network.
+The case of $(1, 32, 16384)$ and $(3, 256, 4096)$ took about 3.8 and 3 hours, respectively.
+Intuitively speaking, this observation shows that the run times are mainly dominated by the numbers of training points per batch rather than the complexity of a network.
 
 We also compare the final $L_{2,sp-t}$ from the three cases with that in figure \ref{fig:petibm-tgv-spatial-temporal-error}.
-While PetIBM was able to achieve an error order of $10^{-3}$ ins less than 20 seconds, none of the three PINN cases was able to achieve the same level of error-time ratio.
+While PetIBM was able to achieve an error level of $10^{-3}$ in less than 20 seconds, none of the three PINN cases was able to achieve the same level of error-cost ratio.
 
 Figures \ref{fig:nl1-nn32-npts16384-t40-contours}, \ref{fig:nl2-nn32-npts65536-t40-contours}, and \ref{fig:nl3-nn256-npts4096-t40-contours} show the solution contours at $t=40$ for the three cases.
 The color bars' levels are fixed according to the exact solution.
 It is obvious that cases with $N_l=1$ and $N_l=2$ only work at where the exact solutions are zero.
 The results are not even visually acceptable.
-Only the case with $N_3$ is able to predict visually acceptable results.
+Only the case with $N_l=3$ is able to predict visually acceptable results.
 It means both $(1, 16, 15384)$ and $(2, 32, 65536)$ underfit the solution, implying the model complexities are not enough in these two cases.
 Later in section \ref{sec:pinn-2d-tgv-model-complexity}, we will see more comparison regarding the run times, model complexity, and the batch sizes.
 % vim:ft=tex

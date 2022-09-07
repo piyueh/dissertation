@@ -1,13 +1,13 @@
 %! TEX root = main.tex
 The second part of our benchmarking with PINNs focuses on the ability to simulate sensitive dynamical systems of flow problems.
 Our benchmark target is the 2D cylinder flow of $Re=200$, which exhibits vortex shedding.
-However, before we conduct the benchmark on the $Re=200$ cylinder flow, we would like to test a steady cylinder flow problem with our unsteady PINN implementation for solver validation.
-The selected case is an $Re=40$ cylinder flow, which reaches a steady state eventually.
+However, before we conduct the $Re=200$ cylinder flow test, we would like to test a steady cylinder flow problem with our unsteady PINN implementation for solver validation.
+The selected case is a $Re=40$ cylinder flow, which reaches a steady state eventually.
 The results were validated with experimental data and verified against PetIBM results.
 
 The computational domain of the $Re=40$ cylinder flow is $[-10, 30]\times[-10, 10]$, and the simulation time range is $t=0$ to $t=20$.
 A cylinder with a radius of $0.5$ sits at the coordinate $(0, 0)$.
-Nondimensional density is $1$ and kinematic viscosity is $0.025$ so that the Reynolds number is $40$.
+Nondimensional density is $1$, and kinematic viscosity is $0.025$, so the Reynolds number is $40$.
 The IC is $u=1$ and $v=0$.
 The BCs are $u=1$ and $v=0$ on $x=-10$, $y=-10$, and $y=10$.
 The BC at the outlet $x=30$ is a 1D convective condition:
@@ -30,10 +30,10 @@ And we tested two different cyclical learning rate configurations:
     \item Large cycle: $(\eta_{low}, \eta_{high}, N_c, \gamma)=(1e-6, 1e-2, 5000, 0.99998)$
     \item Small cycle: $(\eta_{low}, \eta_{high}, N_c, \gamma)=(1e-6, 1e-3, 2000, 0.999972)$
 \end{enumerate}
-Figure \ref{fig:cylinder-2d-re40-lr-hist} shows the comparison of the two scheduling.
+Figure \ref{fig:cylinder-2d-re40-lr-hist} shows the comparison of the two schedules.
 \begin{figure}[hbt!]
     \includegraphics[width=0.9\linewidth]{cylinder-2d-re40/learning-rate-hist}
-    \caption[
+    \caption[%
         PINNs, 2D Cylinder, $Re=40$: cyclical learning rate configurations%
     ]{%
         PINNs, 2D Cylinder, $Re=40$: cyclical learning rate configurations%
@@ -41,12 +41,12 @@ Figure \ref{fig:cylinder-2d-re40-lr-hist} shows the comparison of the two schedu
     \label{fig:cylinder-2d-re40-lr-hist}
 \end{figure}
 A total of 6 cases were run in this benchmark.
-(The $N_{bs}=25,600$ was not applied to small cycle scheduling.)
+(The small cyclical schedule was not applied to $N_{bs}=25,600$.)
 
 For unsteady cases with $N_{bs}=6,400$, $6,400\times 10,000$ points were sampled from the computational spatial-temporal domain for PDE losses, meaning each batch was repeated every $10,000$ iterations.
 Except for the cylinder surface, $640\times 10,000$ points were sampled on each boundary and $t\in[0, 20]$.
 On the cylinder surface, $256\times 10,000$ points were sampled and also with $t\in[0, 20]$.
-To evaluate IC losses, $6,400\times 10,000$ points were sampled from the spatial domain with their temporal coordinates being limited to $t=0$.
+To evaluate IC losses, $6,400\times 10,000$ points were sampled from the spatial domain with their temporal coordinates being constrained to $t=0$.
 The steady cases with $N_{bs}=6,400$ follows a similar setting, except the PDE evaluation points were sampled completely from spatial domain, as there was no temporal coordinates.
 And steady cases did not need to evaluate IC losses.
 

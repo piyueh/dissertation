@@ -80,7 +80,7 @@ We did not expect this result because, traditionally in deep learning, using mor
 More data per batch means the statistical properties are similar across different batches, and thus the hypersurface does not change significantly from iteration to iteration.
 One explanation to the figure \ref{fig:tgv2d-re100-err-vs-time} is that our test cases used too many training points.
 The smallest case, $N_{bs}=1024$, might still big enough for this TGV problem and hence we were not able to see the effect of $N_{bs}$ in the accuracy and convergence rates.
-It is, of course, that PINNs are generally insensitive to $N_{bs}$. 
-Unfortunately, our test cases are not able to verify either claims at this point.
+Another explanation is that PINNs are generally insensitive to $N_{bs}$. 
+Unfortunately, our test cases are not able to verify either claim at this point.
 If we strictly follow our benchmark results, increasing $N_{bs}$ simply increases the time costs without getting any benefit.
 % vim:ft=tex
