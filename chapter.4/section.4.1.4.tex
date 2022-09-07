@@ -19,7 +19,7 @@ See equation \eqref{eq:residual-norms}
     \caption[%
         PINNs, 2D TGV, $Re=100$: $L_{2,sp-t}$ error v.s. aggregated loss%
     ]{%
-        PINNs, 2D TGV, $Re=100$: $L_{2,sp-t}$ error v.s. aggregated loss.%
+        PINNs, 2D TGV, $Re=100$: $L_{2,sp-t}$ error v.s. aggregated loss. %
         $L_{2,sp-t}$ errors for $u$ and $v$ from the same case are separate data points in the figure.
     }
     \label{fig:tgv2d-re100-err-vs-loss}
@@ -29,7 +29,7 @@ From the figure, the first observation is the flat region in the top-right corne
 It says, for these cases, the aggregated loss is completely dominated by IC losses.
 These cases are majorly those with only one hidden layer, implying that one hidden layer may not be enough to approximate the solutions of the Navier-Stokes equations.
 
-Although the relationship is approximately linear in the middle range, the data points become more diversed in the bottom-left corner.
+Although the relationship is approximately linear in the middle range, the data points become more diverse in the bottom-left corner.
 And a similar loss level has a wider range of possible $L_{2,sp-t}$.
 Given the observed trends, it is reasonable to suspect that, if we have more data further extend to the left of this figure, the possible $L_{2,sp-t}$ corresponding to a loss level may have wider and wider range, meaning it is more difficult to predict the solution accuracy for a given training loss.
 

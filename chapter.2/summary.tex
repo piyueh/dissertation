@@ -1,7 +1,7 @@
 %! TEX root = main.tex
 PetIBM is a C++ library that helps create new incompressible flow solvers for large-scale and distributed GPU computing.
 The core design philosophy of PetIBM is to allow the easy creation of a solver that fits into Perot's framework \cite{perot_analysis_1993} for projection methods.
-Combining Perrot's framework and staggered grids, PetIBM does not need pressure boundary conditions.
+Combining Perot's framework and staggered grids, PetIBM does not need pressure boundary conditions.
 Pressure boundary conditions have caused many headaches for CFD practitioners \cite{gresho_pressure_1987,sani_resume_1994}.
 
 On top of the vanilla projection method from Perot, the primary use case of PetIBM is to create solvers of the immersed-boundary projection method (IBPM \cite{taira_immersed_2007}) and its derived works.
@@ -10,7 +10,7 @@ Solvers created with the PetIBM library run on distributed-memory architectures,
 
 To our knowledge, another work similar to PetIBM is IBAMR \cite{griffith_adaptive_2007,bhalla_unified_2013}. 
 PetIBM and IBAMR use different immersed-boundary schemes.
-IBARM is based on Peskin's immersed-boundary formulation \cite{Peskin2002} and implements adaptive mesh refinement.
+IBAMR is based on Peskin's immersed-boundary formulation \cite{Peskin2002} and implements adaptive mesh refinement.
 However, IBAMR does not have GPU capability.
 
 Though PetIBM's primary role is a library, it includes several flow solvers for different flow applications and solving schemes.

@@ -53,7 +53,7 @@ Theoretically, these two configurations are comparable because AmgX's classical 
 
 From the results, we observed a $65x$ speedup comparing 1 GPU to 1 CPU in the $15$-million problem and a $9x$ speedup comparing 4 GPUs to 36 CPUs in the $33$-million problem.
 As a reference, 4 V100 GPUs cost about $12$ thousand US dollars at the time of writing.
-On the other hand, $36$ cores of CPUs consist of $2$ Xeon Gold 6140 chips, which cost around $2$ thousand US dollars\footnote{Xeon Gold 6140 was descontinued at the time or writing. The price we show here was the market value at the time, while the official suggested price for $2$ brand-new chips was around $4,800$ US dollars.}.
+On the other hand, $36$ cores of CPUs consist of $2$ Xeon Gold 6140 chips, which cost around $2$ thousand US dollars\footnote{Xeon Gold 6140 was discontinued at the time or writing. The price we show here was the market value at the time, while the official suggested price for $2$ brand-new chips was around $4,800$ US dollars.}.
 If we naively compare the results base on the monetary cost of the GPUs and CPUs, we would observe a speedup of about $1.5x$ (4 V100 GPUs versus 218 CPU cores).
 However, as CPUs and GPUs work under different hardware configurations and setups, this monetary-based comparison is not fair in the real world.
 For example, $6$ CPU chips may require $3$ complete computing nodes and an HPC cluster, while 4 V100 GPU can completely reside in one single workstation or even a personal desktop.
