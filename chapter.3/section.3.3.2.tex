@@ -1,16 +1,16 @@
 %! TEX root = main.tex
 
-The gradient-descent method and its derived methods all suffer from the problems of choosing right learning rates.
-The learning rate scheduling adjusts the value according to pre-defined formulae rather than in an adaptive fashion.
-Hence, using a scheduling does not resolve the problem.
+The gradient-descent method and its derived methods all suffer from the problems of choosing the right learning rates.
+The learning rate schedules adjust the value according to pre-defined formulae rather than in an adaptive fashion.
+Hence, using a schedule does not resolve the problem.
 
 Moreover, using negative gradients as the moving directions to find the minimal loss does not mean the overall descent is the fastest.
 For example, at $k$-th iteration, the negative gradient $- \nabla_{\Theta} r(\vec{\theta}^k)$ just means the direction that descends the fast at $\Theta=\vec{\theta}^k$.
-It does not mean the minimum sits at this direction.
+It does not mean the minimum sits in this direction.
 Another real-world example is reaching the lowest-elevation point in a mountain area.
 Sometimes it is faster to reach the lowest point by climbing and crossing a mountain rather than always following the downhill directions.
 
-Nonlinear conjugate-gradient (CG) methods provides an alternative searching direction, and a proper line-search algorithm helps determine the learning rate.
+Nonlinear conjugate-gradient (CG) methods provide an alternative searching direction, and a proper line-search algorithm helps determine the learning rate.
 In this work, we implemented a variant of CG proposed by Hager and Zhang \cite{hager_new_2005,hager_survey_2006,hager_algorithm_2006}.
 We also implemented an inexact line-search algorithm proposed by the same authors.
 At $k$-th iteration in CG, the general update formula is
@@ -30,9 +30,9 @@ where $\vec{d}^k$ is the searching direction, and $\alpha_k$ is the step size (o
 $\vec{g}^k$ is the gradient at $k$-th iteration.
 In our work, this corresponds to $\nabla_{\Theta} r(\Theta=\vec{\theta}^k)$.
 The vanilla gradient-descent method can be deemed as a special case of \eqref{eq:cg-update-formula}, in which $\beta_0=\beta_1=\cdots=0$.
-Generally speaking, each iteration in CG methods can be seen as starting a new search at a direction between the current search direction and the fastest descending direction at this location.
+Generally speaking, each iteration in CG methods can be seen as starting a new search in a direction between the current search direction and the fastest descending direction at this location.
 
-Different CG methods provide different approaches to evaluate $\beta_k$.
+Different CG methods provide different approaches to evaluating $\beta_k$.
 That is, the resulting searching directions from different CG methods are different.
 In our work, we used the formula proposed in \cite{hager_new_2005,hager_algorithm_2006}:
 \begin{equation}\label{eq:hager-cg-beta}
@@ -53,28 +53,28 @@ and
     \frac{\vec{g}^{k+1}}{\left(\vec{d}^k\right)^\mathsf{T}\cdot\vec{y}^k}
 \end{equation}
 The vector $\vec{y}^k$ is defined as $\vec{y}^k=\vec{g}^{k+1}-\vec{g}^k$.
-$\eta > 0$ is a user defined constant to control the lower bound of allowed $\beta_k$.
+$\eta > 0$ is a user-defined constant to control the lower bound of allowed $\beta_k$.
 $\hat{\beta_k}$ in \eqref{eq:hager-cg-beta-hat-k} may be negative, meaning we rewind somehow on the current search direction before starting a new search.
 By limiting the lower bound, we can limit how much this rewinding effect can be.
-A rewinding is not necessarily a bad phenomenon.
-It can be seen as a restart on the search when current search has no progress.
+Rewinding is not necessarily a bad phenomenon.
+It can be seen as a restart on the search when the current search has no progress.
 We use $\eta=0.01$ for all cases in this work.
 
-As for the learning rate $\alpha_k$, theoretically, $\alpha_k$ is the value that makes $r(\vec{\theta}^k+\alpha_k\vec{d}^k)$ the absolute minimum on the direction $\vec{d}^k$.
+As for the learning rate $\alpha_k$, theoretically, $\alpha_k$ is the value that makes $r(\vec{\theta}^k+\alpha_k\vec{d}^k)$ the absolute minimum in the direction $\vec{d}^k$.
 A line search algorithm that finds such $\alpha_k$ is called an exact line search algorithm.
-However, exact line search is expensive.
+However, an exact line search is expensive.
 Using exact line search hurts the performance advantage of CG (as well as gradient-descent methods).
-It is therefore more common to use inexact line search algorithms.
+It is, therefore, more common to use inexact line search algorithms.
 In inexact line search, at $k$-th iteration, we only seek an $\alpha_k$ that helps us land at a new location along $\vec{d}^k$ where
 \begin{enumerate}[noitemsep,topsep=-12pt]
     \item we have a sufficient decrease in the loss and
     \item the slope in the $\vec{d}^k$ direction at the new location is milder than that at the beginning of the current iteration.
 \end{enumerate}
-Several mathematical conditions exit to evaluate these two textual statements quantitatively, including the Wolfe conditions, the strong Wolfe conditions, and the approximate Wolfe conditions.
+Several mathematical conditions exist to evaluate these two textual statements quantitatively, including the Wolfe conditions, the strong Wolfe conditions, and the approximate Wolfe conditions.
 We ignore the mathematical details and expressions of the two conditions here to help focus on the meaning rather than the formulae.
 Please refer to \cite[Chapter~3]{nocedal_numerical_2006} for mathematical details.
 
-Alongside the CG variant \eqref{eq:hager-cg-beta}-\eqref{eq:hager-cg-beta-hat-k}, Hager and Zhang also proposed a companion inexact line search algorithm to find the learning rate $\alpha_k$ that assists this particular GC method to converge.
+Alongside the CG variant \eqref{eq:hager-cg-beta}-\eqref{eq:hager-cg-beta-hat-k}, Hager and Zhang also proposed a companion inexact line search algorithm to find the learning rate $\alpha_k$ that helps this particular GC method to converge.
 We have implemented both the CG and this line search in this work.
 They will be used in some benchmarks to see if they can be beneficial to the training of data-free PINNs.
 % vim:ft=tex

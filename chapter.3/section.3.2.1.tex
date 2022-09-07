@@ -1,24 +1,22 @@
 %! TEX root = main.tex
 
-In the previous section, $G$ denotes a neural network model (or any mathematical model, actually) that predicts flow quantities at given spatial-temporal coordinates.
-The exact mathematical expression of $G$ was omitted.
+In the previous section, $G$ denotes a neural network model (or any mathematical model) that predicts flow quantities at given spatial-temporal coordinates.
 In this section, we would like to introduce the mathematical expression of the most common neural network model in data-free PINNs: MLP (multilayer perceptron) networks.
 
 The universal approximation theorem \cite{hornik_approximation_1991} states that large-enough MLP networks can approximate any smooth functions.
 This theorem justifies the use of MLP networks as PDEs' approximation solutions.
-These PDEs include the Navier-Stokes equations, which are the major governing equations for CFD.\footnote[0]{Though the existence of the smooth solutions for the Navier-Stokes equations are not yet proved, as CFD practitioners, we usually ignore this theoretical fact.}
+These PDEs include the Navier-Stokes equations, which are the primary governing equations for CFD.\footnote[0]{Though the existence of the smooth solutions for the Navier-Stokes equations is not yet proved, as CFD practitioners, we usually ignore this theoretical fact.}
 
-Figure \ref{fig:mlp-graph} is a commonly seen graphical illustration for how MLP works in literature.
-To avoid introducing more mathematical symbols, in this section and in figure \ref{fig:mlp-graph}, we reuse the notation from the previous section.
-
-\begin{figure}
+Figure \ref{fig:mlp-graph} is a commonly seen graphical illustration of how MLP works in literature.
+\begin{figure}[hbt!]
     \singlespacing
     \includegraphics[width=0.95\linewidth]{figs/mlp.tikz}
     \caption{Graphical illustration of MLP networks}
     \label{fig:mlp-graph}
 \end{figure}
+To avoid introducing more mathematical symbols, in this section and figure \ref{fig:mlp-graph}, we reuse the notation from the previous section.
 
-An MLP network fundamentally is a series of linear-nonlinear mapping pairs:
+An MLP network is fundamentally a series of linear-nonlinear mapping pairs:
 \begin{equation}\label{eq:mlp-formula}
     \begin{array}{ll}
         \vec{h}^0 \equiv \begin{bmatrix} \vec{x} \\ t \end{bmatrix} & \\
@@ -30,7 +28,7 @@ $\vec{h}^k$ is called a hidden layer or a latent space vector.
 $\sigma_{k}$ is a chosen element-wise nonlinear function.
 $A^{k}$ and $\vec{b}^k$ for $k=0$ to $k=N_l$ are parameter matrices and vectors that consist of free model parameters.
 In other words, $\Theta=\left\{A^0, \vec{b}^0, A^1, \vec{b}^1, \cdots \right\}$.
-$N_l$ denotes the number of hidden layers, and $N_n$ in figure \ref{fig:mlp-graph} represents number of elements in each hidden layer, $\vec{h}^k$.
+$N_l$ denotes the number of hidden layers, and $N_n$ in figure \ref{fig:mlp-graph} represents the number of elements in each hidden layer, $\vec{h}^k$.
 Elements in $\vec{h}^k$ are often called neurons in deep learning.
 Theoretically, $N_n$ does not have to be constant.
 Each $\vec{h}^k$ can have different $N_n$.
@@ -40,29 +38,29 @@ We follow the same approach in this work.
 $A^k$ and $\vec{b}^k$ are the free parameters we want to determine in the optimization step (i.e., equation \eqref{eq:total-residual-weighted}).
 $N_l$ and $N_n$ are also parameters that control the complexity and accuracy of an MLP network.
 However, they are determined by users rather than by optimization.
-This type of parameters is called hyperparameters---they are not counted into the degree of freedom of a mathematical model.
+These parameters are called hyperparameters---they are not counted in the degree of freedom of a mathematical model.
 
 The element-wise nonlinear functions $\sigma_{k}$ are also pre-determined by users.
 Theoretically, they can be different functions across different $k$.
 To our knowledge, most reports in PINNs used the same function for all $k$, i.e., $\sigma_0(x)=\sigma_1(x)=\cdots=\sigma(x)$.
-In PINNs, most commonly seen choices of $\sigma$ are hyperbolic tangent ($\tanh$) and the sigmoid function:
+In PINNs, the most commonly seen choices of $\sigma$ are hyperbolic tangent ($\tanh$) and the sigmoid function:
 \begin{equation}
     \operatorname{sigmoid}(x) = \frac{1}{1+\exp(-x)}
 \end{equation}
-In this work, we instead use SiLU for $\sigma$ \cite{hendrycks_gaussian_2020}, which is the default option for Modulus:
+In this work, we use SiLU for $\sigma$ \cite{hendrycks_gaussian_2020}, which is the default option for Modulus:
 \begin{equation}\label{eq:silu}
     \operatorname{SiLU}(x) = \frac{x}{1+\exp(-x)}
 \end{equation}
 To our best knowledge, in terms of solving flow problems with data-free PINNs, no reports have discussed the effect of $\sigma$ except for \cite{li_integration_2010}.
 
 While simple MLP networks like \eqref{eq:mlp-formula} are not popular in modern deep learning applications, they are still the first choice in solving PDEs with data-free PINNs.
-The reason may be that MLP networks are supported by the universal approximation theorem, and most other networks were not.
-The universal approximation theorem proves MLP networks' ability to approximate any smooth functions, which makes them theory-backed mathematical models for PDEs' general solutions.
-Nevertheless, lacking theoretical proofs does not mean other networks would not work.
+The reason may be that the universal approximation theorem proves MLP networks' ability to approximate any smooth functions, which makes them theory-backed mathematical models for PDEs' general solutions.
+Other types of networks lack such a theoretical backup.
+Nevertheless, lacking theoretical proof does not mean other networks would not work.
 For example, \cite{sirignano_dgm:_2018} reported the success of using an LSTM-style network to solve PDEs.
 
-Networks with higher complexity imply more expensive computational cost.
-Whether using complicated networks is worth it may be another open question in terms of cost-performance ratios. 
+Networks with higher complexity imply a more expensive computational cost.
+Whether using complicated networks is worth it may be a question from the perspective of cost-performance ratios.
 Instead, in this work, we used a variant of MLP networks implemented in Modulus---a weight-normalization MLP \cite{salimans_weight_2016}:
 \begin{equation}\label{eq:weighted-norm-mlp-formula}
     \begin{array}{ll}
@@ -82,9 +80,11 @@ The key idea is to decouple each row in $A^k$ to a length multiplying a directio
 $\operatorname{diag}\left(\vec{w}_n^k\right)W^k$ is a row-normalized matrix, that is, each row is a unit vector.
 $\vec{w}_g^k$ represents the lengths of the corresponding rows.
 
-Equation \eqref{eq:weighted-norm-mlp-formula} does not actually alter the architecture of an MLP network but rearranges the mathematical expression.
-Theoretically, either using \eqref{eq:mlp-formula} or \eqref{eq:weighted-norm-mlp-formula}, a perfect optimization scheme should find $A^k$ and $\operatorname{diag}\left(\vec{w}_g^{k-1}\right) \operatorname{diag}\left(\vec{w}_n^{k-1}\right)^{-1} W^{k-1}$ equivalent.
-However, real-world is far from perfect, and Salimans and Kingma \cite{salimans_weight_2016} found using the expression of \eqref{eq:weighted-norm-mlp-formula} speeds up the convergence when using 1st-order optimization schemes, such as the basic gradient-descent and Adam.
+Compared to using other types of networks, a weight-normalization MLP \eqref{eq:weighted-norm-mlp-formula} does not actually alter the architecture of an MLP network.
+It just rearranges the mathematical expression.
+Theoretically, either using \eqref{eq:mlp-formula} or \eqref{eq:weighted-norm-mlp-formula}, a perfect optimization scheme should find $A^k$ and $\operatorname{diag}\left(\vec{w}_g^{k-1}\right) \operatorname{diag}\left(\vec{w}_n^{k-1}\right)^{-1} W^{k-1}$ equivalent to each other.
+However, the real world is far from perfect.
+Salimans and Kingma \cite{salimans_weight_2016} found that using the expression of \eqref{eq:weighted-norm-mlp-formula} speeds up the convergence when using 1st-order optimization schemes, such as the basic gradient-descent and Adam.
 
 The weight-normalization variant of the MLP networks has the following formula to calculate the total number of free parameters:
 \begin{equation}\label{eq:dof-calculator}
@@ -93,5 +93,5 @@ The weight-normalization variant of the MLP networks has the following formula t
     N_{n} \left(N_{n} + 2 \right) \left(N_l-1\right) +
      N_{out}\left(N_{n} + 1\right)
 \end{equation}
-where $DoF$ means the degree of freedom, which is another term for the number of free parameters.
+where $DoF$ means the degree of freedom, another term for the number of free parameters.
 % vim:ft=tex

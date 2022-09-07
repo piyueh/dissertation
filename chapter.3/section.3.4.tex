@@ -33,12 +33,12 @@ This results in a system of linear equations:
     \end{bmatrix}
     = 0
 \end{equation}
-Solving this linear system determines the values of $\theta_i$ and conclude the solving workflow of this naive spectral method.
+Solving this linear system determines the values of $\theta_i$ and concludes the solving workflow of this naive spectral method.
 The obtained $\theta_i$ guarantees that the residuals are zero at least on the $N$ chosen $x$ coordinates.
 
 Though this example uses a spectral method, the workflow also applies to many other numerical methods, such as finite difference methods, which can be reformatted as a form of spectral method.
 
-Alternatively, some numerical methods solve $\theta_i$ through finding the values that minimize the square of the residual across the whole $x$ domain:
+Alternatively, some numerical methods solve $\theta_i$ by finding the values that minimize the square of the residual across the whole $x$ domain:
 \begin{equation}\label{eq:least-square-fem}
     \begin{aligned}
         \begin{bmatrix}
@@ -123,23 +123,23 @@ If we replace the integral in \eqref{eq:least-square-fem} with a Monte-Carlo num
 where $L_x$ is the computational domain, and $N$ is the number of random points sampled from the computational domain.
 We can see that \eqref{eq:least-square-monte-carlo} is actually the loss function in PINNs (equations \eqref{eq:residual-norms} and \eqref{eq:total-residual}) tailored to this specific example.
 (The BCs are omitted from the beginning of this example for simplicity.)
-Equations \eqref{eq:least-square-fem}-\eqref{eq:spetral-least-equare} are called least-square finite-element methods (least-square FEMs).
-This shows PINNs can be seen as a type of global least-square FEMs.
+Equations \eqref{eq:least-square-fem}-\eqref{eq:spetral-least-equare} are called least-square finite-element methods (LSFEMs).
+Equation \eqref{eq:least-square-monte-carlo} shows that PINNs can be seen as a type of global LSFEMs.
 
-With the spectral and least-square finite element methods in mind, we can see the analogy between PINNs and conventional numerical methods.
-Especially when comparing to the least-square FEMs, their workflows are very close.
+With the spectral methods and LSFEMs in mind, we can see the analogy between PINNs and conventional numerical methods.
+Especially when compared to the LSFEMs, their workflows are very close.
 The main difference is that PINNs replace the analytical integration with a Monte-Carlo numerical integration.
-Further, while the least-square FEMs solve zero-slope conditions to find the minimum residuals, PINNs rely on searching the minimal residuals on a complicated hypersurface of residuals iteratively.
+Further, while the LSFEMs solve zero-slope conditions to find the minimum residuals, PINNs rely on searching the minimal residuals on a complicated hypersurface of residuals iteratively.
 It is due to the complexity and the nonlinearity of the models in PINNs, where neither solving zero-residual conditions on selected points nor solving zero-slope conditions can reduce problems to a linear system. 
 
 The second difference is how to approximate derivatives.
 Conventional numerical methods use analytical or numerical differentiation of the models to approximate derivatives.
-On the other hand, modern PINNs depend on automatic differentiation due to the complexity and nonlinearity in the networks.
+On the other hand, modern PINNs depend on automatic differentiation due to the networks' complexity and nonlinearity.
 
 The two differences play an important role in solution accuracy and time-to-solution.
-Solving linear systems is intuitively faster than solving a nonlinear optimization problems through 1st-order optimization methods and is cheaper than 2nd-order methods in terms of memory usage.
-And while automatic differentiation is powerful, it requires a nontrivial computer memory.
+Solving linear systems is intuitively faster than solving nonlinear optimization problems through 1st-order optimization methods and is cheaper than 2nd-order methods in terms of memory usage.
+And while automatic differentiation is powerful, it requires nontrivial computer memory.
 As seen in section \ref{sec:ad}, automatic differentiation needs to memorize all computational graphs for derivatives.
-And high-order derivatives needs also to memorize the computational graphs of lower-order derivatives, making the computational graph to grow exponentially.
+High-order derivatives also need to memorize the computational graphs of lower-order derivatives, making the computational graph grow exponentially.
 
 % vim:ft=tex

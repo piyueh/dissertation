@@ -1,7 +1,7 @@
 %! TEX root = main.tex
-In equation \eqref{eq:total-residual-weighted}, each individual loss term is weighted.
-However, how to properly assign the weights is still and open question.
-In references \cite{jin_nsfnets_2020,wang_understanding_2021}, the authors proposed an annealing approach to change these weights in an adaptive fashion during the optimization process.
+In equation \eqref{eq:total-residual-weighted}, each loss term is weighted.
+How to properly assign the weights is still an open question.
+In references \cite{jin_nsfnets_2020,wang_understanding_2021}, the authors proposed an annealing approach to change these weights adaptively during the optimization process.
 However, these adaptive approaches have not been further tested by more works.
 In this work, part of the benchmarks will cover the performance of the adaptive weight strategy proposed in \cite{jin_nsfnets_2020}.
 
@@ -12,10 +12,10 @@ Jin et al. \cite{jin_nsfnets_2020} proposed the following annealing loss aggrega
         \left(\left(1-\lambda\right)\beta^k + \lambda\beta^{k+1}\right)r_{IC}^k(\Theta)
 \end{equation}
 where $k$ denotes the $k$-th iteration in an iterative optimization method.
-The subscript $PDE$, $BC$, and $IC$ denote the loss contributions from the residuals of PDEs, BCs, and IC.
+The subscript $PDE$, $BC$, and $IC$ denote the loss contributed by the residuals of PDEs, BCs, and IC.
 $\lambda$ is a user-provided parameter to control the moving average of the current and the previous weights.
 The concept of this adaptive approach is to make the gradients of each loss term comparable.
-When using the gradient-descent method and its derived methods, the magnitude of each loss term is reduced with a similar rate.
+The magnitude of each loss term is reduced at a similar rate when using the gradient-descent method and its derived methods.
 And
 \begin{equation}
     \alpha^{k+1} = \frac{\overline{\lvert\nabla_\Theta r_{PDE}^k(\Theta)\rvert}}{\overline{\lvert\nabla_\Theta r_{BC}^k(\Theta)\rvert}}
@@ -23,7 +23,7 @@ And
     \beta^{k+1} = \frac{\overline{\lvert\nabla_\Theta r_{PDE}^k(\Theta)\rvert}}{\overline{\lvert\nabla_\Theta r_{IC}^k(\Theta)\rvert}}
 \end{equation}
 $\lvert\cdot\rvert$ denotes the element-wise absolute values of a vector.
-$\overline{\lvert\cdot\rvert}$ is the mean values of these absolute values.
+$\overline{\lvert\cdot\rvert}$ is the mean of these absolute values.
 
 The following expression better represents the actual implementation in our code:
 \begin{equation}

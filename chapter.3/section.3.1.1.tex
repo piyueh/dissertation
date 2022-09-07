@@ -33,7 +33,7 @@ and
         t \in [0, T]
     \right.
 \end{equation}
-We only list the Dirichlet BCs to save space and for the simplicity, as the treatment of Neumann BCs does not differ from treating PDEs in PINNs.
+We only list the Dirichlet BCs to save space and for simplicity, as the treatment of Neumann BCs does not differ from treating PDEs in PINNs.
 
 In the method of PINNs, the first step is to approximate the solutions of \eqref{eq:orig-ns} with a neural network model.
 Says, the network model is named $G$, of which the inputs are spatial coordinates $\vec{x}\equiv\begin{bsmallmatrix}x & y & z\end{bsmallmatrix}^\mathsf{T}$, time $t$, and a set of free parameters $\Theta$ that we need to determine later:
@@ -60,7 +60,7 @@ where $\vec{u}\equiv\begin{bsmallmatrix}u & v & p\end{bsmallmatrix}^\mathsf{T}$ 
 In \eqref{eq:G-network}, we use a single network to predict both pressure and velocity fields.
 Though it is possible to use separate networks for different fields, we keep \eqref{eq:G-network} this way for simplicity.
 Also, later in this work, we will use $G^{\vec{u}}$, $G^u$, $G^v$, $G^w$, and $G^p$ to denote the predicted velocity vector, components, and pressure from $G$.
-In this section we will focus on the solution workflow \cite{dissanayake_neural-network-based_1994,lagaris_artificial_1998,cai_physics-informed_2021} and leave the mathematical expression of neural netwrok models to section \ref{sec:mlp}.
+In this section, we will focus on the solution workflow \cite{dissanayake_neural-network-based_1994,lagaris_artificial_1998,cai_physics-informed_2021} and leave the mathematical expression of neural network models to section \ref{sec:mlp}.
 
 The next step is to approximate the derivatives required for the differential equations.
 For example, the continuity equation $\nabla \cdot \vec{u} = \pdiff{u}{x} + \pdiff{v}{y} + \pdiff{w}{z}$ requires the approximations for the 1st-order derivatives of velocity.
@@ -69,8 +69,8 @@ For example, using finite difference, $\pdiff{u}{x}$ can be
 \begin{equation*}
     \pdiff{u}{x} \approx \frac{G^u(x+\Delta x, \cdots)-G^u(x-\Delta x, \cdots)}{2\Delta x} 
 \end{equation*}
-As the model $G$ is continuous and not defined on discretized space, $x$ can be arbitrary coordinates in the domain.
-And $\Delta x$ is a user-provided scalars as there is no grid.
+Model $G$ is continuous and not defined on discretized space, so $x$ can be arbitrary coordinates in the domain.
+And $\Delta x$ is a user-provided scalar as there is no grid.
 However, we will not proceed with numerical differentiation. 
 Being a continuous model and having a well-defined mathematical expression, $G$ gives us two more reasonable options.
 
@@ -103,8 +103,8 @@ For example, a very simple MLP network for a steady 2D flow may look like
     \end{aligned}
 \end{equation}
 where $a_{ij}$, $b_i$, and $c_{ki}$ for $i,j=1,2$ and $k=1,2,3$ are free parameters in the model and belong to $\Theta$.
-This MLP network is said to have one hidden layer with 2 neurons per layer, and it uses cosine for the activation function.
-(Note it is uncommon to use cosine for the activation in real applications.)
+This MLP network is said to have one hidden layer with 2 neurons per layer and uses cosine for the activation function.
+(Note that it is uncommon to use cosine for activation in real applications.)
 We will formally introduce the definitions of these terms and the MLP's matrix form in section \ref{sec:mlp}.
 Given the expression of \eqref{eq:explicit-toy-mlp}, we are able to derive the derivatives.
 Such as
@@ -117,20 +117,20 @@ Such as
     a_{11}c_{11}\cos\left(a_{11}x + a_{12}y + b_1\right) + a_{21}c_{12}\cos\left(a_{21}x + a_{22}y + b_2\right)
     \end{aligned}
 \end{equation}
-And the same applies to all higher-order derivatives.
+And the same concept applies to all higher-order derivatives.
 
 Analytical derivatives were used in earlier literature when the networks might be just slightly more complicated than the one shown in \eqref{eq:explicit-toy-mlp}.
-When the neural network models become more and more complicated, analytical derivatives become much less feasible if not impossible.
-Even modern hardware and symbolic differentiation software is not able to derive the analytical derivatives when $G$ has tens of thousands of free parameters and when the activation is not as simple as a cosine function.
+When the neural network models become more and more complicated, analytical derivatives become much less feasible, if not impossible.
+Even modern hardware and symbolic differentiation software may not be able to derive the analytical derivatives when $G$ has tens of thousands of free parameters and when the activation is not as simple as a cosine function.
 
 Modern deep learning, instead, relies on the second option: automatic differentiation \cite{griewank_automatic_1988}.
 Automatic differentiation is based on the chain rule and gives exact derivatives (exact with respect to actual computer intrinsic operations).
 Section \ref{sec:ad} will talk about the fundamental concept of automatic differentiation.
 At this point, we can just treat the automatic differentiation as a black box function that returns exact derivatives.
-It requires less computing resource than symbolic differentiation and provides more accurate derivatives than numerical differentiation.
+It requires fewer computing resources than symbolic differentiation and provides more accurate derivatives than numerical differentiation.
 
-Moving on to the next step, once we obtain the desired derivatives, we substitute these derivatives in to the governing PDEs, IC, and BCs.
-For example, substituting $G$ and corresponding derivatives to \eqref{eq:orig-ns}, \eqref{eq:orig-ns-ic}, \eqref{eq:orig-ns-bc}, we get several residual functions
+Moving on to the next step, once we obtain the desired derivatives, we substitute these derivatives into the governing PDEs, IC, and BCs.
+For example, by substituting $G$ and corresponding derivatives to \eqref{eq:orig-ns}, \eqref{eq:orig-ns-ic}, and \eqref{eq:orig-ns-bc}, we get several residual functions
 \begin{equation}\label{eq:residuals}
     \begin{array}{ll}
         \left\{
@@ -167,7 +167,7 @@ For example, substituting $G$ and corresponding derivatives to \eqref{eq:orig-ns
         \right.
     \end{array}
 \end{equation}
-We omitted $\vec{x}$, $t$, and $\Theta$ in $G$ to make the expression cleaner. 
+To make the expression cleaner, we omitted $\vec{x}$, $t$, and $\Theta$ in $G$.
 Residual vectors $\hat{\vec{r}}_i$ and residual scalar $\hat{r}_i$, where $i$ denotes different residual sources, are functions of $\vec{x}$, $t$, and $\Theta$.
 They are zero anywhere in the domain of interest only when the approximation solution $G$ perfectly fits in \eqref{eq:orig-ns}, \eqref{eq:orig-ns-ic}, and \eqref{eq:orig-ns-bc}.
 
@@ -177,15 +177,15 @@ $\vec{\theta}$ then represents the common zero roots of all the residual functio
 Assume there are a total of $N_\Theta$ free parameters.
 If residual functions in (\ref{eq:residuals}) are not complicated, and if $N_\Theta$ is small enough, we may numerically find the zero roots by solving a system of $N_\Theta$ nonlinear equations.
 Such a system of nonlinear equations may be generated by enforcing the zero-residual conditions only on a set of $N_\Theta$ spatial-temporal points, i.e., $N_\Theta$ pairs of $\vec{x}$ and $t$.
-However, this approach rarely results in an easy-to-solve system given that $G$ is usually complicated and $N_\Theta$ is large.
+However, this approach rarely results in an easy-to-solve system, given that $G$ is usually complicated and $N_\Theta$ is large.
 Even for the toy model like \eqref{eq:explicit-toy-mlp}, the first-order derivatives are non-trivial.
 If we further consider higher-order derivatives and the native nonlinearity in the PDEs, even this toy model results in a complicated nonlinear system. 
 We do not even know if zero roots exist for this nonlinear system.
 
 We instead relax the condition in PINNs.
 We do not seek the zero roots of \eqref{eq:residuals} but just hope the desired set of parameters, $\theta$, makes the residuals sufficiently close to zero.
-Also, note that the residuals functions in \eqref{eq:residuals} are continuous in the domain and time range of our interest.
-To make the optimization easier, we also limit ourselves to find the minimal residuals at some spatial-temporal coordinates only, rather than asking for minimal residuals everywhere in the continuous space-time domain. 
+Also, note that the residual functions in \eqref{eq:residuals} are continuous in the domain and time range of our interest.
+To make the optimization easier, we also limit ourselves to finding the minimal residuals at some spatial-temporal coordinates only, rather than asking for minimal residuals everywhere in the continuous space-time domain. 
 In other words, the resulting optimization problem tries to find $\vec{\theta}$ that gives the minimal residuals on some spatial-temporal points.
 
 Assume we have picked $N_{PDE}$ spatial-temporal points from $\vec{x}\in\Omega$ and $t\in[0, T]$, $N_{IC}$ points in $\Omega$ but with a fixed time $t=0$, and $N_{BC}$ points from $\vec{x} \in \Gamma_{bc}$ and $t\in[0, T]$.
@@ -223,7 +223,7 @@ Alternatively, most recent reports of PINNs used soft constraints, that is
 \end{equation}
 Though the optimized $\vec{\theta}$ does not guarantee that IC and BCs are satisfied, \eqref{eq:total-residual} is easier to solve and to be generalized to different PDEs, BCs, or applications.
 In the terminology of optimization, \eqref{eq:total-residual} is called the loss function or objective.
-And residuals from different sources are called loss terms.
+Residuals from different sources are called loss terms.
 
 In practice, a more general form of \eqref{eq:total-residual} is
 \begin{equation}\label{eq:total-residual-weighted}
@@ -238,9 +238,9 @@ In practice, a more general form of \eqref{eq:total-residual} is
 where $i$ denotes different loss terms in \eqref{eq:residual-norms}.
 Each loss term is weighted before being aggregated to the final loss.
 To our best knowledge, nevertheless, there is not yet a standard or guideline for how to properly configure $\alpha_i$.
-And it is common to see $\alpha_i=1$ in literature.
+It is common to see $\alpha_i=1$ in literature.
 
-If there exists zero roosts that make all residuals in \eqref{eq:residual-norms} zero, then a perfect optimization method will find them from either \eqref{eq:hard-constraint-loss}, \eqref{eq:total-residual}, or \eqref{eq:total-residual-weighted}.
+If there exist zero roosts that make all residuals in \eqref{eq:residual-norms} zero, then a perfect optimization method will find them from either \eqref{eq:hard-constraint-loss}, \eqref{eq:total-residual}, or \eqref{eq:total-residual-weighted}.
 This hope is surely unrealistic.
 First, zero roots' existence is not guaranteed.
 Second, the hypersurface of the aggregated loss, $r(\Theta)$, in the vector space of $\Theta$ is usually neither convex nor concave, making it difficult to find the global minimum.
@@ -252,12 +252,11 @@ It is thus reasonable to doubt PINNs' accuracy compared to conventional schemes.
 
 Nevertheless, finding optimized $\vec{\theta}$ concludes the workflow of data-free PINNs for solving PDEs.
 Figure \ref{fig:pinn-workflow} shows a graphical illustration of the workflow.
-
-\begin{figure}[H]
+\begin{figure}[hbt!]
     \includegraphics[width=\linewidth]{figs/pinn.tikz} 
     \caption{A graphical demonstration of workflow in PINNs}
     \label{fig:pinn-workflow}
 \end{figure}
 
-The optimization process is done with the Adam optimizer \cite{kingma_adam_2017} in this work together with a batched approach described in the next section.
+The optimization process is done with the Adam optimizer \cite{kingma_adam_2017} in this work, together with a batched approach described in the next section.
 % vim:ft=tex

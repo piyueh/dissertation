@@ -1,29 +1,29 @@
 %! TEX root = main.tex
 
-Compared to solving $N_\Theta$ nonlinear equations directly, an optimization problem of \eqref{eq:total-residual} or \eqref{eq:total-residual-weighted} allows us to use any numbers of spatial-temporal points.
+Compared to solving $N_\Theta$ nonlinear equations directly, an optimization problem of \eqref{eq:total-residual} or \eqref{eq:total-residual-weighted} allows us to use any number of spatial-temporal points.
 That is, there is no limitation on the magnitude of $N_{PDE}$, $N_{BC}$, and $N_{IC}$.
-This eases the need of computational resources.
+This eases the need for computational resources.
 In data-free PINNs, these spatial-temporal points are called training points or training data.
 They are spatial-temporal coordinates where we evaluate the residuals of PDEs, IC, and BCs.
 While training points may be generated manually and intentionally positioned at desired locations (just like meshing in conventional CFD simulations), it is more common to generate them by selecting coordinates randomly using a uniform density function. 
 
-The ability to use arbitrary numbers of training points helps in the generalizability of a trained PINNs model.
+The ability to use arbitrary numbers of training points helps the generalizability of a trained PINNs model.
 When more training points are involved in \eqref{eq:residual-norms} and hence \eqref{eq:total-residual-weighted}, the minimal residuals are achieved at more locations in the domain. 
-Ultimately, with unlimited training points evenly distributed in the domain, the optimization of the discretized residuals in \eqref{eq:residual-norms} becomes optimization of the continuous residual functions in \eqref{eq:residuals}. 
+Ultimately, with unlimited training points evenly distributed in the domain, optimizing the discretized residuals in \eqref{eq:residual-norms} becomes optimizing continuous residual functions in \eqref{eq:residuals}. 
 And the resulting optimal parameters, $\vec{\theta}$, will make $G$ a more accurate approximation solution to the whole domain of $\Omega$ and $t\in[0, T]$.
 
-More points also mean more computational cost.
-To reduce the cost, a batched training is utilized.
+More points also mean a higher computational cost.
+Batched training is thus utilized to reduce the cost.
 For example, if using an iterative optimization method (such as the gradient-descent or Adam optimizer), we can always generate a new batch of training points for a new iteration to evaluate the discretized residuals.
 After a significant number of iterations, the total number of training points involved in optimization will also be significant.
-Once the model is trained, theoretically, it is therefore capable of giving accurate predictions at any locations and times.
+Once the model is trained, theoretically, it is capable of giving accurate predictions at any location and time.
 
 In practice, however, it is not a cheap task if thousands or even more random points have to be generated on the fly at each iteration.
 We instead generated a fixed amount of training points before the optimization and only used a batch of them in each iteration.
 For example, to use $N_{PDE}$ points to evaluate the PDE residuals at each iteration, we may generate $N_{PDE}\times 1000$ points in advance and divide them into $1000$ batches.
 If we run an optimizer for 1 million iterations, each batch is repeated every 1000 iterations.
 
-Theoretically, each batch should have similar statistical properties and hence give a similar gradient vector under fixed model parameters.
+Theoretically, each batch should have similar statistical properties and give a similar gradient vector under fixed model parameters.
 That is
 \begin{equation}
 \left.\nabla_\theta r(\Theta) \right|_{\vec{x}, t \in \mathcal{X}_1} \sim
@@ -33,11 +33,11 @@ That is
 where $\mathcal{X}_i$ for $i=1,2,\cdots$ represents the $i$-th batch of the training points.
 These gradients are used to update $\vec{\theta}$ in iterative optimization methods.
 In other words, the hypersurface of $r(\Theta)$ is expected not to change significantly from iteration to iteration when using different batches of points to evaluate it.
-However, whether this statement is true may depend on the number of points in each batch: the number of points should be big enough to have similar statistical properties across different batches.
+However, whether this statement is true may depend on the number of points in each batch: the number of points should be large enough to have similar statistical properties across different batches.
 
-In PINNs, as the training points are randomly sampled from the computational space-time domain, it means the number of points in a batch should be big enough to cover all over the domain.
-Otherwise, for example, if one batch mostly covers the inflow region of a cylinder flow, while the next batch covers mostly the wake region behind the cylinder, then the hypersurface of the PDE residuals will change significantly.
-And this change of the hypersurface from iteration to iteration may slow down the convergence.
-In the later benchmarks, we would like to examine the effect of batch sizes, i.e., number of points in each batch. 
+In PINNs, as the training points are randomly sampled from the computational space-time domain, the number of points in a batch should be large enough to cover all over the domain.
+Otherwise, for example, if one batch mostly covers the inflow region of a cylinder flow while the next batch covers mostly the wake region behind the cylinder, then the hypersurface of the PDE residuals will change significantly.
+This change of the hypersurface from iteration to iteration may slow down the convergence.
+In the later benchmarks, we would like to examine the effect of batch sizes, i.e., the number of points in each batch. 
 
 % vim:ft=tex
