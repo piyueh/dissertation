@@ -32,9 +32,9 @@ Through PETSc's unified calling interface, PetIBM users are able to choose diffe
 However, one prominent feature missing from PETSc when we developed PetIBM was the capability of using distributed GPU clusters.
 
 We developed AmgXWrapper \cite{chuang_geoclaw-arcgis_2019} to bridge PETSc and NVIDIA's AmgX library.
-AmgX is a library providing multi-GPU algebraic multigrid linear solvers.
+AmgX is a library providing multi-GPU algebraic multigrid preconditioners.
 AmgXWrapper provides a translation layer for PETSc to call AmgX, and its target applications are legacy PETSc applications. 
-With the help of AmgX, by inserting around 5 lines of code, legacy PETSc applications can enjoy the computing power of the modern GPU technology.
+With the help of AmgXWrapper, by inserting around 5 lines of code, legacy PETSc applications can enjoy the computing power of the modern GPU technology.
 See figure \ref{fig:amgxwrapper} for using AmgXWrapper in PETSc.
 \begin{figure}[hbt!]
     \includegraphics[width=0.6\linewidth]{amgxwrapper.png}
@@ -51,7 +51,7 @@ They expect users to use the same number for MPI processes and GPUs.
 AmgXWrapper provides a matrix consolidation mechanism for use cases when CPU cores and MPI processes are greater than available GPUs.
 For example, most GPUs nowadays do not have enough memory to host a whole 3D CFD problem, so users may choose to use CPUs for solving forcing and velocity systems as they are not performance bottlenecks.
 They only use GPUs for pressure solvers to save GPU memory usage.
-Therefore, it is natural for these users to use as many CPUs for forcing and velocity, and domain decomposition is done using the same number of MPI processes on CPUs.
+Therefore, it is natural for these users to use as many CPUs for forcing and velocity as possible, and domain decomposition is done using the same number of MPI processes on CPUs.
 When calling pressure solvers on GPUs, the number of subdomains does not match the number of GPUs, and this is when the matrix consolidation layer comes into play, as shown in figure \ref{fig:amgxwrapper-consolidation}.
 \begin{figure}[hbt!]
     \includegraphics[width=0.6\linewidth]{amgxwrapper-consolidation.png}

@@ -111,7 +111,7 @@ The IBPM is based on the following block-matrix system that can be generated fro
     \end{bmatrix}
 \end{equation}
 where $A$, $G$, and $D$ correspond to the $\frac{1}{\Delta t}I+\alpha\frac{1}{Re}L$, gradient, and divergence operators of a given spatial discretization. 
-$L$ is the Laplacian operator, and $alpha$ is a coefficient that depends on chosen time marching scheme for the diffusion term.
+$L$ is the Laplacian operator, and $\alpha$ is a coefficient that depends on chosen time marching scheme for the diffusion term.
 $H$ and $E$ are the operators from substituting equation \eqref{eq:regularized-dirac} into equation \eqref{eq:mod-ns} and discretizing the forcing terms and \eqref{eq:mod-ns-body-vel}.
 Only matrix $A$ is a square matrix, while others are not.
 Superscript $n+1$ and $n$ denote the $n+1$-th and $n$-th time steps.
@@ -119,7 +119,7 @@ $\vec{\gamma}^n$ represents the results of explicit terms from the selected time
 Though having a superscript $n$, $\vec{\gamma}^n$ can also depend on solutions from $n-1$, $n-2$, and so on, based on the chosen temporal schemes.
 $\vec{bc}_1$ and $\vec{bc}_2$ are the artifacts generated from eliminating BCs from operators.
 
-Reference \cite{taira_immersed_2007} shows an example of how these operators are defined using a staggered Cartesian grid for spatial discretization, Adams-Bashforth for marching the convection term, and Crank-Nicolson for marching the diffusion term can be found in \cite{taira_immersed_2007}.
+Reference \cite{taira_immersed_2007} shows an example of how these operators are defined using a staggered Cartesian grid for spatial discretization, Adams-Bashforth for marching the convection term, and Crank-Nicolson for marching the diffusion term.
 Here, we assume we already have these operators to save space.
 We can focus on the solution scheme of this block matrix system using the decoupled IBPM in reference \cite{li_efficient_2016}.
 
