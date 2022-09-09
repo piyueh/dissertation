@@ -26,7 +26,7 @@ $\lvert\cdot\rvert$ denotes the element-wise absolute values of a vector.
 $\overline{\lvert\cdot\rvert}$ is the mean of these absolute values.
 
 The following expression better represents the actual implementation in our code:
-\begin{equation}
+\begin{equation}\label{eq:annealing-in-this-work}
     \begin{aligned}
         &\zeta^k =
             \overline{\lvert\nabla_\Theta r_{m,u}^k(\Theta)\rvert} +

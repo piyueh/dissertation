@@ -1,0 +1,34 @@
+%! TEX root = main.tex
+The PINN solvers used in the later benchmarks were implemented with the help of NVIDIA's Modulus \cite{noauthor_modulus_nodate}.
+Modulus utilizes symbolic expression, constructive solid geometry, computational graphs, and PyTorch to make defining a PINN PDE solver easier.
+It provides some pre-defined PDE solvers and neural network architectures.
+Regular users only need to configure the computational domains and constraint instances to evaluate each loss term in equation \eqref{eq:total-residual-weighted}.
+(For example, the number of training points per batch, sampling regions, or weights.)
+These configurations are done with a combination of YAML files and Python code.
+For simple use cases, the Python code only consists of several lines defining how to interpret the key-value pairs in the YAML files and calling APIs to set up loss terms.
+
+Another feature of Modulus is using SymPy's symbolic expression \cite{meurer_sympy_2017} as a user interface.
+For example, if users want to sample points from the region where $x > 0.5$, they add a SymPy symbolic expression instance of \lstinline{sympy.Gt(x, 0.5)} to the corresponding constraint instance.
+Internally, Modulus does not rely on symbolic calculation.
+Instead, it translates users' symbolic expressions to numeric calculations in PyTorch.
+With this symbolic user interface, users are even allowed to define new PDEs by using symbolic expressions.
+Please refer to Modulus' manual for details.
+
+In our work, we further customized and added several components in Modulus to meet our needs:
+\begin{enumerate}[nolistsep]
+    \item A reimplementation of the unsteady incompressible Navier-Stokes equations.
+    Modulus also ships a similar class for the compressible Navier-Stokes equations, which falls back to the same incompressible formulation when the density is a constant.
+    We reimplemented it for a better control over the source code.
+    \item Other non-governing PDEs, such as vorticity, Q criterion, and Neumann and convective boundary conditions.
+    \item A binding to PyTorch's \lstinline{CylicLR} learning schedule.
+    \item Nonlinear CG and inexact line search as a subclass of \lstinline{torch.optim.Optimizer}.
+    \item Reimplementation of the annealing loss aggregation based on equation \eqref{eq:annealing-in-this-work}. The original annealing loss aggregation implementation was hard-coded for single-variable PDEs, which does not work with PDE systems like the Navier-Stokes equations.
+    \item A solution workflow controller that allows the use of annealing loss aggregation, Adam, nonlinear CG, and SWA in an arbitrary combination. 
+    \item An inferencer that allows to output only the desired portion of a PINN model every given iterations. 
+    \item Boundary and interior constraint classes that are aware of the counter of training iterations so that they keep re-using the same batch of training points when the iteration counter remains the same.
+    They are used when the CG optimizer and the annealing loss aggregation are both enabled.
+\end{enumerate}
+
+The code for the mentioned new/reimplemented components is available at \cite{chuang_dissertation_nodate}.
+The same reference also contains all other code, scripts, and the container definition files for reproducing the results and figures in the later benchmarks.
+% vim:ft=tex
