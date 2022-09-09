@@ -10,8 +10,8 @@ We are particularly interested in the following properties:
 \begin{description}
     \item[Convergence]
         Engineering cares about the trade-off between cost and performance.
-        In terms of numerical simulations, it means whether we can get a better result if we are willing to spend more time and monetary cost or whether we can reduce the cost when sacrifice in accuracy is allowed.
-        If a quantitative relationship can not be deduced, we expect to have at least a qualitative correlation established.
+        In terms of numerical simulations, it means whether we can get a better result if we are willing to spend more time and monetary cost or whether we can reduce the cost when a sacrifice in accuracy is allowed.
+        If a quantitative relationship can not be deduced, we expect to have at least a qualitative relationship established.
     \item[Scalability]
         Once we have preliminary cost and performance results from test runs (e.g., from low-resolution simulations or only the first few iterations under actual configurations), scalability helps estimate the required hardware cost to meet a given time cost allowance or vice versa.
         We would like to investigate both the strong and weak scaling of data-free PINNs.
@@ -21,36 +21,36 @@ We are particularly interested in the following properties:
         Convergence and cost-performance ratios may be confusingly similar.
         However, convergence only concerns the accuracy and model complexity (e.g., DoFs); it does not concern the computational workload per-unit model complexity (if it is measurable).
         Neither does convergence provide information about the time and hardware requirement to finish a given workload.
-        As most reports in the literature did not report or investigate deeper in the computational cost, we would like to examine PINNs from this perspective.
+        As most reports in the literature did not report or investigate the computational cost, we would like to examine PINNs from this perspective.
         Here, computational costs include both time and computing hardware.
     \item[Training strategies]
-        Like network architecture and hyperparameters are predominantly random choices in literature, the training strategies (e.g., optimizers) seem to be in a similar situation.
+        In the literature, the configurations and the choices of training strategies (e.g., optimizers, learning schedules) seem to be arbitrary.
         Take the use of L-BFGS as an example.
         Only Krishnapriyan et al. \cite{krishnapriyan_characterizing_2021} reported using L-BFGS because it performed better for unknown reasons.
-        Other reports that used L-BFGS did not even justify their choice.
+        Other reports that used L-BFGS did not justify their choice.
         Neither did these works report the results of using other training strategies.
         In this work, we would like to test several training strategies to see how they affect the training.
         These strategies include exponentially-decaying learning rate, cyclic learning rate, stochastic weight averaging, nonlinear conjugate gradient, and annealing loss aggregation.
     \item[Capability in problems with instability]
-        We would like to examine the capability of data-free PINNs in solving flow problems with instability.
+        We would like to examine the capability of data-free PINNs in solving flow problems with fluid instabilities.
         The chosen case is 2D cylinder flow---a standard benchmark for conventional CFD solvers.
-        If data-free PINNs are considered a potential alternative to conventional solvers, then it is expected to produce at least physical solutions in this benchmark case.
+        If data-free PINNs are considered a potential alternative to conventional solvers, then they should be expected to produce at least physical solutions in this benchmark case.
     \item[Cost on non-computing tasks]
         In academia, it is not uncommon for researchers to only consider a solver's run time as time cost.
         However, in practice, code development and pre-/post-processing also contribute a significant portion to the cost of a project.
-        Given that human labor and associated time/monetary cost may be challenging to evaluate and to be compared in an objective approach, we would like to share our subjective viewpoints on this topic in the final discussion.
-        As we are the developers of the PINNs solvers and the conventional CFD solver used in this work, our knowledge and experience should be able to justify our subjective claims.
+        Given that human labor and associated time/monetary cost may be challenging to evaluate and to be compared in an objective manner, we would like to share our subjective viewpoints on this topic in the final discussion.
+        As we are the developers of the PINNs solvers and the conventional CFD solver used in this work, our knowledge and experience should be sufficient to justify our subjective claims.
 \end{description}
 
 A 2D Taylor-Green vortex problem was chosen for benchmarking convergence, scalability, cost-performance ratios, and training strategies.
-2D Taylor-Green vortex has periodic boundary conditions in both $x$ and $y$ directions, and its solution exponentially decays from the initial conditions.
+The 2D Taylor-Green vortex has periodic boundary conditions in both $x$ and $y$ directions, and its solution exponentially decays from the initial conditions.
 It is, therefore, a typical benchmark for conventional unsteady CFD solvers.
-Its convergence and other numerical properties are not affected by the implementation and errors of boundary conditions, and the temporal error accumulation can be better analyzed with less pollution.
+This flow problem has periodic boundary conditions, which allow us to investigate the spatial and temporal errors without the pollution from the numerical treatments of boundary conditions.
 
-As for the benchmark of flow with instability, we used two cylinder flow configurations: $Re=40$ and $Re=200$ ($Re$ denotes Reynolds number).
+As for the benchmark of flow with physical instability, we used two cylinder flow configurations: $Re=40$ and $Re=200$ ($Re$ denotes Reynolds number).
 2D cylinder flow at $Re=40$ does not have instability and has a steady solution.
-We used it to verify our PINN solver and confirm it can solve laminar flow with an object's presence.
-The actual benchmark is the one at $Re=200$.
+We used it to validate our PINN solver and confirm it can solve laminar flow with an immersed solid body.
+The target flow problem with instabilities is the one at $Re=200$.
 It does not have a steady solution, though eventually, the flow should reach a periodic flow pattern, i.e., the flow pattern repeats after every certain time.
 
 We built our PINN solver with the help of NVIDIA's Modulus library.

@@ -36,7 +36,7 @@ and
 We only list the Dirichlet BCs to save space and for simplicity, as the treatment of Neumann BCs does not differ from treating PDEs in PINNs.
 
 In the method of PINNs, the first step is to approximate the solutions of \eqref{eq:orig-ns} with a neural network model.
-Says, the network model is named $G$, of which the inputs are spatial coordinates $\vec{x}\equiv\begin{bsmallmatrix}x & y & z\end{bsmallmatrix}^\mathsf{T}$, time $t$, and a set of free parameters $\Theta$ that we need to determine later:
+Let the network model name be $G$, of which the inputs are spatial coordinates $\vec{x}\equiv\begin{bsmallmatrix}x & y & z\end{bsmallmatrix}^\mathsf{T}$, time $t$, and a set of free parameters $\Theta$ that we need to determine later:
 \begin{equation}\label{eq:G-network}
     \begin{bmatrix}
         \vec{u}(\vec{x}, t) \\ p(\vec{x}, t)
@@ -56,7 +56,7 @@ Says, the network model is named $G$, of which the inputs are spatial coordinate
         G^p
     \end{bmatrix}
 \end{equation}
-where $\vec{u}\equiv\begin{bsmallmatrix}u & v & p\end{bsmallmatrix}^\mathsf{T}$ is the velocity vector, and $p$ is the pressure.
+where $\vec{u}\equiv\begin{bsmallmatrix}u & v & w\end{bsmallmatrix}^\mathsf{T}$ is the velocity vector, and $p$ is the pressure.
 In \eqref{eq:G-network}, we use a single network to predict both pressure and velocity fields.
 Though it is possible to use separate networks for different fields, we keep \eqref{eq:G-network} this way for simplicity.
 Also, later in this work, we will use $G^{\vec{u}}$, $G^u$, $G^v$, $G^w$, and $G^p$ to denote the predicted velocity vector, components, and pressure from $G$.
@@ -106,7 +106,7 @@ where $a_{ij}$, $b_i$, and $c_{ki}$ for $i,j=1,2$ and $k=1,2,3$ are free paramet
 This MLP network is said to have one hidden layer with 2 neurons per layer and uses cosine for the activation function.
 (Note that it is uncommon to use cosine for activation in real applications.)
 We will formally introduce the definitions of these terms and the MLP's matrix form in section \ref{sec:mlp}.
-Given the expression of \eqref{eq:explicit-toy-mlp}, we are able to derive the derivatives.
+Given the expression of \eqref{eq:explicit-toy-mlp}, we are able to obtain the derivatives.
 Such as
 \begin{equation}
     \begin{aligned}
@@ -121,9 +121,9 @@ And the same concept applies to all higher-order derivatives.
 
 Analytical derivatives were used in earlier literature when the networks might be just slightly more complicated than the one shown in \eqref{eq:explicit-toy-mlp}.
 When the neural network models become more and more complicated, analytical derivatives become much less feasible, if not impossible.
-Even modern hardware and symbolic differentiation software may not be able to derive the analytical derivatives when $G$ has tens of thousands of free parameters and when the activation is not as simple as a cosine function.
+Even modern hardware and symbolic differentiation software may not be able to obtain the analytical derivatives when $G$ has tens of thousands of free parameters and when the activation is not as simple as a cosine function.
 
-Modern deep learning, instead, relies on the second option: automatic differentiation \cite{griewank_automatic_1988}.
+Modern deep learning instead relies on the second option: automatic differentiation \cite{griewank_automatic_1988}.
 Automatic differentiation is based on the chain rule and gives exact derivatives (exact with respect to actual computer intrinsic operations).
 Section \ref{sec:ad} will talk about the fundamental concept of automatic differentiation.
 At this point, we can just treat the automatic differentiation as a black box function that returns exact derivatives.

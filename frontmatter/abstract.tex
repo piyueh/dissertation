@@ -21,7 +21,7 @@ We used the 2D Taylor-Green vortex at $Re=100$ for all benchmarks within this gr
 
 In the second group of the benchmarks, we investigated PINNs' capability to solve flow problems with instabilities by conducting computational experiments with a 2D cylinder flow at $Re=200$.
 In both physical experiments and conventional CFD simulations, such a flow eventually reaches an unsteady solution with periodic vortex shedding due to instability.
-We wanted to understand PINNs accuracy in predicting such unsteady solutions.
+We wanted to understand PINNs' accuracy in predicting such unsteady solutions.
 Benchmarks in this group used three types of PINNs:
 \begin{enumerate*}[label=(\arabic*)]
     \item a steady data-free PINN,
@@ -37,26 +37,26 @@ Here we listed the key findings from the first group of our benchmarks:
     \item PINNs with the same training loss may give different prediction accuracies.
     This nondeterministic behavior grows when MLP networks' model complexity increases.
     We found that training losses may keep decreasing even when PDE residuals already stop improving.
-    In such cases, only the residuals of initial conditions are improving, which does not help with prediction accuracies.
+    In such cases, only the residuals of initial conditions are improving, which does not help with prediction accuracy.
     This finding suggests that PDE residuals are better options for monitoring training progress.
     \item Errors decrease at a similar rate when we either increase the number of hidden layers by one or double the number of per-layer neurons in MLP networks.
     It suggests that the former is a better option to improve prediction accuracy than the latter because the former needs less computational cost.
     \item Unlike conventional numerical methods, PINNs' errors do not monotonically decrease when increasing MLP networks' degrees of freedom (DoFs).
     PINNs can have different accuracies under the same DoF, indicating that DoFs are not a proper metric for PINNs' model complexity.
-    \item Increasing per-batch training points does not improve PINNs' accuracy, and the per-batch number of training points dominates PINNs' time costs.
-    It suggests that increasing per-batch training points should come after increasing hidden layers or neurons when improving PINNs' accuracies.
+    \item The per-batch number of training points has a stronger effect on PINNs' time costs than the model complexity. However, the former has less influence than the latter on prediction accuracy.
+    It suggests that increasing per-batch training points should come after increasing hidden layers or neurons when improving PINNs' accuracy.
     \item PINNs' weak scaling is above $90\%$ on average (with 1 to 8 GPUs), which helps scale per-batch training points on GPUs with limited memory space.
-    \item If we defined workload using the number of training points, PINNs have strong-scaling efficiencies ranging from $91\%$ with 2 GPUs in the best case to $27\%$ with 8 GPUs in the worst cast.
+    \item If we defined workload using the number of training points, PINNs have strong-scaling efficiencies ranging from $91\%$ with 2 GPUs in the best case to $27\%$ with 8 GPUs in the worst case.
     \item Defining a proper quantitative metric to evaluate model complexity is necessary to study PINNs' convergence and scaling properties further.
-    \item All new training strategies we tried did not have significant effects on improving time-to-solutions and prediction accuracies.
+    \item All new training strategies we tried did not have significant effects on improving time-to-solution and prediction accuracy.
 \end{enumerate}
 
-In the second part of our benchmarks, the validations of both the steady and unsteady data-free PINN solvers were successful against the 2D cylinder flow at $Re=40$.
+In the second group of our benchmarks, the validations of both the steady and unsteady data-free PINN solvers were successful against the 2D cylinder flow at $Re=40$.
 PINNs' drag coefficients and surface pressure distribution were within the range of experimental data and conventional CFD simulations.
 
 As for the 2D cylinder flow at $Re=200$, the unsteady data-free PINN solver could not predict vortex shedding within a simulation time of $t\in[0, 200]$.
 The unsteady data-free PINN solver converged to a steady-state solution instead.
-The data-driven PINN solver ---trained against simulation results from PetIBM in $t \in [125, 140]$ and the Navier-Stokes equations in $t\in[125, 200]$---also converged to a steady-state solution when $t > 140$.
+The data-driven PINN solver---trained against simulation results from PetIBM in $t \in [125, 140]$ and the Navier-Stokes equations in $t\in[125, 200]$---also converged to a steady-state solution when $t > 140$.
 Moreover, the data-driven PINN solver failed to give meaningful predictions for $t<125$.
 Nevertheless, all PINNs' drag coefficients agreed with conventional steady-state simulation results.
 
@@ -73,6 +73,6 @@ The in-house CFD code served as a baseline for PINNs' benchmarks.
 In a nutshell, our results show that PINNs is a relatively new research area.
 As we investigated the feasibility of PINNs, we found more open questions and challenges for PINNs to become a daily engineering tool.
 While most studies in the literature focused on the theoretical capability of PINNs and toy PDEs, we hope our work can arouse others' interest in solving those challenges.
-All the code, scripts for pre-/post-processing, definition files of containers, 
+All the code, case configurations, scripts for pre-/post-processing, and definition files of containers are open and available online.
 }
 % vim:ft=tex
