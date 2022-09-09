@@ -52,8 +52,8 @@ We presume that when using older GPUs with limited memory, a complicated neural 
 In such a case, the good weak scaling may be valuable.
 
 In terms of strong scaling, our benchmarks show unsatisfying speedups and efficiency.
-We acknowledge that our strong-scaling experiments may not be objective enough as the total work loading was not evenly distributed to each GPU.
-If the work loading can be naively decoupled into a network's contribution and training points' contribution, our strong-scaling experiments only distributed the contribution from the training points, and the network's contribution was duplicated to each GPU.
+We acknowledge that our strong-scaling experiments may not be objective enough as the total workload was not evenly distributed to each GPU.
+If the workload can be naively decoupled into a network's contribution and training points' contribution, our strong-scaling experiments only distributed the contribution from the training points, and the network's contribution was duplicated to each GPU.
 However, at this point, we are not aware of a fair way to test PINNs' strong scaling.
 We consider this a limitation in our work.
 

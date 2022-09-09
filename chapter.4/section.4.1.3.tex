@@ -30,7 +30,7 @@ And for the other $y$-axis, we have the run times in hours versus iterations.
     }\label{fig:nl3-nn128-npts8192-weak-scaling}
 \end{figure}
 
-In weak scaling, because each GPU has the same amount of work loading, the run time versus iterations should be the same for different cases.
+In weak scaling, because each GPU has the same amount of workload, the run time versus iterations should be the same for different cases.
 From figure \ref{fig:nl2-nn32-npts8192-weak-scaling} and \ref{fig:nl3-nn128-npts8192-weak-scaling}, we found that, except for the 1-GPU cases, cases with other GPUs match each other.
 The reason that 1-GPU cases show different results may be that it does not have the latency overhead due to exchanging with other GPUs.
 
@@ -77,7 +77,7 @@ Nevertheless, we believe the differences are quantitatively minor if we consider
 The quantitative results are listed in table \ref{table:weak-scaling-perf}.
 The weak-scaling efficiencies are all above $90\%$.
 The losses and errors are close in terms of the orders of magnitude.
-PINNs generally have good weak-scaling if we define the work loading using $N_{bs}$.
+PINNs generally have good weak-scaling if we define the workload using $N_{bs}$.
 During training, each GPU calculates the gradients $\nabla_{\Theta} r(\Theta)$ independently, and then each training iteration only needs one all-reduce operation to calculate the averaged gradients across all GPUs.
 A good weak scaling is thus expected.
 
@@ -112,9 +112,9 @@ However, if we consider their orders of magnitude, we consider the differences m
 This claim can be examined from table \ref{table:strong-scaling-perf}.
 On the other hand, the results show deteriorating strong-scaling efficiencies.
 The worse strong scaling is caused by only dividing the training points across GPUs, while the model itself is not divided.  
-The model complexity also contributes to the work loading.
-We do not have a clear way to divide a model and fairly distribute the work loading across GPUs.
-Neither do we have means to exclude the model's contribution to the work loading and correctly calculate the strong-scaling efficiencies and speedups.
+The model complexity also contributes to the workload.
+We do not have a clear way to divide a model and fairly distribute the workload across GPUs.
+Neither do we have means to exclude the model's contribution to the workload and correctly calculate the strong-scaling efficiencies and speedups.
 Lacking this knowledge limited our investigation into the strong scaling of PINNs.
 
 \input{tables/tgv-2d-re100/scaling-tests/strong-scaling.tex}

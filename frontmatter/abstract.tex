@@ -46,7 +46,7 @@ Here we listed the key findings from the first group of our benchmarks:
     \item Increasing per-batch training points does not improve PINNs' accuracy, and the per-batch number of training points dominates PINNs' time costs.
     It suggests that increasing per-batch training points should come after increasing hidden layers or neurons when improving PINNs' accuracies.
     \item PINNs' weak scaling is above $90\%$ on average (with 1 to 8 GPUs), which helps scale per-batch training points on GPUs with limited memory space.
-    \item If we defined work loading using the number of training points, PINNs have strong-scaling efficiencies ranging from $91\%$ with 2 GPUs in the best case to $27\%$ with 8 GPUs in the worst cast.
+    \item If we defined workload using the number of training points, PINNs have strong-scaling efficiencies ranging from $91\%$ with 2 GPUs in the best case to $27\%$ with 8 GPUs in the worst cast.
     \item Defining a proper quantitative metric to evaluate model complexity is necessary to study PINNs' convergence and scaling properties further.
     \item All new training strategies we tried did not have significant effects on improving time-to-solutions and prediction accuracies.
 \end{enumerate}
