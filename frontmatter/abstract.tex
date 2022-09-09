@@ -1,42 +1,78 @@
 %! TEX root = ../main.tex
 \abstract{
-Solving the Navier-Stokes with deep learning has been a popular research topic since the term {\it physics-informed neural networks} (PINNs) was coined by Raissi et al. in 2017.
+Solving the Navier-Stokes equations with deep learning has been a popular research topic since the term {\it physics-informed neural networks} (PINNs) was coined by Raissi et al. in 2017.
 A search on Google Scholar using "physics-informed neural networks" as the keyword revealed a rapid growth from 60 results in 2017 to 3,340 results in 2021.
-Such a blooming in PINNs raised our interest in how ready PINNs are for computational fluid dynamics applications in practical engineering.
+Such a blooming in PINNs raised our interest in how ready PINNs are for computational fluid dynamics (CFD) applications in practical engineering.
 
-This work aims to understand PINNs' capability to solve CFD problems from the perspectives of predictability and controllability.
+This work aims to understand data-free PINNs' capability to solve CFD problems from the perspectives of predictability and controllability.
 Predictability helps engineering practitioners estimate the cost for the desired accuracy level, and controllability means whether practitioners can control the cost and accuracy.
-We investigated convergence behaviors, scalability, cost-performance ratios, and the cost of non-computing tasks.
-We also investigated several training strategies and PINNs' capability to solve flow problems with instability.
+With the help of NVIDIA's Modulus---a Python tool set for PINNs, we conducted computational experiments to understand PINNs' numerical behaviors and limitations in solving the incompressible Navier-Stokes equations.
 
-The results show that PINNs exhibit a qualitatively converging behavior with respect to model complexity.
-And increasing the number of hidden layers is a better option to increase the model complexity.
-However, a proper quantitative metric for evaluating model complexity is necessary for further analyses and cost-performance estimation in engineering practice.
-We also found that the accuracy-loss relationship becomes more nondeterministic when the model complexity increases, which may hurt its engineering use.
+The computational experiments consist of two groups of benchmarks.
+Benchmarks in the first group help us understand the following behaviors of PINNs when solving the incompressible Navier-Stokes equations:
+\begin{enumerate*}[label=(\arabic*)]
+    \item cost-performance ratios,
+    \item convergence of errors with respect to model complexity of MLP (multilayer perceptron) networks, and
+    \item weak and strong scalabilities.
+\end{enumerate*}
+Further, we benchmarked several training strategies that had not been seen in PINNs' literature or had not been widely examined by other researchers.
+These strategies include annealing loss aggregation, cyclical learning rate, stochastic weight averaging, and nonlinear conjugate-gradient methods.
+We used the 2D Taylor-Green vortex at $Re=100$ for all benchmarks within this group.
 
-On the other hand, our results show that PINNs have good weak scaling, which helps scale per-batch training points when using lower-end GPUs.
-However, our benchmarks also indicate that PINNs are generally insensitive to the number of per-batch training points for unknown reasons.
-Increasing per-batch training points hurts the time-to-solution for no apparent benefit---and we found PINNs' time-to-solutions were already several orders slower than conventional CFD code.
+In the second group of the benchmarks, we investigated PINNs' capability to solve flow problems with instabilities by conducting computational experiments with a 2D cylinder flow at $Re=200$.
+In both physical experiments and conventional CFD simulations, such a flow eventually reaches an unsteady solution with periodic vortex shedding due to instability.
+We wanted to understand PINNs accuracy in predicting such unsteady solutions.
+Benchmarks in this group used three types of PINNs:
+\begin{enumerate*}[label=(\arabic*)]
+    \item a steady data-free PINN,
+    \item an unsteady data-free PINN, and
+    \item an unsteady data-driven PINN trained against both the Navier-Stokes equations and simulation data from PetIBM.
+\end{enumerate*}
+In addition, we used a 2D cylinder flow at $Re=40$, which does not have instabilities, to validate the steady and unsteady data-free PINNs' capabilities in flow with immersed bodies.
 
-Our PINN implementation could not predict vortex shedding in a 2D cylinder flow at $Re=200$.
-The unsteady PINN solver converged to a steady-state solution.
-Another data-driven benchmark also converged to a steady-state solution when the predicted data were outside the time range of provided observed data.
-These results cast doubt on both data-driven and data-free PINNs' capability to solve flow with instability.
-Nevertheless, the PINN solver's drag coefficient predictions agreed with steady-state simulations' results.
-And we additionally validated the predictions for a cylinder flow at $Re=40$.
+Here we listed the key findings from the first group of our benchmarks:
+\begin{enumerate}[nolistsep]
+    \item Under a given desired error level, the time cost of a PINN solver is several orders of magnitude slower than our in-house conventional CFD solver, PetIBM.
+    For example, 20 seconds with PetIBM versus 2 hours with the PINN for an error level of $1e-3$.
+    \item PINNs with the same training loss may give different prediction accuracies.
+    This nondeterministic behavior grows when MLP networks' model complexity increases.
+    We found that training losses may keep decreasing even when PDE residuals already stop improving.
+    In such cases, only the residuals of initial conditions are improving, which does not help with prediction accuracies.
+    This finding suggests that PDE residuals are better options for monitoring training progress.
+    \item Errors decrease at a similar rate when we either increase the number of hidden layers by one or double the number of per-layer neurons in MLP networks.
+    It suggests that the former is a better option to improve prediction accuracy than the latter because the former needs less computational cost.
+    \item Unlike conventional numerical methods, PINNs' errors do not monotonically decrease when increasing MLP networks' degrees of freedom (DoFs).
+    PINNs can have different accuracies under the same DoF, indicating that DoFs are not a proper metric for PINNs' model complexity.
+    \item Increasing per-batch training points does not improve PINNs' accuracy, and the per-batch number of training points dominates PINNs' time costs.
+    It suggests that increasing per-batch training points should come after increasing hidden layers or neurons when improving PINNs' accuracies.
+    \item PINNs' weak scaling is above $90\%$ on average (with 1 to 8 GPUs), which helps scale per-batch training points on GPUs with limited memory space.
+    \item If we defined work loading using the number of training points, PINNs have strong-scaling efficiencies ranging from $91\%$ with 2 GPUs in the best case to $27\%$ with 8 GPUs in the worst cast.
+    \item Defining a proper quantitative metric to evaluate model complexity is necessary to study PINNs' convergence and scaling properties further.
+    \item All new training strategies we tried did not have significant effects on improving time-to-solutions and prediction accuracies.
+\end{enumerate}
 
-Besides the benchmarks in PINNs, this work briefly introduces PINNs.
-Starting from the difference between data-driven and data-free PINNs, we continued by introducing the history and the development of solving partial differential equations (PDEs) with data-free PINNs since 1994.
-We discussed the open questions and known issues of data-free PINNs, which further motivated the present work.
-In a later chapter, we detailed the mathematical expressions related to PINNs.
-Moreover, we compared PINNs to conventional numerical methods and showed that PINNs is a special case of the least-square finite element methods.
+In the second part of our benchmarks, the validations of both the steady and unsteady data-free PINN solvers were successful against the 2D cylinder flow at $Re=40$.
+PINNs' drag coefficients and surface pressure distribution were within the range of experimental data and conventional CFD simulations.
 
-We described our in-house high-performance CFD code and associated verification and validation (V\&V) to fairly compare conventional CFD methods and data-free PINNs.
+As for the 2D cylinder flow at $Re=200$, the unsteady data-free PINN solver could not predict vortex shedding within a simulation time of $t\in[0, 200]$.
+The unsteady data-free PINN solver converged to a steady-state solution instead.
+The data-driven PINN solver ---trained against simulation results from PetIBM in $t \in [125, 140]$ and the Navier-Stokes equations in $t\in[125, 200]$---also converged to a steady-state solution when $t > 140$.
+Moreover, the data-driven PINN solver failed to give meaningful predictions for $t<125$.
+Nevertheless, all PINNs' drag coefficients agreed with conventional steady-state simulation results.
+
+Besides the benchmarks, this work briefly introduces PINNs.
+Starting from the difference between data-driven and data-free PINNs, we continue by introducing the history and the development of solving PDEs with data-free PINNs since 1994.
+We discuss the open questions and known issues of data-free PINNs, which further motivated the present work.
+In a later chapter, we detail the mathematical expressions related to PINNs.
+Moreover, we compare PINNs to conventional numerical methods and show that PINNs is a special case of the least-square finite element methods.
+
+We describe our in-house high-performance CFD code and associated verification and validation (V\&V) to compare conventional CFD methods and data-free PINNs.
 The V\&V confirmed the correctness of our CFD code, and the subsequent performance benchmarks demonstrated its computational performance.
 The in-house CFD code served as a baseline for PINNs' benchmarks.
 
 In a nutshell, our results show that PINNs is a relatively new research area.
 As we investigated the feasibility of PINNs, we found more open questions and challenges for PINNs to become a daily engineering tool.
 While most studies in the literature focused on the theoretical capability of PINNs and toy PDEs, we hope our work can arouse others' interest in solving those challenges.
+All the code, scripts for pre-/post-processing, definition files of containers, 
 }
 % vim:ft=tex
