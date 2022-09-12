@@ -1,6 +1,6 @@
 %! TEX root = main.tex
 This section shows cases for V\&V (verification and validation).
-PetIBM is a baseline in PINNs benchmarks, so its correctness must be confirmed.
+PetIBM is a baseline in PINN benchmarks, so its correctness must be confirmed.
 The cases shown here include 2D and 3D Taylor-Green vortex, 2D cylinder flows, 3D flow around a sphere, and 3D flow around an inclined flat plate.
 
 \subsection*{Convergence test of 2D Taylor-Green vortex at $Re=100$}
@@ -53,10 +53,10 @@ We ran simulations with $2^{n} \times 2^{n}$ cells for $i=4, 5, \dots, 10$.
 The simulations ran from $t=0$ up to $t=100$, and we output the transient results every $2$ seconds of $t$.
 The time step size $\Delta t$ did not follow a fixed refinement ratio.
 Rather, it was refined based on the maximum allowed CFL number and whether it was a factor of $2$ (to output transient results).
-The corresponding time step sizes were $\Delta t = 1.25e-1, 8e-2, 4e-2, 2e-2, 1e-2, 5e-3, 1.25e-3$.
+The corresponding time step sizes were $\Delta t = 1.25\times 10^{-1}, 8\times 10^{-2}, 4\times 10^{-2}, 2\times 10^{-2}, 1\times 10^{-2}, 5\times 10^{-3}, 1.25\times 10^{-3}$.
 The linear solvers for both velocity and pressure systems were solved with BiCGSTAB (biconjugate gradient stabilized method).
 The velocity and pressure systems used a block Jacobi preconditioner and an algebraic multigrid preconditioner from AmgX.
-At each time step, both solvers stopped when preconditioned residual reached $1e-14$.
+At each time step, both solvers stopped when preconditioned residual reached $1\times 10^{-14}$.
 The hardware contains 5 physical cores of Intel E5-2698 v4 and 1 V100 GPU.
 
 Figure \ref{fig:petibm-tgv2d-re100-conv} shows the grid convergence results.
@@ -65,11 +65,11 @@ Figure \ref{fig:petibm-tgv2d-re100-conv} shows the grid convergence results.
     \caption{PetIBM, 2D TGV, $Re=100$: spatial-temporal grid convergence}
     \label{fig:petibm-tgv2d-re100-conv}
 \end{figure}
-Both $u$ and $v$ velocities follow an expected 2nd-order convergence before machine truncation errors become non-trivial at the $1024 \times 1024$ grid.
+Both $u$ and $v$ velocities follow an expected 2nd-order convergence before machine roundoff errors become non-trivial at the $1024 \times 1024$ grid.
 However, the pressure field does not follow such a nice convergence pattern.
 After examining the log files, we determined that the cause was that AmgX did not solve the pressure systems to the tolerance we defined.
 AmgX has a hard-coded stop mechanism when relative residuals (relative to the residual before the 1st iteration in a Krylov solver) reach the machine precision.
-So while we configured the tolerance to be $1e-14$, the final preconditioned residuals of the pressure systems did not match this value.
+So while we configured the tolerance to be $1\times 10^{-14}$, the final preconditioned residuals of the pressure systems did not match this value.
 On the other hand, the velocity systems were solved to the requested tolerance.
 
 As we determined that the cause of the deviated convergence in pressure was irrelevant to the numerical method implementation, we concluded that the 2D TGV verification was successful.
@@ -79,8 +79,8 @@ As we determined that the cause of the deviated convergence in pressure was irre
 3D TGV problems have closed-form initial conditions but do not have closed-form analytical solutions.
 These 3D TGV problems differ from 2D TGV cases due to the transition to turbulence.
 Hence, it serves as a standard benchmark for turbulence simulations.
-For example, see the campaign described in \cite{noauthor_1st_2012}. 
-We compared the results to the other published simulation data \cite{debonis_solutions_2013} in this verification.
+For example, see the campaign described in reference \cite{noauthor_1st_2012}. 
+We compared the results to other published simulation data \cite{debonis_solutions_2013} in this verification.
 
 The initial condition used was
 \begin{equation}\label{eq:tgv3d-ic}
@@ -96,7 +96,7 @@ The initial condition used was
 We used $\rho = V_0 = L = 1$ and $\nu=0.000625$, corresponding to $Re \equiv \frac{V_0 L}{\nu} = 1600$.
 The computational domain is $-L\pi$ to $L\pi$ for all three directions.
 
-Due to the hardware required for high-resolution 3D DNS simulations for turbulence flow, we did not run the simulation with the spatial resolution suggested by \cite{noauthor_1st_2012}.
+Due to the hardware required for high-resolution 3D DNS simulations for turbulent flow, we did not run the simulation with the spatial resolution suggested by reference \cite{noauthor_1st_2012}.
 Our spatial resolution was $N_x=N_y=N_z=256$ with $\Delta t=0.01$.
 The simulation ran up to $t=20$.
 The hardware used was 128 physical CPU cores of AMD EPYC 7742 and 4 A100 GPUs (the 80GB variant).
@@ -122,14 +122,14 @@ Figure \ref{fig:petibm-tgv3d-re1600-val} shows that the mean kinetic energy qual
     \label{fig:petibm-tgv3d-re1600-val}
 \end{figure}
 However, a visible mismatch exists in the mean kinetic energy dissipation rate.
-Besides lower spatial resolution, another likely source of error may be in the post-processing rather than in the numerical method implementation.
+Besides lower spatial resolution, another likely source of error is in the post-processing rather than in the numerical method implementation.
 We calculated the dissipation rate using enstrophy, which requires post-processing steps due to using a staggered grid.
 First, we applied the curl operator to the velocity defined on the staggered grid, and the resulting vorticity was also distributed staggered.
 Next, we applied the linear interpolation operator and collected values from staggered grid points to cell centers.
 Finally, we integrated the cell-centered vorticity using a simple 1st-order numerical integration.
-Hence, we suspected that the post-processing largely contributed to the energy dissipation rate error.
+Hence, we suspect that the post-processing largely contributed to the energy dissipation rate error.
 
-Even some results from the campaign of \cite{noauthor_1st_2012} and \cite{debonis_solutions_2013} show this level of mismatch in the dissipation rate.
+Even some results from the campaign of references \cite{noauthor_1st_2012} and \cite{debonis_solutions_2013} show this level of mismatch in the dissipation rate.
 Therefore, we conclude the 3D TGV verification at this point.
 We do not claim that PetIBM's results match the reference data.
 Nevertheless, it does not show any concerning problems in the comparison, either.
@@ -140,7 +140,7 @@ In this work, a total of three different 2D cylinder flows were simulated: $Re=4
 In Williamson's stability categorization \cite{williamson_vortex_1996}, they correspond to the stable, 2D instability, and 2D to 3D transitioning regimes.
 The cases of $Re=40$ and $Re=200$ were used for benchmarking PINNs.
 Their results and V\&V can be found in chapter \ref{chap:pinn-cases}.
-In this section, we only verify and validate our numerical solutions with $Re=100$ only.
+In this section, we only verify and validate our numerical solutions with $Re=100$.
 
 The computational domain was $[-15, 35]\times[-25, 25]$ with a spatial discretization of $510 \times 298$.
 Gridlines were stretched so that the cell size around the cylinder is about $\Delta x = \Delta y \approx 0.01\bar{6}$.
@@ -153,7 +153,6 @@ In addition, this case has an extra forcing system (equation \eqref{eq:dibpm-ord
 The hardware used was a node with 6 cores of intel i7-5930K and 1 K40 GPU.
 It took about 10 minutes to finish the simulation.
 
-Table \ref{table:cylinder-2d-re100-cpb} shows the validation of the back suction coefficient, $C_{pb}$ (i.e., the surface pressure coefficient at the downstream end of the cylinder) against experimental data.
 \input{tables/cylinder-2d-re100/back-suction-coefficient.tex}
 \input{tables/cylinder-2d-re100/drag-lift-coeff.tex}
 \begin{figure}[hbt!]
@@ -161,9 +160,11 @@ Table \ref{table:cylinder-2d-re100-cpb} shows the validation of the back suction
     \caption{PetIBM, 2D cylinder, $Re=100$: drag, lift, and pressure coefficients}
     \label{fig:petibm-cylinder-2d-re100-val}
 \end{figure}
+
+Table \ref{table:cylinder-2d-re100-cpb} shows the validation of the back suction coefficient, $C_{pb}$ (i.e., the surface pressure coefficient at the downstream end of the cylinder) against experimental data.
 The drag coefficient and Strouhal number were verified with others' published numerical data and shown in table \ref{table:cylinder-2d-re100-comparison-cd}.
 Figure \ref{fig:petibm-cylinder-2d-re100-val} shows the drag and lift coefficient with respect to time and the distribution of surface pressure coefficients.
-The latter was verified against another published simulation result.
+The latter was verified against another published simulation result (see figure for the reference).
 
 We determined that the V\&V for 2D cylinder flow at $Re=100$ was successful.
 
@@ -183,14 +184,13 @@ Figure \ref{fig:petibm-sphere3d-drag-val} shows the validation results against e
     }
     \label{fig:petibm-sphere3d-drag-val}
 \end{figure}
-We believe it is proper to call the validation of 3D sphere flow a success.
+We believe it is appropriate to call the validation of 3D sphere flow a success.
 
 \subsection*{Validation of 3D flow around an inclined flat plate}
 
 Lastly, we validate the solver using a 3D flow over an inclined flat plate at $Re=100$.
-We tested with several AoA (angle of attack) and validated the results against the experimental data from \cite{taira_unsteadiness_2007}.
-All cases had the same computational domain, $[-4, 6.1] \times [-5, 5] \times [-5, 5]$.
-And the flat plate was located at $(0.1, 1, 1)$.
+We tested with several AoA (angle of attack) and validated the results against the experimental data from reference \cite{taira_unsteadiness_2007}.
+All cases had the same computational domain, $[-4, 6.1] \times [-5, 5] \times [-5, 5]$, and the flat plate was located at $(0.1, 1, 1)$.
 The spatial discretization is $192 \times 56 \times 86$, and the time step $\Delta t$ is $0.01$.
 The BCs, ICs, and the linear solver configurations are the same as those in 2D cylinder flow at $Re=100$.
 

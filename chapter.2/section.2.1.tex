@@ -111,9 +111,9 @@ The IBPM is based on the following block-matrix system that can be generated fro
     \end{bmatrix}
 \end{equation}
 where $A$, $G$, and $D$ correspond to the $\frac{1}{\Delta t}I+\alpha\frac{1}{Re}L$, gradient, and divergence operators of a given spatial discretization. 
-$L$ is the Laplacian operator, and $\alpha$ is a coefficient that depends on chosen time marching scheme for the diffusion term.
+$L$ is the Laplacian operator, and $\alpha$ is a coefficient that depends on the chosen time marching scheme for the diffusion term.
 $H$ and $E$ are the operators from substituting equation \eqref{eq:regularized-dirac} into equation \eqref{eq:mod-ns} and discretizing the forcing terms and \eqref{eq:mod-ns-body-vel}.
-Only matrix $A$ is a square matrix, while others are not.
+Only matrix $A$ is a square matrix, while the others are not.
 Superscript $n+1$ and $n$ denote the $n+1$-th and $n$-th time steps.
 $\vec{\gamma}^n$ represents the results of explicit terms from the selected time marching schemes.
 Though having a superscript $n$, $\vec{\gamma}^n$ can also depend on solutions from $n-1$, $n-2$, and so on, based on the chosen temporal schemes.
@@ -238,7 +238,7 @@ and we end up with the following sequence:
         & \vec{u}^* = \vec{u}^{* *} - A^{-1}H \vec{f}^*\label{eq:dibpm-lu2-3}
     \end{align}
 \end{subequations}
-The order of solving is then:
+The order of the solution process is then:
 \begin{subequations}
     \begin{align}
         & A u^{* *} = \vec{\gamma}^n + \vec{bc}_1\label{eq:dibpm-order1-1} \\
@@ -266,7 +266,7 @@ where
     \end{bmatrix}
 \end{equation}
 
-In order to speed up the solving process, in the solution workflow, we can replace $A^{-1}$ and $\bar{A}^{-1}$ with truncated Taylor series expansions.
+In order to speed up the solution process, in the solution workflow, we can replace $A^{-1}$ and $\bar{A}^{-1}$ with truncated Taylor series expansions.
 The most common approach is to use only the first-order approximation, i.e., use only the first term in the series expansions.
 That is, $A^{-1} \approx \Delta t I$ and $\bar{A}^{-1} \approx \Delta t I$, where $I$ denotes the identity matrix with a corresponding dimension. ($A$ and $\bar{A}$ have different dimensions.)
 Further, under the first-order approximation, the submatrices $\bar{A}_{00}^{-1}$ and $\bar{A}_{10}^{-1}$ can be found to be $\Delta t I$ and $0$.
@@ -286,5 +286,5 @@ Using higher-order approximations for $A^{-1}$ and $\bar{A}^{-1}$ is achievable 
 However, the resulting linear systems in \eqref{eq:dibpm-order1-2} and \eqref{eq:dibpm-order1-4} may not be sparse due to the exponential terms in the Taylor series expansions.
 
 In this section, we only described the specific solver (decoupled IBPM) we used to create the baseline data for benchmarking PINNs.
-For other available solvers in PetIBM, please refer to the documentation in \cite{chuang_petibm:_2018}.
+For other available solvers in PetIBM, please refer to the documentation \cite{chuang_petibm:_2018}.
 % vim:ft=tex

@@ -11,7 +11,7 @@ Solvers created with the PetIBM library run on distributed-memory architectures,
 To our knowledge, another work similar to PetIBM is IBAMR \cite{griffith_adaptive_2007,bhalla_unified_2013}. 
 PetIBM and IBAMR use different immersed-boundary schemes.
 IBAMR is based on Peskin's immersed-boundary formulation \cite{Peskin2002} and implements adaptive mesh refinement.
-However, IBAMR does not have GPU capability.
+However, IBAMR does not have GPU capability, as far as we know.
 
 Though PetIBM's primary role is a library, it includes several flow solvers for different flow applications and solving schemes.
 These solvers serve as examples for users to learn how to create their own.
@@ -25,5 +25,5 @@ The decoupled IBPM solver will be used to generate baseline data for benchmarkin
 
 For interested readers, a complete PetIBM installation also includes a basic Navier-Stokes equation solver (for flows without objects), the original IBPM solver, and a solver for moving bodies with prescribed motions.
 These solvers, however, are out of this work's scope.
-Their descriptions can be found in the documentation of \cite{chuang_petibm:_2018}.
+Their descriptions can be found in the documentation of reference \cite{chuang_petibm:_2018}.
 % vim:ft=tex

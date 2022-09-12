@@ -18,21 +18,21 @@ The tests were done with NVIDIA V100 GPUs.
 The bars in the figures represent the results of using different numbers of CPUs plus a fixed number of GPUs.
 The smaller Poisson problem was solved with one GPU, while the larger problem was solved with 4 GPUs.
 Using more CPUs speeds up the pre-processing stage, such as matrix creation, because it means more subdomains and fewer unknowns per subdomain.
-However, the run times of the solving stage should not be affected by the number of CPUs because the solver resides on GPUs entirely, and we have a fixed number of GPUs.
+However, the run times of the solution stage should not be affected by the number of CPUs because the solver resides on GPUs entirely, and we have a fixed number of GPUs.
 
 Results in figures \ref{fig:amgxwrapper-cons-1M} and \ref{fig:amgxwrapper-cons-15M} show that this statement is not valid for the plots on the left, that is, without consolidation. 
 As more CPUs are used, run times grow linearly.
-V100 was still the mainstream GPU used on HPC clusters at the time of writing.
-Nevertheless, the results show it was not designed for handling multiple tasks and does not handle well with resource competition.
+V100 was still the mainstream GPU used on HPC clusters at the time of performing those experiments.
+Nevertheless, the results show it was not designed for handling multiple tasks and did not handle well with resource competition.
 
 The consolidation in the translation layer helps resolve the issue.
-This mechanism consolidates and rearranges subdomains' matrices.
+This mechanism consolidates and rearranges the subdomain matrices.
 Rearranging is necessary as the performances of multigrid preconditioners may rely on the structures of submatrices on each GPU.
-Plots on the right show that run times were close to a constant time regardless of how many CPUs were used.
+Plots on the right show that run times were close to a constant regardless of how many CPUs were used.
 
-The time used for consolidation was included in the solving stage shown in these two figures.
+The time used for consolidation was included in the solution stage shown in these two figures.
 The smaller Poisson problem shows an overhead due to the consolidation.
-However, the overhead was not evident for the larger problem as consolidation is relatively cheap compared to the actual solving time. 
+However, the overhead was not evident for the larger problem as consolidation is relatively cheap compared to the actual solution time. 
 
 Next, in figures \ref{fig:amgxwrapper-speedups-15M} and \ref{fig:amgxwrapper-speedups-33M}, we show the speedups of GPU solvers versus CPU solvers on Poisson problems.
 \begin{figure}[hbt!]
@@ -52,20 +52,20 @@ The GPU tests used the CG solver and the classical multigrid preconditioner from
 Theoretically, these two configurations are comparable because AmgX's classical multigrid preconditioner was a re-implementation of BoomerAMG for GPU.
 
 From the results, we observed a $65x$ speedup comparing 1 GPU to 1 CPU in the $15$-million problem and a $9x$ speedup comparing 4 GPUs to 36 CPUs in the $33$-million problem.
-As a reference, 4 V100 GPUs cost about $12$ thousand US dollars at the time of writing.
-On the other hand, $36$ cores of CPUs consist of $2$ Xeon Gold 6140 chips, which cost around $2$ thousand US dollars\footnote{Xeon Gold 6140 was discontinued at the time or writing. The price we show here was the market value at the time, while the official suggested price for $2$ brand-new chips was around $4,800$ US dollars.}.
-If we naively compare the results base on the monetary cost of the GPUs and CPUs, we would observe a speedup of about $1.5x$ (4 V100 GPUs versus 218 CPU cores).
+As a reference, 4 V100 GPUs cost about $12$ thousand US dollars at the time of completing those experiments.
+On the other hand, $36$ cores of CPUs consist of $2$ Xeon Gold 6140 chips, which cost around $2$ thousand US dollars\footnote{Xeon Gold 6140 has been discontinued at the time or writing. The price we show here was the market value at the time, while the official suggested price for $2$ brand-new chips is around $4,800$ US dollars.}.
+If we naively compare the results based on the monetary cost of the GPUs and CPUs, we would observe a speedup of about $1.5x$ (4 V100 GPUs versus 218 CPU cores).
 However, as CPUs and GPUs work under different hardware configurations and setups, this monetary-based comparison is not fair in the real world.
-For example, $6$ CPU chips may require $3$ complete computing nodes and an HPC cluster, while 4 V100 GPU can completely reside in one single workstation or even a personal desktop.
-Under this argument, both the hardware and human labor (for maintenance) costs of CPUs will be much higher, and the speedups and cost saving from GPUs will be much more attractive.
+For example, $6$ CPU chips may require $3$ complete computing nodes and an HPC cluster, while 4 V100 GPUs can completely reside in one single workstation or even a personal desktop.
+Under this argument, both the hardware and human labor (for maintenance) costs of the CPU-only option will be much higher, and the speedups and cost saving from GPUs will be more attractive.
 Unfortunately, we could not get the cost estimation of a 3-node HPC cluster and hence could not continue on the monetary cost comparisons.
 Nevertheless, we hope our arguments can provide an impression on the hardware costs as these costs are often ignored in the literature on performance benchmarks.
 
-CPU solvers tended to show a better strong scaling.
+CPU solvers tended to show better strong scaling.
 For example, if we translate the speedup in the CPU results to strong scaling efficiencies for the smaller problem, the efficiencies were about 95\%, 88\%, 88\%, 78\%, and 46\%, respectively.
 Those of the larger problem were 100\%, 98\%, and 96\%.
 In the GPU results, the strong scaling efficiencies of the small problem were 70\%, 50\%, and 48\%, while those of the larger problem were 75\%, 47\%, and 32\%.
-From this viewpoint, CPU solvers give better predictability on required resources and time-to-solutions. 
+From this viewpoint, CPU solvers give better predictability on required resources and time-to-solution. 
 
 Finally, we were interested in the actual performance gain in real flow simulation.
 Figures \ref{fig:petibm-speedups-15M-small} and \ref{fig:petibm-speedups-15M-large} show the high-level performance profiling of PetIBM using a 3D flying-snake simulation \cite{krishnan_lift_2014,krishnan_cuibm_2017}.
@@ -85,11 +85,11 @@ The snake was discretized to $2,925$ Lagrangian points, meaning the forcing syst
 In CPU-only simulations, PetIBM solved velocity systems with the GAMG preconditioner and pressure systems with the BoomerAMG preconditioner.
 In CPU-GPU mixed simulations, the preconditioners for velocity and pressure systems are block-Jacobi and classical multigrid from AmgX, respectively.
 The underlying Krylov solvers are the bi-conjugate gradient stabilized solvers from either PETSc or AmgX.
-The forcing systems in both simulation types were solving by LU decomposition using distributed SuperLU.
+The forcing systems in both simulation types were solved by LU decomposition using distributed SuperLU.
 This is the only part solved on CPUs for the CPU-GPU mixed simulations.
 
-The two figures show the performance speedups comparing pure-CPU and CPU-GPU-mixed simulations on two clusters: one with 2 V100 per node and the other with 4 V100 per node.
-We conducted the simulations on two different to ensure the results have generalizability.
+The two figures show the performance speedups comparing pure-CPU and CPU-GPU-mixed simulations on two clusters: one with 2 V100 GPUs per node and the other with 4 V100 GPUs per node.
+We conducted the simulations on two different clusters to ensure the results have generalizability.
 The results from both clusters agree with each other.
 We observed that one 4-GPU node or two 2-GPU nodes are equivalent roughly to 5 pure-CPU nodes.
 The difference between the two clusters is that the 4-GPU nodes had less internode communication and, thus, better performance and scalability.
