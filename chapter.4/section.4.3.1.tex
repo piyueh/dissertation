@@ -1,12 +1,12 @@
 %! TEX root = main.tex
-With the successful validation for the $Re=40$ cylinder flow, we now would like to test an actual unsteady cylinder flow at $Re=200$.
+With the successful validation for the $Re=40$ cylinder flow, we now would like to test an unsteady cylinder flow at $Re=200$.
 
 The computational spatial domain is $[-8, 25]\times[-8, 8]$, and the simulation time range is $t\in[0, 200]$.
 Other problem setups are the same as those in section \ref{sec:pinn-2d-cylinder-re40-conf}, except for the kinematic viscosity.
 The non-dimensional kinematic viscosity is $0.005$ to make the Reynolds number $200$.
 
 The network architecture is the same: $(N_l, N_n)=(6, 512)$.
-We also used a steady and an unsteady PINN solvers on this problem, though $Re=200$ is not expected to have a steady-state solution.
+We also used a steady and an unsteady PINN solver on this problem, though $Re=200$ is not expected to have a steady-state solution.
 The batch size and the configurations of training points are the same as the case of $N_{bs}=6,400$ in section \ref{sec:pinn-2d-cylinder-re40-conf}.
 We only used one cyclical learning rate schedule: $(\eta_{low}, \eta_{high}, N_c, \gamma)=(1e-6, 1e-2, 5000, 0.9999915)$.
 

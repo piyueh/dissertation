@@ -1,6 +1,6 @@
 %! TEX root = main.tex
 
-In this section, we are interested in the scalability of PINNs.
+In this section, we are interested in the parallel scalability of PINNs.
 In the weak scaling tests, we scaled $(2, 32, 8192)$ and $(3, 128, 8192)$ with 1, 2, 4, and 8 GPUs. 
 As for the strong scaling tests, we scaled $(2, 32, 65536)$ and $(3, 128, 65536)$ with 1, 2, 4, and 8 GPUs. 
 We will use an expression of $(N_l, N_n, N_{bs})\times N_{gpu}$ to denote how many GPUs are used and how many training points per batch on each GPU.
@@ -31,16 +31,15 @@ And for the other $y$-axis, we have the run times in hours versus iterations.
 \end{figure}
 
 In weak scaling, because each GPU has the same amount of workload, the run time versus iterations should be the same for different cases.
-From figure \ref{fig:nl2-nn32-npts8192-weak-scaling} and \ref{fig:nl3-nn128-npts8192-weak-scaling}, we found that, except for the 1-GPU cases, cases with other GPUs match each other.
-The reason that 1-GPU cases show different results may be that it does not have the latency overhead due to exchanging with other GPUs.
+From figures \ref{fig:nl2-nn32-npts8192-weak-scaling} and \ref{fig:nl3-nn128-npts8192-weak-scaling}, we found that the run times match each other for cases more than 1 GPU.
+The reason that 1-GPU cases show different results may be that it does not have the latency overhead due to data exchanging with other GPUs.
 
-We further checked the losses and error histories and considered no significant difference between using different numbers of GPUs.
-Note that while lines do not overlap on the figures, quantitatively speaking, the difference in the orders of magnitude is minor, as we will see in table \ref{table:weak-scaling-perf}. 
+We also checked the losses and error histories in the same figures.
+We observed no significant difference between using different numbers of GPUs.
+Note that while the lines of the losses and errors do not visually match, quantitatively speaking, their orders of magnitude are the same, as we will see in table \ref{table:weak-scaling-perf}. 
 
-Theoretically, $(N_l, N_n, N_{bs})\times N_{gpu}$ is expected to equal to $(N_l, N_n, N_{bs}\times N_{gpu})$ in terms of losses and errors.
-So the difference between using a different number of GPUs should be similar to the effect of using a different number of training points per batch on one GPU.
-We will examine the effect of different $N_{bs}$ in section \ref{sec:pinn-2d-tgv-model-complexity}.
-Instead, here we would like to check if it is true that $(N_l, N_n, N_{bs})\times N_{gpu}$ is equivalent to $(N_l, N_n, N_{bs}\times N_{gpu})$.
+$(N_l, N_n, N_{bs})\times N_{gpu}$ and $(N_l, N_n, N_{bs}\times N_{gpu})$ have the same network architecture and the same total number of training points, so they are expected to have the same results in terms of losses and errors.
+Here we would like to check if the expectation is true.
 Figure \ref{fig:nl2-nn32-npts8192-multi-singl-gpus} shows the comparisons between $(2, 32, 8192)\times N_{gpu}$ and $(2, 32, 8192\times N_{gpu})$.
 And figure \ref{fig:nl3-nn128-npts8192-multi-singl-gpus} shows the same comparisons between $(3, 128, 8192)\times N_{gpu}$ and $(3, 128, 8192\times N_{gpu})$.
 
@@ -76,14 +75,14 @@ Nevertheless, we believe the differences are quantitatively minor if we consider
 
 The quantitative results are listed in table \ref{table:weak-scaling-perf}.
 The weak-scaling efficiencies are all above $90\%$.
-The losses and errors are close in terms of the orders of magnitude.
+The losses and errors are of the same order of magnitude.
 PINNs generally have good weak-scaling if we define the workload using $N_{bs}$.
 During training, each GPU calculates the gradients $\nabla_{\Theta} r(\Theta)$ independently, and then each training iteration only needs one all-reduce operation to calculate the averaged gradients across all GPUs.
 A good weak scaling is thus expected.
 
 Lastly, we examined the strong scaling.
 Figure \ref{fig:nl2-nn32-npts65536-strong-scaling} shows the strong scaling results of $(2, 32, 65535)\times 1$, $(2, 32, 32768)\times 2$, $(2, 32, 16384)\times 4$, and $(2, 32, 8192)\times 8$.
-Figure \ref{fig:nl3-nn128-npts65536-strong-scaling} shows the similar strong scaling tests for $(N_l, N_n)=(3, 128)$.
+Figure \ref{fig:nl3-nn128-npts65536-strong-scaling} shows the corresponding strong scaling tests for $(N_l, N_n)=(3, 128)$.
 Quantitative results are listed in table \ref{table:strong-scaling-perf}. 
 
 \begin{figure}[hbt!]
@@ -108,12 +107,12 @@ Quantitative results are listed in table \ref{table:strong-scaling-perf}.
 
 Theoretically, a good strong scaling result should show similar losses and errors.
 Figures \ref{fig:nl2-nn32-npts65536-strong-scaling} and \ref{fig:nl3-nn128-npts65536-strong-scaling}, instead, exhibit some differences.
-However, if we consider their orders of magnitude, we consider the differences minor.
+However, if we consider their orders of magnitude, we find the differences minor.
 This claim can be examined from table \ref{table:strong-scaling-perf}.
 On the other hand, the results show deteriorating strong-scaling efficiencies.
 The worse strong scaling is caused by only dividing the training points across GPUs, while the model itself is not divided.  
 The model complexity also contributes to the workload.
-We do not have a clear way to divide a model and fairly distribute the workload across GPUs.
+We do not have a clear way to divide a model and equally distribute the workload across GPUs.
 Neither do we have means to exclude the model's contribution to the workload and correctly calculate the strong-scaling efficiencies and speedups.
 Lacking this knowledge limited our investigation into the strong scaling of PINNs.
 

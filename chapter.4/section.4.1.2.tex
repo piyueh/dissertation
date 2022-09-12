@@ -10,9 +10,9 @@ In the following discussion, we will use the format of $(N_l, N_n, N_{bs})$ to r
 \centering%
 \includegraphics[width=0.9\linewidth]{tgv-2d-re100/training-hist/nl1-nn32-npts16384}%
 \caption[%
-    Aggregated loss and $L_2$ errors of $u$ v.s. iterations ($(N_l, N_n, N_{bs})=(1, 32, 16384)$)%
+    PINNs, 2D TGV, $Re=100$: Aggregated loss and $L_2$ errors of $u$ v.s. iterations ($(N_l, N_n, N_{bs})=(1, 32, 16384)$; the worst case)%
 ]{%
-    Aggregated loss and $L_2$ errors of $u$ v.s. iterations ($(N_l, N_n, N_{bs})$ $=$ $(1, 32, 16384)$)%
+    PINNs, 2D TGV, $Re=100$: Aggregated loss and $L_2$ errors of $u$ v.s. iterations ($(N_l, N_n, N_{bs})$ $=$ $(1, 32, 16384)$; the worst case)%
 }\label{fig:nl1-nn32-npts16384-loss-err-hist}%
 \end{figure}
 
@@ -20,9 +20,9 @@ In the following discussion, we will use the format of $(N_l, N_n, N_{bs})$ to r
 \centering%
 \includegraphics[width=0.9\linewidth]{tgv-2d-re100/training-hist/nl2-nn32-npts65536}%
 \caption[%
-    Aggregated loss and $L_2$ errors of $u$ v.s. iterations ($(N_l, N_n, N_{bs})=(2, 32, 65536)$)%
+    PINNs, 2D TGV, $Re=100$: Aggregated loss and $L_2$ errors of $u$ v.s. iterations ($(N_l, N_n, N_{bs})=(2, 32, 65536)$; the median case)%
 ]{%
-    Aggregated loss and $L_2$ errors of $u$ v.s. iterations ($(N_l, N_n, N_{bs})$ $=$ $(2, 32, 65536)$)%
+    PINNs, 2D TGV, $Re=100$: Aggregated loss and $L_2$ errors of $u$ v.s. iterations ($(N_l, N_n, N_{bs})$ $=$ $(2, 32, 65536)$; the median case)%
 }\label{fig:nl2-nn32-npts65536-loss-err-hist}%
 \end{figure}
 
@@ -30,9 +30,9 @@ In the following discussion, we will use the format of $(N_l, N_n, N_{bs})$ to r
 \centering%
 \includegraphics[width=0.9\linewidth]{tgv-2d-re100/training-hist/nl3-nn256-npts4096}%
 \caption[%
-    Aggregated loss and $L_2$ errors of $u$ v.s. iterations ($(N_l, N_n, N_{bs})=(3, 256, 4096)$)%
+    PINNs, 2D TGV, $Re=100$: Aggregated loss and $L_2$ errors of $u$ v.s. iterations ($(N_l, N_n, N_{bs})=(3, 256, 4096)$; the best case)%
 ]{%
-    Aggregated loss and $L_2$ errors of $u$ v.s. iterations ($(N_l, N_n, N_{bs})$ $=$ $(3, 256, 4096)$)%
+    PINNs, 2D TGV, $Re=100$: Aggregated loss and $L_2$ errors of $u$ v.s. iterations ($(N_l, N_n, N_{bs})$ $=$ $(3, 256, 4096)$; the best case)%
 }\label{fig:nl3-nn256-npts4096-loss-err-hist}%
 \end{figure}
 
@@ -53,9 +53,9 @@ And learning well on IC does not help in solving the PDEs.
     \centering%
     \includegraphics[width=0.9\linewidth]{tgv-2d-re100/contours/nl1-nn32-npts16384-t40.0.png}
     \caption[%
-        Predictions and error contours at $t=40$ for $(N_l, N_n, N_{bs})=(1, 32, 16384)$%
+        PINNs, 2D TGV, $Re=100$: Predictions and error contours at $t=40$ ($(N_l, N_n, N_{bs})=(1, 32, 16384)$; the worst case)%
     ]{%
-        Predictions and error contours at $t=40$ ($(N_l, N_n, N_{bs})$ $=$ $(1, 32, 16384)$)%
+        PINNs, 2D TGV, $Re=100$: Predictions and error contours at $t=40$ ($(N_l, N_n, N_{bs})$ $=$ $(1, 32, 16384)$; the worst case)%
     }
     \label{fig:nl1-nn32-npts16384-t40-contours}
 \end{figure}
@@ -64,9 +64,9 @@ And learning well on IC does not help in solving the PDEs.
     \centering%
     \includegraphics[width=0.9\linewidth]{tgv-2d-re100/contours/nl2-nn32-npts65536-t40.0}
     \caption[%
-        Predictions and error contours at $t=40$ for $(N_l, N_n, N_{bs})=(2, 32, 65536)$%
+        PINNs, 2D TGV, $Re=100$: Predictions and error contours at $t=40$ ($(N_l, N_n, N_{bs})=(2, 32, 65536)$; the median case)%
     ]{%
-        Predictions and error contours at $t=40$ ($(N_l, N_n, N_{bs})$ $=$ $(2, 32, 65536)$)%
+        PINNs, 2D TGV, $Re=100$: Predictions and error contours at $t=40$ ($(N_l, N_n, N_{bs})$ $=$ $(2, 32, 65536)$; the median case)%
     }
     \label{fig:nl2-nn32-npts65536-t40-contours}
 \end{figure}
@@ -75,9 +75,9 @@ And learning well on IC does not help in solving the PDEs.
     \centering%
     \includegraphics[width=0.9\linewidth]{tgv-2d-re100/contours/nl3-nn256-npts4096-t40.0.png}
     \caption[%
-        Predictions and error contours at $t=40$ for $(N_l, N_n, N_{bs})=(3, 256, 4096)$%
+        PINNs, 2D TGV, $Re=100$: Predictions and error contours at $t=40$ ($(N_l, N_n, N_{bs})=(3, 256, 4096)$; the best case)%
     ]{%
-        Predictions and error contours at $t=40$ ($(N_l, N_n, N_{bs})$ $=$ $(3, 256, 4096)$)%
+        PINNs, 2D TGV, $Re=100$: Predictions and error contours at $t=40$ ($(N_l, N_n, N_{bs})$ $=$ $(3, 256, 4096)$; the best case)%
     }
     \label{fig:nl3-nn256-npts4096-t40-contours}
 \end{figure}

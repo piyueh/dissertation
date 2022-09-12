@@ -5,7 +5,7 @@ This TGV problem serves as a good benchmark case because it reduces the number o
 The approach described in section \ref{sec:periodic-boundary} eliminates the constraints coming from periodic BCs.
 The optimization becomes simpler, and the optimizer can focus only on IC and PDE residuals.
 
-The neural network used in the PINN solver is the weight-normalization MLP described in section \ref{sec:mlp}.
+The neural network used in the PINN solver is the weight-normalized MLP described in section \ref{sec:mlp}.
 Cases in this benchmark can be categorized into five groups.
 
 Cases in the first group use common optimization configurations (described later).
@@ -16,7 +16,7 @@ $N_n=2^i$ for $i$ ranging from $4$ to $8$.
 $N_{bs}=2^i$ for $i$ ranging from $10$ to $16$.
 This group contains a total of 105 cases.
 
-The other four groups will be described in the corresponding subsections: section \ref{sec:pinn-2d-tgv-scaling} describes cases for scaling tests; section \ref{sec:pinn-2d-tgv-training-strategy} describes cases with adaptive loss aggregation, cases with cyclical learning rates and SWA, and cases with conjugate-gradient solvers.
+The other four groups will be described in the corresponding subsections: section \ref{sec:pinn-2d-tgv-scaling} describes cases for parallel scaling tests; section \ref{sec:pinn-2d-tgv-training-strategy} describes cases with adaptive loss aggregation, cases with cyclical learning rates and SWA, and cases with conjugate-gradient solvers.
 
 The training processes for cases in the first group are the same: 400,000 iterations of the Adam optimization with an exponentially-decaying learning rate schedule: $\operatorname{lr}(k) = 0.95^\frac{k}{5000}$, where $k$ is the iteration counter.
 We use the default parameters for the Adam optimizer from PyTorch: $\beta_1=0.9$, $\beta_2=0.999$, and $\epsilon=10^{-8}$.
@@ -35,10 +35,10 @@ The hardware used is NVIDIA's V100 GPUs.
 All cases in the first group ran on only one GPU.
 
 After training, the PINN solver's prediction errors (i.e., accuracy) were evaluated on cell centers of a $512 \times 512$ Cartesian mesh against the analytical solutions.
-And if needed, we predict solution snapshots at $t=0, 1, 2, \cdots, 100$ for temporal errors.
-Two types of errors are majorly used: spatial-temporal error ($L_{2,sp-t}$), and spatial $L_2$ error at a given time $t$.
+And if needed, we predicted solution snapshots at $t=0, 1, 2, \cdots, 100$ for temporal errors.
+Two types of errors were used: spatial-temporal error ($L_{2,sp-t}$), and spatial $L_2$ error at a given time $t$.
 $L_{2,sp-t}$ has been defined in \eqref{eq:spt-err-def}.
-The $L_2$ error norm for a given $t$ is calculated with
+The $L_2$ error norm for a given $t$ is
 \begin{equation}\label{eq:l2norm}
     \begin{aligned}
         L_2

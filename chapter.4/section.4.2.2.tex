@@ -1,7 +1,7 @@
 %! TEX root = main.tex
 
-For the steady cases, the PINN solver took about 25 hours to finish for $N_{bs}=25,600$ and 13.5 hours for $N_{bs}=6,400$.
-The unsteady PINN solver, on the other hand, took about 26 hours and 14.5 hours for $N_{bs}=25,600$ and $6,400$, respectively.
+For the steady cases, the PINN solver took about 25 hours to finish for $N_{bs}=\num{25600}$ and 13.5 hours for $N_{bs}=\num{6400}$.
+The unsteady PINN solver, on the other hand, took about 26 hours and 14.5 hours for $N_{bs}=\num{25600}$ and $\num{6400}$, respectively.
 The baseline PetIBM simulation was finished within 2 minutes.
 
 Figure \ref{fig:cylinder-2d-re40-loss-hist-steady} shows the convergence history of the aggregated losses for the steady cases, and figure \ref{fig:cylinder-2d-re40-loss-hist-unsteady} shows those for the unsteady cases.
@@ -27,14 +27,14 @@ Each figure includes sub-figures for losses against iterations and run times.
 An interesting observation from figure \ref{fig:cylinder-2d-re40-loss-hist-steady} is the plateaus at the beginning of the training.
 Though without a proof, we suspect this trend reflects the escaping from saddle points.
 The large cyclical schedule took more time to escape because it had fewer cycles under given iterations.
-Regardless of the difference at the beginning, all cases reaches the same level of losses eventually.
-And for the large cyclical schedule, both $N_{bs}=6,400$ and $N_{bs}=25,600$ show similar convergence history in terms of iterations.
-This observation again proves our suspicion in the previous section that $N_{bs}$ does not have significant influence on the losses and errors.
+Regardless of the difference at the beginning, all cases reached the same level of losses eventually.
+And for the large cyclical schedule, both $N_{bs}=\num{6400}$ and $N_{bs}=\num{25600}$ show similar convergence history in terms of iterations.
+This observation again substantiates our suspicion in the previous section that $N_{bs}$ does not have significant influence on the losses and errors.
 
 Figure \ref{fig:cylinder-2d-re40-loss-hist-unsteady} also shows plateaus at the beginning, though not as obvious as those for the steady cases.
 The convergence histories for the unsteady cases are also bumpier.
 We also suspect that it is caused by escaping from saddle points and poor local minimums.
-The hypersurface of unsteady solver might be more complicated than the steady one, hence causing more oscillating convergence.
+The hypersurface of the unsteady solver might be more complicated than the steady one, hence causing more oscillating convergence.
 Nevertheless, all unsteady cases converged to a similar loss level.
 
 Figure \ref{fig:cylinder-2d-re40-contours} shows visual comparisons of the steady-state flow fields.
@@ -49,11 +49,10 @@ Figure \ref{fig:cylinder-2d-re40-contours} shows visual comparisons of the stead
     }%
     \label{fig:cylinder-2d-re40-contours}
 \end{figure}
-The results of steady PINN solver were obtained from the case of $N_{bs}=25,600$ with the large cyclical schedule, and that of the unsteady solver was also obtained from the same $N_{bs}$ and schedule.
+The results of steady PINN solver were obtained from the case of $N_{bs}=\num{25600}$ with the large cyclical schedule, and that of the unsteady solver was also obtained from the same $N_{bs}$ and schedule.
 All three cases visually agree with each other, except for the vorticity.
-Note that vorticity is a product from post-processing for all three solvers.
-PetIBM relies on central difference to calculate the vorticity.
-And PINNs use automatic differentiation to obtain it.
+Note that vorticity is obtained by post-processing for all three solvers.
+PetIBM relies on central difference to calculate the vorticity, while PINNs use automatic differentiation to obtain it.
 
 Figure \ref{fig:cylinder-2d-re40-drag-lift-time} gives the drag and lift coefficients ($C_D$ and $C_L$).
 We only plotted the results from the unsteady solver because the steady solvers do not have the time variable. 
@@ -70,8 +69,8 @@ Table \ref{table:cylinder-2d-re40-comparison-cd} compares the values of $C_D$ ag
 \input{tables/cylinder-2d-re40/drag-lift-coeff.tex}
 As seen from the table, values from different previous works in the literature show a variability in $C_D$.
 Though there is not a correct answer to compare against, at least the $C_D$ from PINNs and PetIBM all fall into the range of others' works.
-And the differences seen in figure \ref{fig:cylinder-2d-re40-drag-lift-time} is acceptable given that the $C_D$ shown in the figure are all within the acceptable range.
-We consider the results of $C_D$ is validated.
+And the differences seen in figure \ref{fig:cylinder-2d-re40-drag-lift-time} are acceptable given that the $C_D$ shown in the table are all within the acceptable range.
+We consider the results of $C_D$ validated.
 
 Lastly, we compared the pressure coefficient ($C_p$) on the cylinder surface.
 Figure \ref{fig:cylinder-2d-re40-surface-cp-steady} shows the surface $C_p$ of the steady cases, and figure \ref{fig:cylinder-2d-re40-surface-cp-unsteady} shows that of the unsteady cases.

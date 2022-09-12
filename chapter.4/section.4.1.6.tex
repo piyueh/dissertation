@@ -47,7 +47,7 @@ Figure \ref{fig:annealing-tests-final-sterrs} gives the comparison of the final 
 For simpler network architectures, $(1, 16, 8192)$ and $(2, 32, 8192)$, the final spatial-temporal errors are close.
 The more complicated model, $(3, 128, 8192)$, shows visually obvious difference.
 However, after examining the actual quantities, we consider them similar.
-For example, in the $u$ velocity and with the case of $(3, 128, 8192)$, the even-weight aggregation has an error between $1e-2$ to $2e-2$, while the annealing algorithm has an error between $8e-3$ to $9e-3$.
+For example, in the $u$ velocity and with the case of $(3, 128, 8192)$, the even-weight aggregation has an error between $\num{1e-2}$ to $\num{2e-2}$, while the annealing algorithm has an error between $\num{8e-3}$ to $\num{9e-3}$.
 The difference is just about $20\%$ smaller relative to the even-weight aggregation.
 And this difference is even smaller in $v$ velocity.
 
@@ -65,7 +65,7 @@ We further examined the convergence with respect to the run times.
 Annealing loss aggregation is more expensive as it involves evaluating the gradient of each single loss term with respect to model parameters.
 As shown in figures \ref{fig:annealing-tests-nl1-nn16-npts8192-walltimes}, \ref{fig:annealing-tests-nl2-nn32-npts8192-walltimes}, and \ref{fig:annealing-tests-nl3-nn128-npts8192-walltimes}, the even-weight aggregation is considered to converge much faster in terms of the run time.
 Though annealing aggregation shows a slightly better accuracy at the end of training for $(3, 128, 8192)$, the even-weight aggregation achieves slightly better losses and errors under a given wall time, meaning a better accuracy-cost ratio.
-Annealing loss aggregation's computational cost is about the double of the even-weight aggregation. 
+Annealing loss aggregation's computational cost is about double of that of the even-weight aggregation. 
 
 \begin{figure}[hbt!]
     \centering%
@@ -100,7 +100,8 @@ Annealing loss aggregation's computational cost is about the double of the even-
 \subsubsection{Cyclical Learning Rate and Stochastic Weight Averaging}
 
 The benchmarks in this section cover the cyclical learning rate and stochastic weight averaging (SWA).
-The cyclical learning rate (equation \eqref{eq:cyclical-learning-rate}) in this section was configured with $\eta_{low}=1.5e-5$, $\eta_{high}=1.5e-3$, $N_c=5000$, and $\gamma=0.999989$.
+The cyclical learning rate (equation \eqref{eq:cyclical-learning-rate}) in this section was configured with $\eta_{low}=\num{1.5e-5}$, $\eta_{high}=\num{1.5e-3}$, $N_c=5000$, and $\gamma=0.999989$.
+These values are chosen so that the peak learning rate of each cycle is a just slightly higher than the original exponentially-decaying learning rate used in the previous subsections.
 Figure \ref{fig:cyclic-swa-tests-lr-hist} shows a comparison of the learning rate from the original exponentially-decaying and the cyclical learning rate.
 \begin{figure}[hbt!]
     \centering%
@@ -112,11 +113,16 @@ Figure \ref{fig:cyclic-swa-tests-lr-hist} shows a comparison of the learning rat
     }\label{fig:cyclic-swa-tests-lr-hist}%
 \end{figure}
 The exponentially-decaying learning rate will be simply denoted as {\it exponential} learning rate in the later discussion and figures.
-SWA, on the other, hand, runs in parallel when using the cyclical learning rate and does not affect the normal training process.
-It is thus able to decouple the performance of SWA from the results of only the cyclical learning rate.
-In the cases presented here, SWA was configured to collect and average the model parameters from the last 200,000 iterations of the training.
+
+SWA, on the other hand, collects parameters at each iteration and calculates the averages of parameters.
+It runs in parallel when using the cyclical learning rate and does not affect the training process.
+One can choose to export the parameter snapshot at each iteration and perform the SWA as post-processing.
+This approach, however, requires a significant amount of disk space to store parameter snapshots.
+We instead relied on PyTorch's implementation of SWA, which calculates the running averages of parameters on the fly during training.
+We were thus able to decouple the performance of SWA from the results of only the cyclical learning rate.
+In the cases presented here, SWA started from the \num{200000}th iterations of the training.
 Its results share the same convergence histories with the cases of pure cyclical learning rates.
-The only difference between with and without SWA lies in the prediction errors (e.g., errors in $u$) after iteration 200,000.
+The only difference between with and without SWA lies in the prediction errors (e.g., errors in $u$) after iteration \num{200000}.
 
 \begin{figure}[hbt!]
     \centering%
@@ -148,16 +154,16 @@ The only difference between with and without SWA lies in the prediction errors (
     }\label{fig:cyclic-swa-tests-nl3-nn128-npts8192}%
 \end{figure}
 
-In figures \ref{fig:cyclic-swa-tests-nl1-nn16-npts8192}, \ref{fig:cyclic-swa-tests-nl2-nn32-npts8192}, and \ref{fig:cyclic-swa-tests-nl3-nn128-npts8192}, we presented the convergence histories and the time costs.
+In figures \ref{fig:cyclic-swa-tests-nl1-nn16-npts8192}, \ref{fig:cyclic-swa-tests-nl2-nn32-npts8192}, and \ref{fig:cyclic-swa-tests-nl3-nn128-npts8192}, we present the convergence histories and the time costs.
 First, the run times between the two learning rate schedules are similar.
 This is expected as the cyclical learning rate does not add notable operations to the training.
 
 We next examined the convergence of the cyclical and exponential learning rates.
 The results show that obvious difference only exists in the simplest model, $(1, 16, 8192)$.
-However, this difference may be obvious only because the narrower $y$-axis scale in figure \ref{fig:cyclic-swa-tests-nl1-nn16-npts8192}.
+However, this difference may be obvious only because of the narrower $y$-axis scale in figure \ref{fig:cyclic-swa-tests-nl1-nn16-npts8192}.
 If we plot all three figures using the same scale, the difference in $(1, 16, 8192)$ may not be noticeable.
 The quantitative difference also supports this claim.
-For example, the final loss of exponential learning rate is about $2e-1$, and that of cyclical learning rate is around $1e-1$.
+For example, the final loss of exponential learning rate is about $\num{2e-1}$, and that of cyclical learning rate is around $\num{1e-1}$.
 We do not consider this difference significant.
 
 Also, slight oscillation and evident oscillation can be seen in $(2, 32, 8192)$ and $(3, 128, 8192)$, respectively. 
@@ -192,18 +198,19 @@ The last attempt to adopt new training strategy was the application of nonlinear
 The major difficulty of applying CG lies in how to handle batch training.
 CG relies on the previous search direction to determine the current search direction, and the former is based on the hypersurface in the last iteration.
 In batch training, the hypersurface more or less changes from iteration to iteration due to using different training points.
-It is unclear how legit the previous search direction is to be used in the current iteration.
+It is unclear if using the previous search direction to calculate the current search direction work or not.
 
 Moreover, in each iteration, the line-search algorithm searches for a new location in the search direction according to the Wolfe conditions or their derived conditions.
-A point meets the Wolfe conditions in the previous iteration does not necessarily meet the same conditions in the current iteration.
-This may cause a convergence issues in CG as its convergence relies on properly determining the location in each search direction.
+A point that meets the Wolfe conditions in the previous iteration does not necessarily meet the same conditions in the current iteration.
+This may cause convergence issues in CG as its convergence relies on properly determining the location in each search direction.
 
 Nevertheless, given the efficiencies of CG in non-batched training, we would like to experiment the possibility of using it.
 In our current attempt, we used CG to optimize the loss $r(\Theta)$ of a certain batch to a given tolerance before moving on to the next batch.
-Also, CG may not have capability to escape from poor local minimums, so our attempts first used Adam for optimization up to 200,000 iterations to identify a region with proper minimum, and then CG was used for an extra 200 iterations.
-In other words, pure Adam cases ran 400,000 iterations, while the CG cases ran 200,000 Adam iterations and then 200 iterations with CG.
+Also, CG may not have capability to escape from poor local minimums, so our attempts first used Adam for optimization up to \num{200000} iterations to identify a region with proper minimum, and then CG was used for an extra 200 iterations.
+In other words, pure Adam cases ran \num{400000} iterations, while the CG cases ran \num{200000} Adam iterations and then \num{200} iterations with CG.
+Like most of the hyperparameters in deep learning, there is no rigorous justification for these configurations.
 The case tested are $(1, 16, 8192)$, $(2, 32, 8192)$, and $(3, 128, 8192)$.
-CG trained each batch until the change in the loss is smaller than $1e-6$.
+CG trained each batch until the change in the loss is smaller than $\num{1e-6}$.
 
 \begin{figure}[hbt!]
     \centering%
@@ -220,18 +227,18 @@ On the left, we have the losses and errors versus iterations.
 The range of iterations shown in the $x$-axis is 199,800th to 200,200th iteration.
 We can see that, for simple architectures, CG does not help reduce the losses.
 Based on the observations and discussions in the previous sections, cases with simple architectures converge very early.
-It is hence reasonable for CG not able to improve the losses in simple architectures because they may have already converged.
+It is hence reasonable for CG not to be able to improve the losses in simple architectures because they may have already converged.
 However, $(3, 128, 8192)$ does show a sudden drop in the loss and error at $t=0$.
 After the sudden drop, further training with new batches does not further improve the loss and errors.
 
 On the right of the same figure, we have losses and errors versus run time.
-The range of the run time starts from the time at the 200,000th iteration until the end of training.
-In other words, sub-figures on the right show the histories between the 200,000th to 400,000th iteration for Adam-only cases and the 200,000th to 200,200th iteration for CG cases.
+The range of the run time starts from the time at the \num{200000}th iteration until the end of training.
+In other words, sub-figures on the right show the histories between the \num{200000}th to \num{400000}th iteration for Adam-only cases and the \num{200000}th to 200,200th iteration for CG cases.
 As we use CG on each batch until a certain tolerance, one training iteration with CG consists of hundreds or thousands sub-iterations.
-Therefore, it is reasonable to see 200 training iterations with CG takes much longer time than 200,000 iterations with Adam.
+Therefore, it is reasonable to see 200 training iterations with CG take much longer time than \num{200000} iterations with Adam.
 It is clear from these sub-figures that---although CG provides a sudden drop in the losses---it does not further improve the training.
 And eventually, Adam reaches even smaller losses than CG does.
-More importantly, Adam take much less time.
+More importantly, Adam takes much less time.
 
 \begin{figure}[hbt!]
     \centering%
@@ -249,7 +256,7 @@ CG does not provide more accurate results.
 As mentioned, the major problem with CG is the batched training and the capability to escape from saddle points and poor local minimums.
 Carefully tuned line-search parameters may help achieve the escaping.
 However, how to deal with batched training is still a question.
-If the issues is caused by the change in hypersurface, then using more training points per batch may help stabilize the hypersurface from iteration to iteration.
+If the issue is caused by the change in hypersurface, then using more training points per batch may help stabilize the hypersurface from iteration to iteration.
 And each CG iteration can be used as a training iteration, i.e., each batch of points is used in one CG iteration.
 This may be a potential direction for future investigation on this topic.
 % vim:ft=tex
