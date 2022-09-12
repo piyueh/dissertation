@@ -5,7 +5,7 @@ The learning rate schedules adjust the value according to pre-defined formulae r
 Hence, using a schedule does not resolve the problem.
 
 Moreover, using negative gradients as the moving directions to find the minimal loss does not mean the overall descent is the fastest.
-For example, at $k$-th iteration, the negative gradient $- \nabla_{\Theta} r(\vec{\theta}^k)$ just means the direction that descends the fast at $\Theta=\vec{\theta}^k$.
+For example, at $k$-th iteration, the negative gradient $- \nabla_{\Theta} r(\vec{\theta}^k)$ just means the direction that descends the fastest at $\Theta=\vec{\theta}^k$.
 It does not mean the minimum sits in this direction.
 Another real-world example is reaching the lowest-elevation point in a mountain area.
 Sometimes it is faster to reach the lowest point by climbing and crossing a mountain rather than always following the downhill directions.
@@ -13,7 +13,7 @@ Sometimes it is faster to reach the lowest point by climbing and crossing a moun
 Nonlinear conjugate-gradient (CG) methods provide an alternative searching direction, and a proper line-search algorithm helps determine the learning rate.
 In this work, we implemented a variant of CG proposed by Hager and Zhang \cite{hager_new_2005,hager_survey_2006,hager_algorithm_2006}.
 We also implemented an inexact line-search algorithm proposed by the same authors.
-At $k$-th iteration in CG, the general update formula is
+At the $k$-th iteration in CG, the general update formula is
 \begin{equation}\label{eq:cg-update-formula}
     \begin{aligned}
         &\vec{d}^k = 
@@ -27,14 +27,14 @@ At $k$-th iteration in CG, the general update formula is
     \end{aligned}
 \end{equation}
 where $\vec{d}^k$ is the searching direction, and $\alpha_k$ is the step size (or the learning rate).
-$\vec{g}^k$ is the gradient at $k$-th iteration.
+$\vec{g}^k$ is the gradient at the $k$-th iteration.
 In our work, this corresponds to $\nabla_{\Theta} r(\Theta=\vec{\theta}^k)$.
 The vanilla gradient-descent method can be deemed as a special case of \eqref{eq:cg-update-formula}, in which $\beta_0=\beta_1=\cdots=0$.
 Generally speaking, each iteration in CG methods can be seen as starting a new search in a direction between the current search direction and the fastest descending direction at this location.
 
 Different CG methods provide different approaches to evaluating $\beta_k$.
 That is, the resulting searching directions from different CG methods are different.
-In our work, we used the formula proposed in \cite{hager_new_2005,hager_algorithm_2006}:
+In our work, we used the formula proposed in references~\cite{hager_new_2005,hager_algorithm_2006}:
 \begin{equation}\label{eq:hager-cg-beta}
     \beta_k = \max\left(\hat{\beta}_k, \eta_k\right)
 \end{equation}
@@ -65,13 +65,13 @@ A line search algorithm that finds such $\alpha_k$ is called an exact line searc
 However, an exact line search is expensive.
 Using exact line search hurts the performance advantage of CG (as well as gradient-descent methods).
 It is, therefore, more common to use inexact line search algorithms.
-In inexact line search, at $k$-th iteration, we only seek an $\alpha_k$ that helps us land at a new location along $\vec{d}^k$ where
+In inexact line search, at the $k$-th iteration, we only seek an $\alpha_k$ that helps us land at a new location along $\vec{d}^k$ where
 \begin{enumerate}[noitemsep,topsep=-12pt]
     \item we have a sufficient decrease in the loss and
     \item the slope in the $\vec{d}^k$ direction at the new location is milder than that at the beginning of the current iteration.
 \end{enumerate}
 Several mathematical conditions exist to evaluate these two textual statements quantitatively, including the Wolfe conditions, the strong Wolfe conditions, and the approximate Wolfe conditions.
-We ignore the mathematical details and expressions of the two conditions here to help focus on the meaning rather than the formulae.
+We skip the mathematical details and expressions of the two conditions here to help focus on the meaning rather than the formulae.
 Please refer to \cite[Chapter~3]{nocedal_numerical_2006} for mathematical details.
 
 Alongside the CG variant \eqref{eq:hager-cg-beta}-\eqref{eq:hager-cg-beta-hat-k}, Hager and Zhang also proposed a companion inexact line search algorithm to find the learning rate $\alpha_k$ that helps this particular GC method to converge.

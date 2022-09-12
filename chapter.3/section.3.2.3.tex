@@ -78,12 +78,12 @@ See figure~\ref{fig:automatic-differentiation-backward} for the backward calcula
 \end{figure}
 
 Given that $v_9=y$, $v_0=x_1$ and $v_1=x_2$, once the backward calculation reaches $i=0$ and $i=1$, we automatically obtain $\pdiff{y}{x_1}$ and $\pdiff{y}{x_2}$.
-Please refer to~\cite{griewank_automatic_1988} for a detailed introduction to automatic differentiation algorithms.
+Please refer to reference~\cite{griewank_automatic_1988} for a detailed introduction to automatic differentiation algorithms.
 
 No matter how complicated a mathematical expression is (like a neural network $G$), it is always broken down to a sequence of simple binary or unary operations.
 And hence automatic differentiation guarantees the exact derivatives in terms of this sequence of unary and binary computation.
 
-The automatic differentiation is used to evaluate the derivatives of $G$'s outputs with respect to its inputs.
+Automatic differentiation is used to evaluate the derivatives of $G$'s outputs with respect to its inputs.
 Also, it is used to evaluate the derivatives of the residuals with respect to model parameters, i.e., $\nabla_{\Theta} r(\Theta)$.
 The latter is used by optimizers in the optimization process.
 % vim:ft=tex

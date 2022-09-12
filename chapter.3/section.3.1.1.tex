@@ -213,7 +213,7 @@ This is a constrained optimization problem.
 Only residuals from PDEs are relaxed, and residuals from BCs and IC must be exactly zero.
 Though exactly satisfied BCs and IC sound attractive, optimization with hard constraints is much more difficult than unconstrained optimization.
 And optimization methods may not be general enough for arbitrary types of BCs and arbitrary computational domains.
-This approach was used in, for example, \cite{lagaris_artificial_1998,McFall2009,mcfall_solving_2010,berg_unified_2018} for limited types of PDEs and applications.
+This approach was used in, for example, references \cite{lagaris_artificial_1998,McFall2009,mcfall_solving_2010,berg_unified_2018} for limited types of PDEs and applications.
 
 Alternatively, most recent reports of PINNs used soft constraints, that is
 \begin{equation}\label{eq:total-residual}
@@ -237,10 +237,10 @@ In practice, a more general form of \eqref{eq:total-residual} is
 \end{equation}
 where $i$ denotes different loss terms in \eqref{eq:residual-norms}.
 Each loss term is weighted before being aggregated to the final loss.
-To our best knowledge, nevertheless, there is not yet a standard or guideline for how to properly configure $\alpha_i$.
-It is common to see $\alpha_i=1$ in literature.
+To our best knowledge, there is not yet a standard or guideline for how to properly configure $\alpha_i$.
+It is common to see $\alpha_i=1$ in the literature.
 
-If there exist zero roosts that make all residuals in \eqref{eq:residual-norms} zero, then a perfect optimization method will find them from either \eqref{eq:hard-constraint-loss}, \eqref{eq:total-residual}, or \eqref{eq:total-residual-weighted}.
+If there exist zero roots that make all residuals in \eqref{eq:residual-norms} zero, then a perfect optimization method will find them from either \eqref{eq:hard-constraint-loss}, \eqref{eq:total-residual}, or \eqref{eq:total-residual-weighted}.
 This hope is surely unrealistic.
 First, zero roots' existence is not guaranteed.
 Second, the hypersurface of the aggregated loss, $r(\Theta)$, in the vector space of $\Theta$ is usually neither convex nor concave, making it difficult to find the global minimum.

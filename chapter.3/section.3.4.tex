@@ -33,8 +33,8 @@ This results in a system of linear equations:
     \end{bmatrix}
     = 0
 \end{equation}
-Solving this linear system determines the values of $\theta_i$ and concludes the solving workflow of this naive spectral method.
-The obtained $\theta_i$ guarantees that the residuals are zero at least on the $N$ chosen $x$ coordinates.
+Solving this linear system determines the values of $\theta_i$ and concludes the solution workflow of this naive spectral method.
+The obtained $\theta_i$ guarantee that the residuals are zero at least on the $N$ chosen $x$ coordinates.
 
 Though this example uses a spectral method, the workflow also applies to many other numerical methods, such as finite difference methods, which can be reformatted as a form of spectral method.
 
@@ -98,10 +98,10 @@ which also results in a linear system:
     \end{bmatrix}
     = 0
 \end{equation}
-As $\phi_i$ is given, the integrals can be evaluated analytically.
+As $\phi_i$ are given, the integrals can be evaluated analytically.
 Moreover, a proper choice of $\phi_i$ can make the coefficient matrix in \eqref{eq:spetral-least-equare} sparse, making it cheap and fast to solve.
 Finally, $\Theta=\{\theta_1,\cdots\theta_N\}$ is determined.
-In this approach, the obtained $\theta_i$ guarantees that the integrated residual over the whole domain is minimal, but it does not guarantee a zero residual unless $r(x; \Theta) = \sum\limits_{i=1}^{N}\theta_i \frac{\diff^2 \phi_i(x)}{\diff x^2} - s(x)$ has zero roots with respect to $\Theta$ for any given $x$.
+In this approach, the obtained $\theta_i$ guarantee that the integrated residual over the whole domain is minimal, but it does not guarantee a zero residual unless $r(x; \Theta) = \sum\limits_{i=1}^{N}\theta_i \frac{\diff^2 \phi_i(x)}{\diff x^2} - s(x)$ has zero roots with respect to $\Theta$ for any given $x$.
 
 If we replace the integral in \eqref{eq:least-square-fem} with a Monte-Carlo numerical integration:
 \begin{equation}\label{eq:least-square-monte-carlo}
@@ -130,14 +130,14 @@ With the spectral methods and LSFEMs in mind, we can see the analogy between PIN
 Especially when compared to the LSFEMs, their workflows are very close.
 The main difference is that PINNs replace the analytical integration with a Monte-Carlo numerical integration.
 Further, while the LSFEMs solve zero-slope conditions to find the minimum residuals, PINNs rely on searching the minimal residuals on a complicated hypersurface of residuals iteratively.
-It is due to the complexity and the nonlinearity of the models in PINNs, where neither solving zero-residual conditions on selected points nor solving zero-slope conditions can reduce problems to a linear system. 
+In PINNs, due to the nonlinearity in both the approximate solutions and the PDEs, neither solving zero-residual conditions on selected points nor solving zero-slope conditions can give a linear system. 
 
 The second difference is how to approximate derivatives.
 Conventional numerical methods use analytical or numerical differentiation of the models to approximate derivatives.
 On the other hand, modern PINNs depend on automatic differentiation due to the networks' complexity and nonlinearity.
 
 The two differences play an important role in solution accuracy and time-to-solution.
-Solving linear systems is intuitively faster than solving nonlinear optimization problems through 1st-order optimization methods and is cheaper than 2nd-order methods in terms of memory usage.
+Intuitively, solving linear systems should be faster than solving nonlinear optimization problems through 1st-order optimization methods and is cheaper than 2nd-order methods in terms of memory usage.
 And while automatic differentiation is powerful, it requires nontrivial computer memory.
 As seen in section \ref{sec:ad}, automatic differentiation needs to memorize all computational graphs for derivatives.
 High-order derivatives also need to memorize the computational graphs of lower-order derivatives, making the computational graph grow exponentially.

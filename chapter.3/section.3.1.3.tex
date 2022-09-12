@@ -3,7 +3,7 @@ In equation \eqref{eq:total-residual-weighted}, each loss term is weighted.
 How to properly assign the weights is still an open question.
 In references \cite{jin_nsfnets_2020,wang_understanding_2021}, the authors proposed an annealing approach to change these weights adaptively during the optimization process.
 However, these adaptive approaches have not been further tested by more works.
-In this work, part of the benchmarks will cover the performance of the adaptive weight strategy proposed in \cite{jin_nsfnets_2020}.
+In this work, part of the benchmarks will cover the performance of the adaptive weight strategy proposed in reference \cite{jin_nsfnets_2020}.
 
 Jin et al. \cite{jin_nsfnets_2020} proposed the following annealing loss aggregation algorithm for iterative optimization methods:
 \begin{equation}
@@ -42,4 +42,7 @@ The following expression better represents the actual implementation in our code
 where $r_{m,u}^k$, $r_{m,v}^k$, and $r_{m,w}^k$ are the $u$-, $v$-, and $w$-component in the residual vector of the momentum equations at $k$-th iteration.
 And subscript $i$ denotes different loss terms, excluding $r_m(\Theta)^k$ and $r_c(\Theta)^k$.
 In this work, $\lambda$ is fixed at $0.1$ for all cases using annealing loss aggregation.
+Jin et al. used this specific value to generate all results in the reference \cite{jin_nsfnets_2020}. 
+The reference does not provide the reason for this value.
+We were not aware of any study with a different $\lambda$.
 % vim:ft=tex

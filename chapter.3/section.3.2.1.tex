@@ -3,11 +3,11 @@
 In the previous section, $G$ denotes a neural network model (or any mathematical model) that predicts flow quantities at given spatial-temporal coordinates.
 In this section, we would like to introduce the mathematical expression of the most common neural network model in data-free PINNs: MLP (multilayer perceptron) networks.
 
-The universal approximation theorem \cite{hornik_approximation_1991} states that large-enough MLP networks can approximate any smooth functions.
-This theorem justifies the use of MLP networks as PDEs' approximation solutions.
+The universal approximation theorem \cite{hornik_approximation_1991} states that large-enough MLP networks can approximate any smooth function.
+This theorem justifies the use of MLP networks as PDEs' approximate solutions.
 These PDEs include the Navier-Stokes equations, which are the primary governing equations for CFD.\footnote[0]{Though the existence of the smooth solutions for the Navier-Stokes equations is not yet proved, as CFD practitioners, we usually ignore this theoretical fact.}
 
-Figure \ref{fig:mlp-graph} is a commonly seen graphical illustration of how MLP works in literature.
+Figure \ref{fig:mlp-graph} is a commonly seen graphical illustration of how MLP works.
 \begin{figure}[hbt!]
     \singlespacing
     \includegraphics[width=0.95\linewidth]{figs/mlp.tikz}
@@ -32,17 +32,17 @@ $N_l$ denotes the number of hidden layers, and $N_n$ in figure \ref{fig:mlp-grap
 Elements in $\vec{h}^k$ are often called neurons in deep learning.
 Theoretically, $N_n$ does not have to be constant.
 Each $\vec{h}^k$ can have different $N_n$.
-However, as there is no clear guideline on specifying variate $N_n$ for PINNs, most reports in PINNs just used a constant $N_n$ across hidden layers.
+However, as there is no clear guideline on specifying variate $N_n$ for PINNs, most reports in PINNs just use a constant $N_n$ across hidden layers.
 We follow the same approach in this work.
 
 $A^k$ and $\vec{b}^k$ are the free parameters we want to determine in the optimization step (i.e., equation \eqref{eq:total-residual-weighted}).
 $N_l$ and $N_n$ are also parameters that control the complexity and accuracy of an MLP network.
 However, they are determined by users rather than by optimization.
-These parameters are called hyperparameters---they are not counted in the degree of freedom of a mathematical model.
+These parameters are called hyperparameters---they are not counted in the degrees of freedom of a mathematical model.
 
 The element-wise nonlinear functions $\sigma_{k}$ are also pre-determined by users.
 Theoretically, they can be different functions across different $k$.
-To our knowledge, most reports in PINNs used the same function for all $k$, i.e., $\sigma_0(x)=\sigma_1(x)=\cdots=\sigma(x)$.
+To our knowledge, most reports in PINNs use the same function for all $k$, i.e., $\sigma_0(x)=\sigma_1(x)=\cdots=\sigma(x)$.
 In PINNs, the most commonly seen choices of $\sigma$ are hyperbolic tangent ($\tanh$) and the sigmoid function:
 \begin{equation}
     \operatorname{sigmoid}(x) = \frac{1}{1+\exp(-x)}
@@ -51,17 +51,17 @@ In this work, we use SiLU for $\sigma$ \cite{hendrycks_gaussian_2020}, which is 
 \begin{equation}\label{eq:silu}
     \operatorname{SiLU}(x) = \frac{x}{1+\exp(-x)}
 \end{equation}
-To our best knowledge, in terms of solving flow problems with data-free PINNs, no reports have discussed the effect of $\sigma$ except for \cite{li_integration_2010}.
+To our best knowledge, in terms of solving flow problems with data-free PINNs, no reports have discussed the effect of $\sigma$ except for reference \cite{li_integration_2010}.
 
 While simple MLP networks like \eqref{eq:mlp-formula} are not popular in modern deep learning applications, they are still the first choice in solving PDEs with data-free PINNs.
-The reason may be that the universal approximation theorem proves MLP networks' ability to approximate any smooth functions, which makes them theory-backed mathematical models for PDEs' general solutions.
+The reason may be that the universal approximation theorem proves MLP networks' ability to approximate any smooth function, which makes them theory-backed mathematical models for PDEs' general solutions.
 Other types of networks lack such a theoretical backup.
 Nevertheless, lacking theoretical proof does not mean other networks would not work.
-For example, \cite{sirignano_dgm:_2018} reported the success of using an LSTM-style network to solve PDEs.
+For example, reference \cite{sirignano_dgm:_2018} reports the success of using an LSTM-style network to solve PDEs.
 
-Networks with higher complexity imply a more expensive computational cost.
+Networks with higher complexity imply a higher computational cost.
 Whether using complicated networks is worth it may be a question from the perspective of cost-performance ratios.
-Instead, in this work, we used a variant of MLP networks implemented in Modulus---a weight-normalization MLP \cite{salimans_weight_2016}:
+Instead, in this work, we used a variant of MLP networks implemented in Modulus---a weight-normalized MLP \cite{salimans_weight_2016}:
 \begin{equation}\label{eq:weighted-norm-mlp-formula}
     \begin{array}{ll}
         \vec{h}^0 \equiv \begin{bmatrix} \vec{x} \\ t \end{bmatrix} & \\
@@ -77,21 +77,24 @@ $\vec{w}_g^{k}$ for $k=0,\cdots,N_l$ represents a parameter vector.
 $W^k$ is a parameter matrix.
 $\vec{w}_n^{k}$ is not a parameter vector but holds the norms of each row in $W^k$.
 The key idea is to decouple each row in $A^k$ to a length multiplying a direction.
-$\operatorname{diag}\left(\vec{w}_n^k\right)W^k$ is a row-normalized matrix, that is, each row is a unit vector.
-$\vec{w}_g^k$ represents the lengths of the corresponding rows.
+The matrix $\operatorname{diag}\left(\vec{w}_n^k\right)^{-1}W^k$ is row-normalized, in which each row represents a direction.
+And each element in $\vec{w}_g^k$ represents the lengths of the corresponding direction.
+If the matrix $A^k$ is given, then $\vec{w}_g^k$ is the length of each row in $A^k$.
+In other words, $\operatorname{diag}\left(\vec{w}_g^{k}\right) \operatorname{diag}\left(\vec{w}_n^{k}\right)^{-1} W^{k}$ equals to $A^k$.
+When $A^k$ is unknown and needs to be trained, this decoupling allows the lengths and directions to be trained separately.
 
-Compared to using other types of networks, a weight-normalization MLP \eqref{eq:weighted-norm-mlp-formula} does not actually alter the architecture of an MLP network.
+Compared to using other types of networks, a weight-normalized MLP \eqref{eq:weighted-norm-mlp-formula} does not actually alter the architecture of an MLP network.
 It just rearranges the mathematical expression.
-Theoretically, either using \eqref{eq:mlp-formula} or \eqref{eq:weighted-norm-mlp-formula}, a perfect optimization scheme should find $A^k$ and $\operatorname{diag}\left(\vec{w}_g^{k-1}\right) \operatorname{diag}\left(\vec{w}_n^{k-1}\right)^{-1} W^{k-1}$ equivalent to each other.
+Theoretically, either using \eqref{eq:mlp-formula} or \eqref{eq:weighted-norm-mlp-formula}, a perfect optimization scheme should find $A^k$ and $\operatorname{diag}\left(\vec{w}_g^{k}\right) \operatorname{diag}\left(\vec{w}_n^{k}\right)^{-1} W^{k}$ equivalent to each other.
 However, the real world is far from perfect.
 Salimans and Kingma \cite{salimans_weight_2016} found that using the expression of \eqref{eq:weighted-norm-mlp-formula} speeds up the convergence when using 1st-order optimization schemes, such as the basic gradient-descent and Adam.
 
-The weight-normalization variant of the MLP networks has the following formula to calculate the total number of free parameters:
+The weight-normalized variant of the MLP networks has the following formula to calculate the total number of free parameters:
 \begin{equation}\label{eq:dof-calculator}
     DoF =
      N_{n} \left(N_{in} + 2\right) + 
     N_{n} \left(N_{n} + 2 \right) \left(N_l-1\right) +
      N_{out}\left(N_{n} + 1\right)
 \end{equation}
-where $DoF$ means the degree of freedom, another term for the number of free parameters.
+where $DoF$ means the degrees of freedom, another term for the number of free parameters.
 % vim:ft=tex

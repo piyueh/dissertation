@@ -7,7 +7,7 @@ where $\eta$ is a hyperparameter controlling the step size to move in the negati
 $\Phi(\nabla_{\Theta}r(\vec{\theta}^k))$ represents either a corrected or uncorrected gradient.
 For example, $\Phi(\nabla_{\Theta}r(\vec{\theta}^k))=\nabla_{\Theta}r(\vec{\theta}^k)$ in the vanilla gradient-descent method.
 And $\Phi(\nabla_{\Theta}r(\vec{\theta}^k)) = \left(1-\beta\right)\nabla_{\Theta}r(\vec{\theta}^k) + \beta \vec{g}^{k-1}$ for the gradient-descent with momentum, where $\vec{g}^{k-1}$ is the running average of $\nabla_{\Theta}r(\Theta)$ up to $k-1$-th iteration.
-See \cite[Section~8.3]{goodfellow_deep_2016} for the details of these optimization methods.
+See reference~\cite[Section~8.3]{goodfellow_deep_2016} for the details of these optimization methods.
 As the iteration approaches a local minimum, the gradient approaches zero, and eventually, the training converges to $\vec{\theta}$ when $\vec{\theta}^k=\vec{\theta}^{k-1}$
 
 The step size $\eta$ is called {\it learning rate} in modern machine learning.
@@ -26,16 +26,16 @@ Though a large learning rate may miss a local minimum, it sometimes also helps e
 With exponential learning rate adjustment, later iterations may lose the ability to find a new and better local minimum or lose the ability to quickly go over the plateaus surrounding saddle points.
 
 Smith \cite{smith_cyclical_2017} proposed a cyclical learning rate adjusting strategy for general deep learning applications.
-He found that the cyclical learning rate increased a trained model's accuracy and accelerated the training's convergence.
+He found that the cyclical learning rate increased a trained model's accuracy and accelerated the training convergence.
 In the cyclical learning rate, the learning rate bounces back and forth between an upper and lower bound.
 The upper bound may be a constant or a variable that depends on the iteration counter.
 
 The intuitive reason why the cyclical learning rate works is that the difficulty of training deep neural networks is dominated by saddle points rather than poor local minimums \cite{dauphin_identifying_2014}.
 The cyclical learning rate helps escape saddle points in later iterations by providing large learning rates at the upper bound.
 And once escaping from the saddle points and in a convex region of a minimum, the small learning rates help lock the minimum.
-The large learning rate is not supposed to have a strong effect after reaching a convex and locking a minimum, as the gradients around a minimum are usually small.
+The large learning rate is not supposed to have a strong effect after reaching a convex region and locking a minimum, as the gradients around a minimum are usually small.
 
-In this work, we would like to try an exponential-range cyclical learning rate, also proposed in \cite{smith_cyclical_2017}.
+In this work, we would like to try an exponential-range cyclical learning rate, also proposed in reference~\cite{smith_cyclical_2017}.
 Given a half-cycle size $N_c$ (that is, it takes $N_c$ iterations for the rate to go from the lower to the upper bound or from the upper to the lower bound), a counter $c$ indicating the current cycle, and $k$ indicating the current iteration, we have
 \begin{equation}\label{eq:cyclical-learning-rate}
     \eta(k) = \eta_{low} + \max(0, 1-s)\times(\eta_{high}-\eta_{low})\times\gamma^k
@@ -53,7 +53,7 @@ where $N_{SWA}$ denotes the number of iterations to be used in the averaging, an
 Izmailov et al. \cite{izmailov_averaging_2019} showed that SWA improved the trained models' accuracy and generalizability.
 The intuitive mechanism behind SWA is that, on the hypersurface of $r(\Theta)$, the optimizer rarely finds an exact minimum but usually circulates in the vicinity of that location.
 The last few iterations at the end of training are composed of the coordinates surrounding the actual coordinates of the minimum loss on the hypersurface of $r(\Theta)$ in the $\Theta$ vector space.
-Hence, an average of the $\vec{\theta}^k$ may give us the $\vec{\theta}$ of that sits at the center of these $\vec{\theta}^k$.
+Hence, an average of the $\vec{\theta}^k$ may give us the $\vec{\theta}$ that sits at the center of these $\vec{\theta}^k$.
 
 Another interpretation of SWA is by combining the hypersurfaces from different iterations.
 Due to the batched training, the hypersurface of $r(\Theta)$ at each iteration is slightly different.
