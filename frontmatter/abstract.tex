@@ -13,9 +13,9 @@ Benchmarks in the first group help us understand the following behaviors of PINN
 \begin{enumerate*}[label=(\arabic*)]
     \item cost-performance ratios,
     \item convergence of errors with respect to model complexity of MLP (multilayer perceptron) networks, and
-    \item weak and strong scalabilities.
+    \item weak and strong parallel scalability.
 \end{enumerate*}
-Further, we benchmarked several training strategies that had not been seen in PINNs' literature or had not been widely examined by other researchers.
+Further, we benchmarked several training strategies that have not been seen in PINNs' literature or have not been widely examined by other researchers.
 These strategies include annealing loss aggregation, cyclical learning rate, stochastic weight averaging, and nonlinear conjugate-gradient methods.
 We used the 2D Taylor-Green vortex at $Re=100$ for all benchmarks within this group.
 
@@ -30,7 +30,7 @@ Benchmarks in this group used three types of PINNs:
 \end{enumerate*}
 In addition, we used a 2D cylinder flow at $Re=40$, which does not have instabilities, to validate the steady and unsteady data-free PINNs' capabilities in flow with immersed bodies.
 
-Here we listed the key findings from the first group of our benchmarks:
+Here we list the key findings from the first group of our benchmarks:
 \begin{enumerate}[nolistsep]
     \item Under a given desired error level, the time cost of a PINN solver is several orders of magnitude slower than our in-house conventional CFD solver, PetIBM.
     For example, 20 seconds with PetIBM versus 2 hours with the PINN for an error level of $1e-3$.
@@ -42,7 +42,7 @@ Here we listed the key findings from the first group of our benchmarks:
     \item Errors decrease at a similar rate when we either increase the number of hidden layers by one or double the number of per-layer neurons in MLP networks.
     It suggests that the former is a better option to improve prediction accuracy than the latter because the former needs less computational cost.
     \item Unlike conventional numerical methods, PINNs' errors do not monotonically decrease when increasing MLP networks' degrees of freedom (DoFs).
-    PINNs can have different accuracies under the same DoF, indicating that DoFs are not a proper metric for PINNs' model complexity.
+    PINNs can have different accuracies under the same number of DoFs, indicating that DoFs are not a proper metric for PINNs' model complexity.
     \item The per-batch number of training points has a stronger effect on PINNs' time costs than the model complexity. However, the former has less influence than the latter on prediction accuracy.
     It suggests that increasing per-batch training points should come after increasing hidden layers or neurons when improving PINNs' accuracy.
     \item PINNs' weak scaling is above $90\%$ on average (with 1 to 8 GPUs), which helps scale per-batch training points on GPUs with limited memory space.
@@ -63,7 +63,7 @@ Nevertheless, all PINNs' drag coefficients agreed with conventional steady-state
 Besides the benchmarks, this work briefly introduces PINNs.
 Starting from the difference between data-driven and data-free PINNs, we continue by introducing the history and the development of solving PDEs with data-free PINNs since 1994.
 We discuss the open questions and known issues of data-free PINNs, which further motivated the present work.
-In a later chapter, we detail the mathematical expressions related to PINNs.
+In a later chapter, we detail the mathematical formulations related to PINNs.
 Moreover, we compare PINNs to conventional numerical methods and show that PINNs is a special case of the least-square finite element methods.
 
 We describe our in-house high-performance CFD code and associated verification and validation (V\&V) to compare conventional CFD methods and data-free PINNs.
@@ -71,8 +71,8 @@ The V\&V confirmed the correctness of our CFD code, and the subsequent performan
 The in-house CFD code served as a baseline for PINNs' benchmarks.
 
 In a nutshell, our results show that PINNs is a relatively new research area.
-As we investigated the feasibility of PINNs, we found more open questions and challenges for PINNs to become a daily engineering tool.
+As we investigated the feasibility of PINNs, we found more open questions and challenges for PINNs to become an engineering tool.
 While most studies in the literature focused on the theoretical capability of PINNs and toy PDEs, we hope our work can arouse others' interest in solving those challenges.
-All the code, case configurations, scripts for pre-/post-processing, and definition files of containers are open and available online.
+All the code, case configurations, scripts for pre-/post-processing, and definition files of containers are open and available online (https://github.com/piyueh/dissertation-repro-pack).
 }
 % vim:ft=tex
