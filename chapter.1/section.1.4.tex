@@ -39,19 +39,19 @@ We are particularly interested in the following properties:
         In academia, it is not uncommon for researchers to only consider a solver's run time as time cost.
         However, in practice, code development and pre-/post-processing also contribute a significant portion to the cost of a project.
         Given that human labor and associated time/monetary cost may be challenging to evaluate and to be compared in an objective manner, we would like to share our subjective viewpoints on this topic in the final discussion.
-        As we are the developers of the PINNs solvers and the conventional CFD solver used in this work, our knowledge and experience should be sufficient to justify our subjective claims.
+        As we are the developers of the PINN solvers and the conventional CFD solver used in this work, our knowledge and experience should be sufficient to justify our subjective claims.
 \end{description}
 
 A 2D Taylor-Green vortex problem was chosen for benchmarking convergence, scalability, cost-performance ratios, and training strategies.
 The 2D Taylor-Green vortex has periodic boundary conditions in both $x$ and $y$ directions, and its solution exponentially decays from the initial conditions.
 It is, therefore, a typical benchmark for conventional unsteady CFD solvers.
-This flow problem has periodic boundary conditions, which allow us to investigate the spatial and temporal errors without the pollution from the numerical treatments of boundary conditions.
+This flow problem has periodic boundary conditions, which allow us to investigate the spatial and temporal errors without pollution from the numerical treatments of boundary conditions.
 
 As for the benchmark of flow with physical instability, we used two cylinder flow configurations: $Re=40$ and $Re=200$ ($Re$ denotes Reynolds number).
 2D cylinder flow at $Re=40$ does not have instability and has a steady solution.
 We used it to validate our PINN solver and confirm it can solve laminar flow with an immersed solid body.
 The target flow problem with instabilities is the one at $Re=200$.
-It does not have a steady solution, though eventually, the flow should reach a periodic flow pattern, i.e., the flow pattern repeats after every certain time.
+It does not have a steady solution, though eventually the flow should reach a periodic flow pattern, i.e., the flow pattern repeats after every certain time.
 
 We built our PINN solver with the help of NVIDIA's Modulus library.
 Modulus is a high-level Python package built on top of PyTorch that helps users develop PINNs for differential equations.

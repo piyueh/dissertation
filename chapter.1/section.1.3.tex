@@ -14,7 +14,7 @@ In the same tandem-cylinder example, the trained model can help determine the op
 Conventional numerical methods, on the contrary, require several simulations (with each one covering one distance configuration) to find the optimal setting.
 
 Data-free PINNs may be a potential solution to many engineering applications.
-However, whether its current development is ready for practical engineering is doubtful.
+However, whether their current development is ready for practical engineering is doubtful.
 
 Engineering solutions are always subject to some pre-defined specifications (e.g., minimum accuracy requirements) under certain constraints (e.g., time and monetary cost, existing tools, and resources).
 To make a tool feasible for practical engineering, we believe two crucial factors are the predictability and controllability of the cost-performance relationship.
@@ -25,16 +25,16 @@ We relate predictability and controllability to computational cost and accuracy 
 Computational cost includes run times and required hardware.
 For a given numerical method, the computational cost is affected by the degrees of freedom (DoFs) and the scalability of the method.
 The convergence properties of the method dominate the cost-accuracy relationship.
-With known convergence properties, given a preliminary result of some benchmark simulations on the target problem, engineers can predict how many extra degrees of freedom they need to lower how much of the error level, meaning the accuracy is controllable.
+With known convergence properties, given a preliminary result of some benchmark simulations on the target problem, engineers can predict how many extra degrees of freedom they need to lower the error level by a given amount, meaning the accuracy is controllable.
 Additionally, with known scalability properties, engineers can determine what hardware resources and how much wall time they need.
 
-However, to our best knowledge, these properties in data-free PINNs are still unclear and have not yet been investigated in the literature.
+However, to our best knowledge, these properties in data-free PINNs are still unclear and have not yet been investigated and reported in the literature.
 Few reports studied either theoretically or experimentally the required computing resources, the computational performance, the convergence, or the error analysis of PINN.
 Not to mention that even how to configure the network architectures and hyperparameters is still an open question. 
 
-Since the earliest report of data-free PINNs in 1994, the configurations of neural network architectures have been some random choices based on the researchers' previous experience.
-Even if one justifies the use of MLP networks with the universal approximation theory, the configurations of hyperparameters still seem to be random choices.
-For example, Dissanayake and Phan-Thien acknowledged that their hyperparameter configurations were merely random choices.
+Since the earliest report of data-free PINNs in 1994, the configurations of neural network architectures have been some arbitrary choices based on the researchers' previous experience.
+Even if one justifies the use of MLP networks with the universal approximation theory, the configurations of hyperparameters still seem to be arbitrary choices.
+For example, Dissanayake and Phan-Thien acknowledged that their hyperparameter configurations were merely arbitrary choices.
 Also, they did not notice a significant difference in the accuracies of different architecture configurations.
 Dissanayake and Phan-Thien's report in 1994 may be outdated.
 However, recently in 2019, Dockhorn \cite{dockhorn_discussion_2019} showed that data-free PINNs do not have clear properties in terms of convergence, run time, scalability, and being deterministic.
@@ -48,10 +48,10 @@ In PINNs, automatic differentiation is a crucial component not only because it m
 Automatic differentiation is based on the chain rule of calculus, which backtracks each computing step that results in the current variable of interest.
 Increasing the order of derivatives will at least double the computational graph.
 So naively speaking, if the size of the computational graph from $x$ to $y$ is $N$, the size of the graph to evaluate $\frac{\partial^2 y}{\partial x^2}$ may be at least $4N$.
-This is just a minimum estimation.
+This is just a conservative estimation.
 The actual graph size may be even higher due to many other factors.
 So unlike regular data-driven deep learning applications (in which only first-order derivatives of model parameters are required), solving PDEs may demand much more hardware resources because of the high-order derivatives with respect to spatial-temporal coordinates.
-Besides, the gradients of model parameters will be one-order higher than the highest order of derivatives in PDEs. 
+Besides, the gradients with respect to model parameters will be one-order higher than the highest order of derivatives in PDEs. 
 Even as recently as 2018, researchers \cite{sirignano_dgm:_2018} still used finite-difference to approximate derivatives of orders greater or equal to $2$.
 However, as automatic differentiation is exact, using a finite-difference approximation to replace it might reduce the accuracy.
 

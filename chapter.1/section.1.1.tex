@@ -1,7 +1,7 @@
 %! TEX root = main.tex
 
 CFD (computational fluid dynamics) and other applications of numerical PDEs (partial differential equations) were once the primary reason for the advance in HPC (high-performance computing) hardware and programming tools.
-However, deep learning applications have recently become the major player that pushes the boundaries of these computing resources.
+However, deep learning applications have recently become the major player that pushes the boundaries of these computing technologies.
 For example, Google developed TPU (tensor processing unit), TensorFlow, and Colaboratory for deep learning.
 NVIDIA has been promoting its recent-generation GPUs (graphical processing units) for deep learning since 2015~\cite{buck_nvidias_2015}.
 Even supercomputing centers, such as those managed by the United States Department of Energy, shifted their focus to deep learning for their next-generation hardware~\cite{us_department_of_energy_argonne_2019}.
@@ -38,11 +38,11 @@ Once having mathematical expressions of the derivatives, we substitute them into
 Finally, we determine the free parameters in the model by optimizing/minimizing the residuals.
 In other words, the model fits against PDEs rather than observed data; hence it is called data-free.
 The workflow is similar to least-square finite element methods (LSFEM \cite{jiang_least-squares_1998}) or collocation spectral methods \cite{trefethen_spectral_2000}.
-We will describe a brief comparison of the methods in section \ref{sec:pinn-diff}.
-Figure \ref{fig:pinn-workflow} shows a graphical demonstration of applying this workflow to solve the Navier-Stokes equations. 
+We will develop a brief comparison of the methods in section \ref{sec:pinn-diff}.
+Figure \ref{fig:pinn-workflow} shows a graphical illustration of applying this workflow to solve the Navier-Stokes equations. 
 
-Though only been popular recently, solving PDEs with neural networks can be dated back to the early 90s.
-If we limit ourselves to forward problems, for example, in 1994, Dissanayake and Phan-Thien \cite{dissanayake_neural-network-based_1994} proposed using multilayer perceptron (MLP) networks (or called fully-connected neural networks) as the approximate solutions to PDEs and using the PDEs as the loss functions for model fitting.
+Though only becoming popular recently, solving PDEs with neural networks can be dated back to the early 90s.
+If we limit ourselves to forward problems, for example, in 1994, Dissanayake and Phan-Thien \cite{dissanayake_neural-network-based_1994} proposed using multilayer perceptron (MLP) networks (also called fully-connected neural networks) as the approximate solutions to PDEs and using the PDEs as the loss functions for model fitting.
 Lagaris et al., in 1998 \cite{lagaris_artificial_1998}, also proposed a similar approach but used auxiliary models to enforce boundary conditions.
 McFall and his coworkers \cite{McFall2009,mcfall_solving_2010} further improved the enforcement of boundary conditions.
 Other types of neural network models, such as RBF (radial basis function) neural networks, can be found in references \cite{li_numerical_2003,mai-duy_numerical_2001,demirkaya_direct_2008,li_integration_2010}.
