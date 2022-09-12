@@ -8,14 +8,14 @@ In this section, we would like to discuss on the items we listed in section \ref
 
 From the benchmarks in chapter \ref{chap:pinn-cases}, our first impression is the time cost or time-to-solution of PINNs.
 Even for simple cases like the Taylor-Green vortex, the run times of PINN cases are in hours, while those of PetIBM cases (figure \ref{fig:petibm-tgv-spatial-temporal-error}) are in seconds.
-If we consider the time cost under the same solution error level, PetIBM needs less than 20 seconds to achieve the same error level of the most accurate PINN case (at about $L_{2,sp-t}=8e-2$, according to figure \ref{fig:tgv2d-re100-err-vs-time}).
+If we consider the time cost under the same solution error level, PetIBM needs less than 20 seconds to achieve the same error level of the most accurate PINN case (at about $L_{2,sp-t}=\num{8e-2}$, according to figure \ref{fig:tgv2d-re100-err-vs-time}).
 If we only consider the time required to reach an acceptable converged solution, the gap in the time cost is still significant.
 For example, from figure \ref{fig:nl3-nn256-npts4096-loss-err-hist}, if the solution converged at the \num{200000}th iteration, the time-to-solution is still $1.5$ hours, which can not compete with PetIBM's $20$ seconds.
 
 Another example is the $Re=200$ cylinder flow.
 From figure \ref{fig:cylinder-re200-train-hist}, if the unsteady PINN converged at the \num{500000}th iteration, it still needs about $15$ hours and can not compete with PetIBM's $1.7$ hours.
 Not to mention that the PetIBM case ran on a GPU that is 7 years older than the one used by the unsteady PINN.
-Moreover, PetIBM's accuracy is much higher than the unsteady PINN's because PetIBM solved the PDE residual down to $1e-14$, while the unsteady PINN's final PDE residual is about $1e-4$.
+Moreover, PetIBM's accuracy is much higher than the unsteady PINN's because PetIBM solved the PDE residual down to $\num{1e-14}$, while the unsteady PINN's final PDE residual is about $\num{1e-4}$.
 At least for forward problems, qualitatively speaking, PINNs' cost-performance ratios are significantly inferior to PetIBM and most conventional numerical PDE schemes.
 
 We believe the high cost of PINNs comes from automatic differentiation.
