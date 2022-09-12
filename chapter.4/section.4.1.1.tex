@@ -18,12 +18,12 @@ This group contains a total of 105 cases.
 
 The other four groups will be described in the corresponding subsections: section \ref{sec:pinn-2d-tgv-scaling} describes cases for parallel scaling tests; section \ref{sec:pinn-2d-tgv-training-strategy} describes cases with adaptive loss aggregation, cases with cyclical learning rates and SWA, and cases with conjugate-gradient solvers.
 
-The training processes for cases in the first group are the same: 400,000 iterations of the Adam optimization with an exponentially-decaying learning rate schedule: $\operatorname{lr}(k) = 0.95^\frac{k}{5000}$, where $k$ is the iteration counter.
+The training processes for cases in the first group are the same: \num{400000} iterations of the Adam optimization with an exponentially-decaying learning rate schedule: $\operatorname{lr}(k) = 0.95^\frac{k}{5000}$, where $k$ is the iteration counter.
 We use the default parameters for the Adam optimizer from PyTorch: $\beta_1=0.9$, $\beta_2=0.999$, and $\epsilon=10^{-8}$.
 
-Given an $N_{bs}$, a total of $10,000 \times N_{bs}$ points are used to evaluate PDE residuals.
-And another $10,000 \times N_{bs}$ points are used to evaluate IC residuals.
-In other words, each batch of training points is repeated every $10,000$ iterations.
+Given an $N_{bs}$, a total of $\num{10000} \times N_{bs}$ points are used to evaluate PDE residuals.
+And another $\num{10000} \times N_{bs}$ points are used to evaluate IC residuals.
+In other words, each batch of training points is repeated every $\num{10000}$ iterations.
 And the models see each training point $40$ times during the training process.
 
 The training points for PDE residuals are randomly sampled from the spatial-temporal domain of $[-\pi, \pi]\times[-\pi, \pi]\times(0, 100]$.

@@ -41,7 +41,7 @@ A second $x$ axis at the bottom of these figures shows the corresponding run tim
 
 Only the aggregated loss of $(1, 32, 16384)$ obviously converged, and the other two still show some potential to reach a smaller loss.
 However, if we examine the history of $L_{2,sp-t}$, $L_2@t=40$, and $L_2@t=80$, the trends of these errors do not show much potential for improvement.
-Especially from the case of $(3, 256, 4096)$, we see that the errors of $u$ does not change significantly after 200,000 iterations.
+Especially from the case of $(3, 256, 4096)$, we see that the errors of $u$ does not change significantly after \num{200000} iterations.
 More training iterations only improve the error at $t=0$.
 Note that the solution at $t=0$ is determined by the IC losses only, meaning the correct solution at $t=0$ is given to PINNs.
 The solutions of $t=40$ and $t=80$ are mainly affected by PDE losses, and the PINNs do not have correct solutions.

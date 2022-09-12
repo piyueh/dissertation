@@ -224,7 +224,7 @@ CG trained each batch until the change in the loss is smaller than $\num{1e-6}$.
 
 Figure \ref{fig:ncg-tests-train-hist} shows the comparison of the convergence histories between Adam-only cases and CG cases.
 On the left, we have the losses and errors versus iterations.
-The range of iterations shown in the $x$-axis is 199,800th to 200,200th iteration.
+The range of iterations shown in the $x$-axis is \num{199800}th to \num{200200}th iteration.
 We can see that, for simple architectures, CG does not help reduce the losses.
 Based on the observations and discussions in the previous sections, cases with simple architectures converge very early.
 It is hence reasonable for CG not to be able to improve the losses in simple architectures because they may have already converged.
@@ -233,7 +233,7 @@ After the sudden drop, further training with new batches does not further improv
 
 On the right of the same figure, we have losses and errors versus run time.
 The range of the run time starts from the time at the \num{200000}th iteration until the end of training.
-In other words, sub-figures on the right show the histories between the \num{200000}th to \num{400000}th iteration for Adam-only cases and the \num{200000}th to 200,200th iteration for CG cases.
+In other words, sub-figures on the right show the histories between the \num{200000}th to \num{400000}th iteration for Adam-only cases and the \num{200000}th to \num{200200}th iteration for CG cases.
 As we use CG on each batch until a certain tolerance, one training iteration with CG consists of hundreds or thousands sub-iterations.
 Therefore, it is reasonable to see 200 training iterations with CG take much longer time than \num{200000} iterations with Adam.
 It is clear from these sub-figures that---although CG provides a sudden drop in the losses---it does not further improve the training.

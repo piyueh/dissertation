@@ -13,7 +13,7 @@ We only used one cyclical learning rate schedule: $(\eta_{low}, \eta_{high}, N_c
 In addition to the steady and unsteady PINN solvers, a third case was done in this benchmark.
 This case is a data-driven PINN simulation.
 In this data-driven PINN case, we removed the original IC and train the PINN model against several snapshots from a PetIBM simulation.
-The selected snapshots from PetIBM were those at $t=125,126,\cdots,139, 140$.
+The selected snapshots from PetIBM were those at $t=125$, $126$, $\cdots$, $139$, $140$.
 These snapshots contain around $3$ full periods of vortex shedding.
 In other words, we replaced the IC loss terms in equation \eqref{eq:total-residual} with  
 \begin{equation}\label{eq:data-driven-loss}
@@ -25,13 +25,13 @@ In other words, we replaced the IC loss terms in equation \eqref{eq:total-residu
     \right.
 \end{equation}
 where subscript $data$ denotes the data from the PetIBM simulation.
-The total number of data points from PetIBM is around $17,000,000$, and we only used $6,400$ every iteration, meaning each data batch was repeated approximately every $2,650$ iterations.
+The total number of data points from PetIBM is around $\num{17000000}$, and we only used $\num{6400}$ every iteration, meaning each data batch was repeated approximately every $\num{2650}$ iterations.
 Except for replacing the IC losses with a data-driven approach, all other loss terms in \eqref{eq:total-residual} remain the same.
 
-Note that for the data-driven case, the loss terms of PDEs and BCs were evaluated only in $t\in[125, 200]$ because we treated PetIBM's data as if they were ICs.
+Note that for the data-driven case, the loss terms of PDEs and BCs were evaluated only in $t\in[125,\ 200]$ because we treated PetIBM's data as if they were ICs.
 Also, because PDEs were solved even after $t=140$ (the last snapshot from PetIBM), we expected this trained model to be able to make predictions for $t>140$.
 
-Each case ran for $1,000,000$ iterations with the Adam optimizer.
+Each case ran for $\num{1000000}$ iterations with the Adam optimizer.
 The hardware used was 1 NVIDIA A100 GPU for all cases.
 
 The mentioned PetIBM simulation was done on the same K40 configuration as described in section \ref{sec:pinn-2d-cylinder-re40-conf}.

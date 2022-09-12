@@ -244,7 +244,7 @@ If there exist zero roots that make all residuals in \eqref{eq:residual-norms} z
 This hope is surely unrealistic.
 First, zero roots' existence is not guaranteed.
 Second, the hypersurface of the aggregated loss, $r(\Theta)$, in the vector space of $\Theta$ is usually neither convex nor concave, making it difficult to find the global minimum.
-Even a simple 1D linear Burger's equation with an MLP of around 7,850 free model parameters shows a complicated hypersurface of $r(\Theta)$ \cite{krishnapriyan_characterizing_2021}.
+Even a simple 1D linear Burger's equation with an MLP of around \num{7850} free model parameters shows a complicated hypersurface of $r(\Theta)$ \cite{krishnapriyan_characterizing_2021}.
 While finding zero roots or the global minimum on the hypersurface of $r(\Theta)$ is difficult, practitioners of PINNs just assume the local minimums of $r(\Theta)$ are good and small enough.
 
 This poses a fundamental difference between conventional CFD schemes and PINNs: the former seeks exact zero roots to make residuals zero, while the latter just {\it hopes} to make residuals as small as possible.

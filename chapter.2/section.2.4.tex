@@ -53,7 +53,7 @@ Theoretically, these two configurations are comparable because AmgX's classical 
 
 From the results, we observed a $65x$ speedup comparing 1 GPU to 1 CPU in the $15$-million problem and a $9x$ speedup comparing 4 GPUs to 36 CPUs in the $33$-million problem.
 As a reference, 4 V100 GPUs cost about $12$ thousand US dollars at the time of completing those experiments.
-On the other hand, $36$ cores of CPUs consist of $2$ Xeon Gold 6140 chips, which cost around $2$ thousand US dollars\footnote{Xeon Gold 6140 has been discontinued at the time or writing. The price we show here was the market value at the time, while the official suggested price for $2$ brand-new chips is around $4,800$ US dollars.}.
+On the other hand, $36$ cores of CPUs consist of $2$ Xeon Gold 6140 chips, which cost around $2$ thousand US dollars\footnote{Xeon Gold 6140 has been discontinued at the time or writing. The price we show here was the market value at the time, while the official suggested price for $2$ brand-new chips is around $\num{4800}$ US dollars.}.
 If we naively compare the results based on the monetary cost of the GPUs and CPUs, we would observe a speedup of about $1.5x$ (4 V100 GPUs versus 218 CPU cores).
 However, as CPUs and GPUs work under different hardware configurations and setups, this monetary-based comparison is not fair in the real world.
 For example, $6$ CPU chips may require $3$ complete computing nodes and an HPC cluster, while 4 V100 GPUs can completely reside in one single workstation or even a personal desktop.
@@ -80,7 +80,7 @@ Figures \ref{fig:petibm-speedups-15M-small} and \ref{fig:petibm-speedups-15M-lar
     \label{fig:petibm-speedups-15M-large}
 \end{figure}
 The number of cells is $15$ millions, meaning there were about $45$ million unknowns in the velocity system and $15$ million in the pressure system.
-The snake was discretized to $2,925$ Lagrangian points, meaning the forcing system has $8,775$ unknowns.
+The snake was discretized to $\num{2925}$ Lagrangian points, meaning the forcing system has $\num{8775}$ unknowns.
 
 In CPU-only simulations, PetIBM solved velocity systems with the GAMG preconditioner and pressure systems with the BoomerAMG preconditioner.
 In CPU-GPU mixed simulations, the preconditioners for velocity and pressure systems are block-Jacobi and classical multigrid from AmgX, respectively.
