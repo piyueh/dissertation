@@ -30,8 +30,8 @@ Comparing the coefficients between the steady, unsteady, and PetIBM's values bef
 This speculation is further supported by the values in table \ref{table:cylinder-2d-re200-cd}, where we compare $C_D$ to both unsteady and steady numerical simulations from literature.
 The $C_D$ obtained from the unsteady PINN is the same as the steady PINN and close to those steady CFD simulation results.
 
-As for the data-driven case, its temporal domain is $t\in[125, 200]$, so the coefficients' trajectories start from $t=125$.
-The result, again unexpected to us, only exhibits shedding in the time range where we provide data with shedding to the PINN ($t\in[125, 140]$).
+As for the data-driven case, its temporal domain is $t\in[125$, $200]$, so the coefficients' trajectories start from $t=125$.
+The result, again unexpected to us, only exhibits shedding in the time range where we provide data with shedding to the PINN ($t\in[125$, $140]$).
 This result also shows that data-driven PINNs may be more difficult to train, compared to data-free PINNs and regular data-only model fitting.
 Even in the range of provided data, the data-driven case is not able to reach the given maximal $C_L$, and the $C_D$ is obviously off from the given data.
 After $t=140$, the trajectories quickly fall back to the no-shedding pattern, though it still deviates from the trajectories of the steady and unsteady PINNs.

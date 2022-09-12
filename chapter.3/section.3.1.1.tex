@@ -1,5 +1,5 @@
 %! TEX root = main.tex
-Consider the incompressible Navier-Stokes equations in a spatial domain of $\vec{x}\in\Omega$ and a time range of $t\in[0, T]$:
+Consider the incompressible Navier-Stokes equations in a spatial domain of $\vec{x}\in\Omega$ and a time range of $t\in[0$, $T]$:
 \begin{subequations}\label{eq:orig-ns}
     \begin{align}[left=\empheqlbrace\,]
         &\pdiff{\vec{u}}{t} + \left(\vec{u} \cdot \nabla\right) \vec{u}
@@ -102,7 +102,7 @@ For example, a very simple MLP network for a steady 2D flow may look like
     \end{bmatrix}
     \end{aligned}
 \end{equation}
-where $a_{ij}$, $b_i$, and $c_{ki}$ for $i,j=1,2$ and $k=1,2,3$ are free parameters in the model and belong to $\Theta$.
+where $a_{ij}$, $b_i$, and $c_{ki}$ for $i$, $j=1$, $2$ and $k=1$, $2$, $3$ are free parameters in the model and belong to $\Theta$.
 This MLP network is said to have one hidden layer with 2 neurons per layer and uses cosine for the activation function.
 (Note that it is uncommon to use cosine for activation in real applications.)
 We will formally introduce the definitions of these terms and the MLP's matrix form in section \ref{sec:mlp}.
@@ -172,7 +172,7 @@ Residual vectors $\hat{\vec{r}}_i$ and residual scalar $\hat{r}_i$, where $i$ de
 They are zero anywhere in the domain of interest only when the approximation solution $G$ perfectly fits in \eqref{eq:orig-ns}, \eqref{eq:orig-ns-ic}, and \eqref{eq:orig-ns-bc}.
 
 The final step is to find a set of parameters $\vec{\theta}=\begin{bsmallmatrix}\theta_1 & \theta_2 & \cdots\end{bsmallmatrix}^\mathsf{T}$ that makes all residuals zero, i.e., when $\Theta=\vec{\theta}$, $G$ perfectly fits into \eqref{eq:orig-ns}, \eqref{eq:orig-ns-ic}, and \eqref{eq:orig-ns-bc}.
-$\vec{\theta}$ then represents the common zero roots of all the residual functions in \eqref{eq:residuals} for all $\vec{x} \in \Omega$, $\vec{x} \in \Gamma_{bc}$, and $t\in[0, T]$.
+$\vec{\theta}$ then represents the common zero roots of all the residual functions in \eqref{eq:residuals} for all $\vec{x} \in \Omega$, $\vec{x} \in \Gamma_{bc}$, and $t\in[0$, $T]$.
 
 Assume there are a total of $N_\Theta$ free parameters.
 If residual functions in (\ref{eq:residuals}) are not complicated, and if $N_\Theta$ is small enough, we may numerically find the zero roots by solving a system of $N_\Theta$ nonlinear equations.
@@ -188,7 +188,7 @@ Also, note that the residual functions in \eqref{eq:residuals} are continuous in
 To make the optimization easier, we also limit ourselves to finding the minimal residuals at some spatial-temporal coordinates only, rather than asking for minimal residuals everywhere in the continuous space-time domain. 
 In other words, the resulting optimization problem tries to find $\vec{\theta}$ that gives the minimal residuals on some spatial-temporal points.
 
-Assume we have picked $N_{PDE}$ spatial-temporal points from $\vec{x}\in\Omega$ and $t\in[0, T]$, $N_{IC}$ points in $\Omega$ but with a fixed time $t=0$, and $N_{BC}$ points from $\vec{x} \in \Gamma_{bc}$ and $t\in[0, T]$.
+Assume we have picked $N_{PDE}$ spatial-temporal points from $\vec{x}\in\Omega$ and $t\in[0$, $T]$, $N_{IC}$ points in $\Omega$ but with a fixed time $t=0$, and $N_{BC}$ points from $\vec{x} \in \Gamma_{bc}$ and $t\in[0$, $T]$.
 We define the residuals at these points as \\
 \begin{equation}\label{eq:residual-norms}
     \begin{aligned}

@@ -49,7 +49,7 @@ Combining this fact and the chain rule, automatic differentiation evaluates:
 The set $P(i)$ denotes the parents of node $i$ in the reversed computational graph.
 For example, as shown in figure~\ref{fig:automatic-differentiation-backward}, the parents of node $1$ are $4$ and $5$.
 Any derivatives with respect to $v_1$ have contributions from nodes $4$ and $5$.
-Note that we evaluate equation~\ref{eq:reverse-graph-example} in a reversed order, $i=9, 8, 7, \ldots$, so that $d_p$ ($\forall p\in P(i)$) are ready when evaluating any $d_i$.
+Note that we evaluate equation~\ref{eq:reverse-graph-example} in a reversed order, $i=9$, $8$, $7$, $\cdots$, so that $d_p$ ($\forall p\in P(i)$) are ready when evaluating any $d_i$.
 See figure~\ref{fig:automatic-differentiation-backward} for the backward calculation.
 \begin{figure}[hbt!]
     \begin{minipage}{0.4\textwidth}

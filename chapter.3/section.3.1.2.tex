@@ -10,7 +10,7 @@ While training points may be generated manually and intentionally positioned at 
 The ability to use arbitrary numbers of training points helps the generalizability of a trained PINNs model.
 When more training points are involved in \eqref{eq:residual-norms} and hence \eqref{eq:total-residual-weighted}, the minimal residuals are achieved at more locations in the domain. 
 Ultimately, with unlimited training points evenly distributed in the domain, optimizing the discretized residuals in \eqref{eq:residual-norms} becomes optimizing continuous residual functions in \eqref{eq:residuals}. 
-And the resulting optimal parameters, $\vec{\theta}$, will make $G$ a more accurate approximation solution to the whole domain of $\Omega$ and $t\in[0, T]$.
+And the resulting optimal parameters, $\vec{\theta}$, will make $G$ a more accurate approximation solution to the whole domain of $\Omega$ and $t\in[0$, $T]$.
 
 More points also mean a higher computational cost.
 Batched training is thus utilized to reduce the cost.
@@ -30,7 +30,7 @@ That is
 \left.\nabla_\theta r(\Theta) \right|_{\vec{x}, t \in \mathcal{X}_2} \sim
 \cdots
 \end{equation}
-where $\mathcal{X}_i$ for $i=1,2,\cdots$ represents the $i$-th batch of the training points.
+where $\mathcal{X}_i$ for $i=1$, $2$, $\cdots$ represents the $i$-th batch of the training points.
 These gradients are used to update $\vec{\theta}$ in iterative optimization methods.
 In other words, the hypersurface of $r(\Theta)$ is expected not to change significantly from iteration to iteration when using different batches of points to evaluate it.
 However, whether this statement is true may depend on the number of points in each batch: the number of points should be large enough to have similar statistical properties across different batches.

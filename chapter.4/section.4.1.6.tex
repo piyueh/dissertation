@@ -3,7 +3,7 @@ This subsection presents our experiments with several new training strategies, i
 
 \subsubsection{Annealing Loss Aggregation}
 
-We applied the annealing loss aggregation described in section \ref{sec:loss-annealing} to the cases of $(N_l, N_n, N_{bs}) = (1, 16, 8192)$, $(2, 32, 8192)$, and $(3, 128, 8192)$.
+We applied the annealing loss aggregation described in section \ref{sec:loss-annealing} to the cases of $(N_l$, $N_n$, $N_{bs})$ $=$ $(1$, $16$, $8192)$, $(2$, $32$, $8192)$, and $(3$, $128$, $8192)$.
 The $\lambda$ parameter in the annealing algorithm is $0.1$ for all cases.
 In all the comparisons, we refer to the original loss handling (i.e., equation \eqref{eq:total-residual}) as {\it even-weight aggregation} in the text and {\it naive sum} in the figures to save space.
 
@@ -11,9 +11,9 @@ In all the comparisons, we refer to the original loss handling (i.e., equation \
     \centering%
     \includegraphics[width=0.9\linewidth]{tgv-2d-re100/annealing-tests/nl1-nn16-npts8192-steps}%
     \caption[%
-        Annealing loss aggregation: loss and $L_2$ errors of $u$ v.s. iteration ($(N_l, N_n, N_{bs})=(1, 16, 8192)$)%
+        Annealing loss aggregation: loss and $L_2$ errors of $u$ v.s. iteration ($(N_l$, $N_n$, $N_{bs})$ $=$ $(1$, $16$, $8192)$)%
     ]{%
-        Annealing loss aggregation: loss and $L_2$ errors of $u$ v.s. iteration ($(N_l, N_n, N_{bs})=(1, 16, 8192)$)%
+        Annealing loss aggregation: loss and $L_2$ errors of $u$ v.s. iteration ($(N_l$, $N_n$, $N_{bs})$ $=$ $(1$, $16$, $8192)$)%
     }\label{fig:annealing-tests-nl1-nn16-npts8192-steps}%
 \end{figure}
 
@@ -21,9 +21,9 @@ In all the comparisons, we refer to the original loss handling (i.e., equation \
     \centering%
     \includegraphics[width=0.9\linewidth]{tgv-2d-re100/annealing-tests/nl2-nn32-npts8192-steps}%
     \caption[%
-        Annealing loss aggregation: loss and $L_2$ errors of $u$ v.s. iteration ($(N_l, N_n, N_{bs})=(2, 32, 8192)$)%
+        Annealing loss aggregation: loss and $L_2$ errors of $u$ v.s. iteration ($(N_l$, $N_n$, $N_{bs})$ $=$ $(2$, $32$, $8192)$)%
     ]{%
-        Annealing loss aggregation: loss and $L_2$ errors of $u$ v.s. iteration ($(N_l, N_n, N_{bs})=(2, 32, 8192)$)%
+        Annealing loss aggregation: loss and $L_2$ errors of $u$ v.s. iteration ($(N_l$, $N_n$, $N_{bs})$ $=$ $(2$, $32$, $8192)$)%
     }\label{fig:annealing-tests-nl2-nn32-npts8192-steps}%
 \end{figure}
 
@@ -31,9 +31,9 @@ In all the comparisons, we refer to the original loss handling (i.e., equation \
     \centering%
     \includegraphics[width=0.9\linewidth]{tgv-2d-re100/annealing-tests/nl3-nn128-npts8192-steps}%
     \caption[%
-        Annealing loss aggregation: loss and $L_2$ errors of $u$ v.s. iteration ($(N_l, N_n, N_{bs})=(3, 128, 8192)$)%
+        Annealing loss aggregation: loss and $L_2$ errors of $u$ v.s. iteration ($(N_l$, $N_n$, $N_{bs})$ $=$ $(3$, $128$, $8192)$)%
     ]{%
-        Annealing loss aggregation: loss and $L_2$ errors of $u$ v.s. iteration ($(N_l, N_n, N_{bs})=(3, 128, 8192)$)%
+        Annealing loss aggregation: loss and $L_2$ errors of $u$ v.s. iteration ($(N_l$, $N_n$, $N_{bs})$ $=$ $(3$, $128$, $8192)$)%
     }\label{fig:annealing-tests-nl3-nn128-npts8192-steps}%
 \end{figure}
 
@@ -44,10 +44,10 @@ Annealing aggregation may assign large weights to IC losses and hence shows a hi
 Other than this observation, we did not observe quantitatively significant difference in both loss and errors between the two algorithms.
 
 Figure \ref{fig:annealing-tests-final-sterrs} gives the comparison of the final $L_{2,sp-t}$ for both $u$ and $v$ velocity.
-For simpler network architectures, $(1, 16, 8192)$ and $(2, 32, 8192)$, the final spatial-temporal errors are close.
-The more complicated model, $(3, 128, 8192)$, shows visually obvious difference.
+For simpler network architectures, $(1$, $16$, $8192)$ and $(2$, $32$, $8192)$, the final spatial-temporal errors are close.
+The more complicated model, $(3$, $128$, $8192)$, shows visually obvious difference.
 However, after examining the actual quantities, we consider them similar.
-For example, in the $u$ velocity and with the case of $(3, 128, 8192)$, the even-weight aggregation has an error between $\num{1e-2}$ to $\num{2e-2}$, while the annealing algorithm has an error between $\num{8e-3}$ to $\num{9e-3}$.
+For example, in the $u$ velocity and with the case of $(3$, $128$, $8192)$, the even-weight aggregation has an error between $\num{1e-2}$ to $\num{2e-2}$, while the annealing algorithm has an error between $\num{8e-3}$ to $\num{9e-3}$.
 The difference is just about $20\%$ smaller relative to the even-weight aggregation.
 And this difference is even smaller in $v$ velocity.
 
@@ -64,16 +64,16 @@ And this difference is even smaller in $v$ velocity.
 We further examined the convergence with respect to the run times.
 Annealing loss aggregation is more expensive as it involves evaluating the gradient of each single loss term with respect to model parameters.
 As shown in figures \ref{fig:annealing-tests-nl1-nn16-npts8192-walltimes}, \ref{fig:annealing-tests-nl2-nn32-npts8192-walltimes}, and \ref{fig:annealing-tests-nl3-nn128-npts8192-walltimes}, the even-weight aggregation is considered to converge much faster in terms of the run time.
-Though annealing aggregation shows a slightly better accuracy at the end of training for $(3, 128, 8192)$, the even-weight aggregation achieves slightly better losses and errors under a given wall time, meaning a better accuracy-cost ratio.
+Though annealing aggregation shows a slightly better accuracy at the end of training for $(3$, $128$, $8192)$, the even-weight aggregation achieves slightly better losses and errors under a given wall time, meaning a better accuracy-cost ratio.
 Annealing loss aggregation's computational cost is about double of that of the even-weight aggregation. 
 
 \begin{figure}[hbt!]
     \centering%
     \includegraphics[width=0.9\linewidth]{tgv-2d-re100/annealing-tests/nl1-nn16-npts8192-walltimes}%
     \caption[%
-        Annealing loss aggregation: loss and $L_2$ errors of $u$ v.s. wall time ($(N_l, N_n, N_{bs})=(1, 16, 8192)$)%
+        Annealing loss aggregation: loss and $L_2$ errors of $u$ v.s. wall time ($(N_l$, $N_n$, $N_{bs})$ $=$ $(1$, $16$, $8192)$)%
     ]{%
-        Annealing loss aggregation: loss and $L_2$ errors of $u$ v.s. wall time ($(N_l, N_n, N_{bs})=(1, 16, 8192)$)%
+        Annealing loss aggregation: loss and $L_2$ errors of $u$ v.s. wall time ($(N_l$, $N_n$, $N_{bs})$ $=$ $(1$, $16$, $8192)$)%
     }\label{fig:annealing-tests-nl1-nn16-npts8192-walltimes}%
 \end{figure}
 
@@ -81,9 +81,9 @@ Annealing loss aggregation's computational cost is about double of that of the e
     \centering%
     \includegraphics[width=0.9\linewidth]{tgv-2d-re100/annealing-tests/nl2-nn32-npts8192-walltimes}%
     \caption[%
-        Annealing loss aggregation: loss and $L_2$ errors of $u$ v.s. wall time ($(N_l, N_n, N_{bs})=(2, 32, 8192)$)%
+        Annealing loss aggregation: loss and $L_2$ errors of $u$ v.s. wall time ($(N_l$, $N_n$, $N_{bs})$ $=$ $(2$, $32$, $8192)$)%
     ]{%
-        Annealing loss aggregation: loss and $L_2$ errors of $u$ v.s. wall time ($(N_l, N_n, N_{bs})=(2, 32, 8192)$)%
+        Annealing loss aggregation: loss and $L_2$ errors of $u$ v.s. wall time ($(N_l$, $N_n$, $N_{bs})$ $=$ $(2$, $32$, $8192)$)%
     }\label{fig:annealing-tests-nl2-nn32-npts8192-walltimes}%
 \end{figure}
 
@@ -91,9 +91,9 @@ Annealing loss aggregation's computational cost is about double of that of the e
     \centering%
     \includegraphics[width=0.9\linewidth]{tgv-2d-re100/annealing-tests/nl3-nn128-npts8192-walltimes}%
     \caption[%
-        Annealing loss aggregation: loss and $L_2$ errors of $u$ v.s. wall time ($(N_l, N_n, N_{bs})=(3, 128, 8192)$)%
+        Annealing loss aggregation: loss and $L_2$ errors of $u$ v.s. wall time ($(N_l$, $N_n$, $N_{bs})$ $=$ $(3$, $128$, $8192)$)%
     ]{%
-        Annealing loss aggregation: loss and $L_2$ errors of $u$ v.s. wall time ($(N_l, N_n, N_{bs})=(3, 128, 8192)$)%
+        Annealing loss aggregation: loss and $L_2$ errors of $u$ v.s. wall time ($(N_l$, $N_n$, $N_{bs})$ $=$ $(3$, $128$, $8192)$)%
     }\label{fig:annealing-tests-nl3-nn128-npts8192-walltimes}%
 \end{figure}
 
@@ -128,9 +128,9 @@ The only difference between with and without SWA lies in the prediction errors (
     \centering%
     \includegraphics[width=0.9\linewidth]{tgv-2d-re100/cyclic-swa-tests/nl1-nn16-npts8192}%
     \caption[%
-        Cyclical LR and SWA: loss and $L_2$ errors of $u$ v.s. iteration ($(N_l, N_n, N_{bs})=(1, 16, 8192)$)%
+        Cyclical LR and SWA: loss and $L_2$ errors of $u$ v.s. iteration ($(N_l$, $N_n$, $N_{bs})$ $=$ $(1$, $16$, $8192)$)%
     ]{%
-        Cyclical LR and SWA: loss and $L_2$ errors of $u$ v.s. iteration ($(N_l, N_n, N_{bs})=(1, 16, 8192)$)%
+        Cyclical LR and SWA: loss and $L_2$ errors of $u$ v.s. iteration ($(N_l$, $N_n$, $N_{bs})$ $=(1$, $16$, $8192)$)%
     }\label{fig:cyclic-swa-tests-nl1-nn16-npts8192}%
 \end{figure}
 
@@ -138,9 +138,9 @@ The only difference between with and without SWA lies in the prediction errors (
     \centering%
     \includegraphics[width=0.9\linewidth]{tgv-2d-re100/cyclic-swa-tests/nl2-nn32-npts8192}%
     \caption[%
-        Cyclical LR and SWA: loss and $L_2$ errors of $u$ v.s. iteration ($(N_l, N_n, N_{bs})=(2, 32, 8192)$)%
+        Cyclical LR and SWA: loss and $L_2$ errors of $u$ v.s. iteration ($(N_l$, $N_n$, $N_{bs})$ $=$ $(2$, $32$, $8192)$)%
     ]{%
-        Cyclical LR and SWA: loss and $L_2$ errors of $u$ v.s. iteration ($(N_l, N_n, N_{bs})=(2, 32, 8192)$)%
+        Cyclical LR and SWA: loss and $L_2$ errors of $u$ v.s. iteration ($(N_l$, $N_n$, $N_{bs})$ $=$ $(2$, $32$, $8192)$)%
     }\label{fig:cyclic-swa-tests-nl2-nn32-npts8192}%
 \end{figure}
 
@@ -148,9 +148,9 @@ The only difference between with and without SWA lies in the prediction errors (
     \centering%
     \includegraphics[width=0.9\linewidth]{tgv-2d-re100/cyclic-swa-tests/nl3-nn128-npts8192}%
     \caption[%
-        Cyclical LR and SWA: loss and $L_2$ errors of $u$ v.s. iteration ($(N_l, N_n, N_{bs})=(3, 128, 8192)$)%
+        Cyclical LR and SWA: loss and $L_2$ errors of $u$ v.s. iteration ($(N_l$, $N_n$, $N_{bs})$ $=$ $(3$, $128$, $8192)$)%
     ]{%
-        Cyclical LR and SWA: loss and $L_2$ errors of $u$ v.s. iteration ($(N_l, N_n, N_{bs})=(3, 128, 8192)$)%
+        Cyclical LR and SWA: loss and $L_2$ errors of $u$ v.s. iteration ($(N_l$, $N_n$, $N_{bs})$ $=$ $(3$, $128$, $8192)$)%
     }\label{fig:cyclic-swa-tests-nl3-nn128-npts8192}%
 \end{figure}
 
@@ -159,16 +159,16 @@ First, the run times between the two learning rate schedules are similar.
 This is expected as the cyclical learning rate does not add notable operations to the training.
 
 We next examined the convergence of the cyclical and exponential learning rates.
-The results show that obvious difference only exists in the simplest model, $(1, 16, 8192)$.
+The results show that obvious difference only exists in the simplest model, $(1$, $16$, $8192)$.
 However, this difference may be obvious only because of the narrower $y$-axis scale in figure \ref{fig:cyclic-swa-tests-nl1-nn16-npts8192}.
-If we plot all three figures using the same scale, the difference in $(1, 16, 8192)$ may not be noticeable.
+If we plot all three figures using the same scale, the difference in $(1$, $16$, $8192)$ may not be noticeable.
 The quantitative difference also supports this claim.
 For example, the final loss of exponential learning rate is about $\num{2e-1}$, and that of cyclical learning rate is around $\num{1e-1}$.
 We do not consider this difference significant.
 
-Also, slight oscillation and evident oscillation can be seen in $(2, 32, 8192)$ and $(3, 128, 8192)$, respectively. 
+Also, slight oscillation and evident oscillation can be seen in $(2$, $32$, $8192)$ and $(3$, $128$, $8192)$, respectively. 
 The oscillations may represent how the cyclical learning rate helps in escaping local minimums and saddle points. 
-The reason that $(1, 16, 8192)$ does not show oscillation may be attributed to the simple hypersurface of $r(\Theta)$.
+The reason that $(1$, $16$, $8192)$ does not show oscillation may be attributed to the simple hypersurface of $r(\Theta)$.
 This architecture may be too simple and may not exhibit complex topography on the hypersurface.
 
 The results in the errors of $u$ show that SWA does not help achieve better predictions at all.
@@ -209,7 +209,7 @@ In our current attempt, we used CG to optimize the loss $r(\Theta)$ of a certain
 Also, CG may not have capability to escape from poor local minimums, so our attempts first used Adam for optimization up to \num{200000} iterations to identify a region with proper minimum, and then CG was used for an extra 200 iterations.
 In other words, pure Adam cases ran \num{400000} iterations, while the CG cases ran \num{200000} Adam iterations and then \num{200} iterations with CG.
 Like most of the hyperparameters in deep learning, there is no rigorous justification for these configurations.
-The case tested are $(1, 16, 8192)$, $(2, 32, 8192)$, and $(3, 128, 8192)$.
+The case tested are $(1$, $16$, $8192)$, $(2$, $32$, $8192)$, and $(3$, $128$, $8192)$.
 CG trained each batch until the change in the loss is smaller than $\num{1e-6}$.
 
 \begin{figure}[hbt!]
@@ -228,7 +228,7 @@ The range of iterations shown in the $x$-axis is \num{199800}th to \num{200200}t
 We can see that, for simple architectures, CG does not help reduce the losses.
 Based on the observations and discussions in the previous sections, cases with simple architectures converge very early.
 It is hence reasonable for CG not to be able to improve the losses in simple architectures because they may have already converged.
-However, $(3, 128, 8192)$ does show a sudden drop in the loss and error at $t=0$.
+However, $(3$, $128$, $8192)$ does show a sudden drop in the loss and error at $t=0$.
 After the sudden drop, further training with new batches does not further improve the loss and errors.
 
 On the right of the same figure, we have losses and errors versus run time.

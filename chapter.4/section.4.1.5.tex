@@ -33,8 +33,8 @@ Nevertheless, if we consider the orders of magnitudes, quantitatively speaking, 
 As seen from the figure, model complexity still dominates the error levels. 
 
 It is unclear from figure \ref{fig:tgv2d-re100-err-vs-arch} whether increasing $N_l$ or $N_n$ has a stronger impact on the error levels.
-For example, if we are to improve the error level of $(2, 32)$, both $(2, 64)$ and $(3, 32)$ give us similar improvement.
-Or, if we are to improve the error of $(2, 64)$, both $(2, 128)$ and $(3, 64)$ give a similar level of errors.
+For example, if we are to improve the error level of $(N_l$, $N_n)$ $=$ $(2$, $32)$, both $(2$, $64)$ and $(3$, $32)$ give us similar improvement.
+Or, if we are to improve the error of $(2$, $64)$, both $(2$, $128)$ and $(3$, $64)$ give a similar level of errors.
 Though increasing $N_l$ or doubling $N_n$ have the same effect in terms of the error levels, their effects in the total number of model parameters are different. 
 As seen from equation \eqref{eq:dof-calculator}, the degrees of freedom increase about linearly with $N_l$ but increase proportionally to the square of $N_n$.
 In other words, doubling $N_n$ roughly quadruples the number of free parameters, while increasing $N_l$ by one just adds around $N_n^2$ parameters.

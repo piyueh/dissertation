@@ -5,8 +5,8 @@ However, before we conduct the $Re=200$ cylinder flow test, we would like to tes
 The selected case is $Re=40$ cylinder flow, which reaches a steady state eventually.
 The results were validated with experimental data and verified against PetIBM results.
 
-The computational domain of the $Re=40$ cylinder flow is $[-10, 30]\times[-10, 10]$, and the simulation time range is $t=0$ to $t=20$.
-A cylinder with a radius of $0.5$ sits at the coordinate $(0, 0)$.
+The computational domain of the $Re=40$ cylinder flow is $[-10$, $30]$ $\times$ $[-10$, $10]$, and the simulation time range is $t=0$ to $t=20$.
+A cylinder with a radius of $0.5$ sits at the coordinate $(0$, $0)$.
 Nondimensional density is $1$, and kinematic viscosity is $0.025$, so the Reynolds number is $40$.
 The IC is $u=1$ and $v=0$.
 The BCs are $u=1$ and $v=0$ on $x=-10$, $y=-10$, and $y=10$.
@@ -22,7 +22,7 @@ The BC at the outlet $x=30$ is a 1D convective condition:
 where $\vec{n}$ is the normal vector of the boundary pointing outward from the domain, and $c$ is the convection speed.
 In this work, we used $c=1$.
 
-The network used is $(N_l, N_n)=(6, 512)$.
+The network used is $(N_l$, $N_n)$ $=$ $(6$, $512)$.
 Two PINN implementations were used: a steady solver and an unsteady one.
 Two different $N_{bs}$ were used as well to confirm the effect of batch sizes we observed in the previous section: $N_{bs}=\num{6400}$ and $N_{bs}=\num{25600}$.
 And we tested two different cyclical learning rate configurations:
@@ -44,8 +44,8 @@ A total of 6 cases were run in this benchmark.
 (The small cyclical schedule was not applied to $N_{bs}=\num{25600}$.)
 
 For unsteady cases with $N_{bs}=\num{6400}$, the PINN solver sampled $\num{6400}\times \num{10000}$ points from the computational spatial-temporal domain for PDE losses, meaning each batch was repeated every $\num{10000}$ iterations.
-Except for the cylinder surface, $640\times \num{10000}$ points were sampled on each boundary and $t\in[0, 20]$.
-On the cylinder surface, $256\times \num{10000}$ points were sampled and also with $t\in[0, 20]$.
+Except for the cylinder surface, $640\times \num{10000}$ points were sampled on each boundary and $t\in[0$, $20]$.
+On the cylinder surface, $256\times \num{10000}$ points were sampled and also with $t\in[0$, $20]$.
 To evaluate IC losses, $\num{6400}\times \num{10000}$ points were sampled from the spatial domain with their temporal coordinates being constrained to $t=0$.
 The steady cases with $N_{bs}=\num{6400}$ follows a similar setting, except the PDE evaluation points were sampled only from spatial domain, as there was no temporal coordinates.
 And steady cases did not need to evaluate IC losses.

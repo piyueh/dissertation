@@ -49,7 +49,7 @@ $f$ is the flow quantity of our interest, and $f_{ref}$ is the corresponding ana
 The superscript $(i, j, k)$ denotes the value at the $(i, j, k)$ point in the discretized spatial-temporal space.
 The characteristic cell size in a spatial-temporal sense is simply $\sqrt[3]{\frac{1}{N_x N_y N_t}}$, meaning the characteristic number of cells is $\sqrt[3]{N_x N_y N_t}$.
 
-We ran simulations with $2^{n} \times 2^{n}$ cells for $i=4, 5, \dots, 10$.
+We ran simulations with $2^{n} \times 2^{n}$ cells for $i=4$, $5$, $\dots$, $10$.
 The simulations ran from $t=0$ up to $t=100$, and we output the transient results every $2$ seconds of $t$.
 The time step size $\Delta t$ did not follow a fixed refinement ratio.
 Rather, it was refined based on the maximum allowed CFL number and whether it was a factor of $2$ (to output transient results).
@@ -142,7 +142,7 @@ The cases of $Re=40$ and $Re=200$ were used for benchmarking PINNs.
 Their results and V\&V can be found in chapter \ref{chap:pinn-cases}.
 In this section, we only verify and validate our numerical solutions with $Re=100$.
 
-The computational domain was $[-15, 35]\times[-25, 25]$ with a spatial discretization of $510 \times 298$.
+The computational domain was $[-15$, $35]$ $\times$ $[-25$, $25]$ with a spatial discretization of $510$ $\times$ $298$.
 Gridlines were stretched so that the cell size around the cylinder is about $\Delta x = \Delta y \approx 0.01\bar{6}$.
 The time step size was $\Delta t = 0.01$.
 The freestream condition of $u_{\infty}=1$ and $v_{\infty}=0$ were applied to the inlet, top, and bottom boundaries, while the outlet was convective BC.
@@ -171,9 +171,9 @@ We determined that the V\&V for 2D cylinder flow at $Re=100$ was successful.
 \subsection*{Validation of 3D flow around a sphere}
 
 We validate the simulation results of 3D sphere flows at different Reynolds numbers.
-These Reynolds numbers are $Re=50, 100, 150, 200, 250, 300$.
-All cases used the same computational domain, $[-10, 10] \times [-10, 10] \times [-10, 10]$, and the time step size $\Delta t=0.004$.
-The corresponding grid sizes are $272 \times 82 \times 82$.
+These Reynolds numbers are $Re=50$, $100$, $150$, $200$, $250$, and $300$.
+All cases used the same computational domain, $[-10$, $10]$ $\times$ $[-10$, $10]$ $\times$ $[-10$, $10]$, and the time step size $\Delta t=0.004$.
+The corresponding grid sizes are $272$ $\times$ $82$ $\times$ $82$.
 The BCs, ICs, and the linear solver configurations are the same as those in 2D cylinder flow at $Re=100$.
 
 Figure \ref{fig:petibm-sphere3d-drag-val} shows the validation results against experimental data \cite{clift_bubbles_2013,roos_experimental_1971}.
@@ -190,7 +190,7 @@ We believe it is appropriate to call the validation of 3D sphere flow a success.
 
 Lastly, we validate the solver using a 3D flow over an inclined flat plate at $Re=100$.
 We tested with several AoA (angle of attack) and validated the results against the experimental data from reference \cite{taira_unsteadiness_2007}.
-All cases had the same computational domain, $[-4, 6.1] \times [-5, 5] \times [-5, 5]$, and the flat plate was located at $(0.1, 1, 1)$.
+All cases had the same computational domain, $[-4$, $6.1]$ $\times$ $[-5$, $5]$ $\times$ $[-5$, $5]$, and the flat plate was located at $(0.1$, $1$, $1)$.
 The spatial discretization is $192 \times 56 \times 86$, and the time step $\Delta t$ is $0.01$.
 The BCs, ICs, and the linear solver configurations are the same as those in 2D cylinder flow at $Re=100$.
 

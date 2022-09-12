@@ -26,16 +26,16 @@ And another $\num{10000} \times N_{bs}$ points are used to evaluate IC residuals
 In other words, each batch of training points is repeated every $\num{10000}$ iterations.
 And the models see each training point $40$ times during the training process.
 
-The training points for PDE residuals are randomly sampled from the spatial-temporal domain of $[-\pi, \pi]\times[-\pi, \pi]\times(0, 100]$.
+The training points for PDE residuals are randomly sampled from the spatial-temporal domain of $[-\pi$, $\pi]$ $\times$ $[-\pi$, $\pi]$ $\times$ $(0$, $100]$.
 Note that $t=0$ is excluded from the sampling pool.
-It means the PDE is not enforced at t=0.
-The training points for IC residuals are randomly sampled from the spatial domain of $[-\pi, \pi]\times[-\pi, \pi]$ and have a fixed time $t=0$.
+It means the PDE is not enforced at $t=0$.
+The training points for IC residuals are randomly sampled from the spatial domain of $[-\pi$, $\pi]$ $\times$ $[-\pi$, $\pi]$ and have a fixed time $t=0$.
 
 The hardware used is NVIDIA's V100 GPUs.
 All cases in the first group ran on only one GPU.
 
-After training, the PINN solver's prediction errors (i.e., accuracy) were evaluated on cell centers of a $512 \times 512$ Cartesian mesh against the analytical solutions.
-And if needed, we predicted solution snapshots at $t=0, 1, 2, \cdots, 100$ for temporal errors.
+After training, the PINN solver's prediction errors (i.e., accuracy) were evaluated on cell centers of a $512$ $\times$ $512$ Cartesian mesh against the analytical solutions.
+And if needed, we predicted solution snapshots at $t=0$, $1$, $2$, $\cdots$, $100$ for temporal errors.
 Two types of errors were used: spatial-temporal error ($L_{2,sp-t}$), and spatial $L_2$ error at a given time $t$.
 $L_{2,sp-t}$ has been defined in \eqref{eq:spt-err-def}.
 The $L_2$ error norm for a given $t$ is

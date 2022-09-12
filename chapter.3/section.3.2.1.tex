@@ -27,7 +27,7 @@ An MLP network is fundamentally a series of linear-nonlinear mapping pairs:
 $\vec{h}^k$ is called a hidden layer or a latent space vector.
 $\sigma_{k}$ is a chosen element-wise nonlinear function.
 $A^{k}$ and $\vec{b}^k$ for $k=0$ to $k=N_l$ are parameter matrices and vectors that consist of free model parameters.
-In other words, $\Theta=\left\{A^0, \vec{b}^0, A^1, \vec{b}^1, \cdots \right\}$.
+In other words, $\Theta=\{A^0$, $\vec{b}^0$, $A^1$, $\vec{b}^1$, $\cdots\}$.
 $N_l$ denotes the number of hidden layers, and $N_n$ in figure \ref{fig:mlp-graph} represents the number of elements in each hidden layer, $\vec{h}^k$.
 Elements in $\vec{h}^k$ are often called neurons in deep learning.
 Theoretically, $N_n$ does not have to be constant.
@@ -73,7 +73,7 @@ Instead, in this work, we used a variant of MLP networks implemented in Modulus-
         \vec{h}^{N_l+1}\equiv \begin{bmatrix} G^{\vec{u}} \\ G^p \end{bmatrix} = \sigma_{N_l}\left(A^{N_l}\vec{h}^{N_l}+\vec{b}^{N_l}\right) &
     \end{array}
 \end{equation}
-$\vec{w}_g^{k}$ for $k=0,\cdots,N_l$ represents a parameter vector.
+$\vec{w}_g^{k}$ for $k=0$, $\cdots$, $N_l$ represents a parameter vector.
 $W^k$ is a parameter matrix.
 $\vec{w}_n^{k}$ is not a parameter vector but holds the norms of each row in $W^k$.
 The key idea is to decouple each row in $A^k$ to a length multiplying a direction.

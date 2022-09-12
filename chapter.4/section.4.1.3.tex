@@ -1,10 +1,10 @@
 %! TEX root = main.tex
 
 In this section, we are interested in the parallel scalability of PINNs.
-In the weak scaling tests, we scaled $(2, 32, 8192)$ and $(3, 128, 8192)$ with 1, 2, 4, and 8 GPUs. 
-As for the strong scaling tests, we scaled $(2, 32, 65536)$ and $(3, 128, 65536)$ with 1, 2, 4, and 8 GPUs. 
-We will use an expression of $(N_l, N_n, N_{bs})\times N_{gpu}$ to denote how many GPUs are used and how many training points per batch on each GPU.
-On the other, an expression of $(N_l, N_n, N_{bs}\times N_{gpu})$ denotes a case running on only one GPU but has $N_{bs}\times N_{gpu}$ training points per batch.
+In the weak scaling tests, we scaled $(2$, $32$, $8192)$ and $(3$, $128$, $8192)$ with 1, 2, 4, and 8 GPUs. 
+As for the strong scaling tests, we scaled $(2$, $32$, $65536)$ and $(3$, $128$, $65536)$ with 1, 2, 4, and 8 GPUs. 
+We will use an expression of $(N_l$, $N_n$, $N_{bs})$ $\times$ $N_{gpu}$ to denote how many GPUs are used and how many training points per batch on each GPU.
+On the other, an expression of $(N_l$, $N_n$, $N_{bs}\times N_{gpu})$ denotes a case running on only one GPU but has $N_{bs}$ $\times$ $N_{gpu}$ training points per batch.
 
 Figures \ref{fig:nl2-nn32-npts8192-weak-scaling} and \ref{fig:nl3-nn128-npts8192-weak-scaling} show the results of weak scaling tests.
 These figures show the losses and errors of $u$ versus iterations on the left $y$-axis.
@@ -14,9 +14,9 @@ And for the other $y$-axis, we have the run times in hours versus iterations.
     \centering%
     \includegraphics[width=0.9\linewidth]{tgv-2d-re100/scaling-tests/nl2-nn32-npts8192-weak-scaling.png}
     \caption[%
-        Weak scaling: aggregated loss and run time v.s. iteration ($(N_l, N_n, N_{bs})$ $=$ $(2, 32, 8192)$)%
+        Weak scaling: aggregated loss and run time v.s. iteration ($(N_l$, $N_n$, $N_{bs})$ $=$ $(2$, $32$, $8192)$)%
     ]{%
-        Weak scaling: aggregated loss and run time v.s. iteration ($(N_l, N_n, N_{bs})$ $=$ $(2, 32, 8192)$)%
+        Weak scaling: aggregated loss and run time v.s. iteration ($(N_l$, $N_n$, $N_{bs})$ $=$ $(2$, $32$, $8192)$)%
     }\label{fig:nl2-nn32-npts8192-weak-scaling}
 \end{figure}
 
@@ -24,9 +24,9 @@ And for the other $y$-axis, we have the run times in hours versus iterations.
     \centering%
     \includegraphics[width=0.9\linewidth]{tgv-2d-re100/scaling-tests/nl3-nn128-npts8192-weak-scaling.png}
     \caption[%
-        Weak scaling: aggregated loss and run time v.s. iteration ($(N_l, N_n, N_{bs})$ $=$ $(3, 128, 8192)$)%
+        Weak scaling: aggregated loss and run time v.s. iteration ($(N_l$, $N_n$, $N_{bs})$ $=$ $(3$, $128$, $8192)$)%
     ]{%
-        Weak scaling: aggregated loss and run time v.s. iteration ($(N_l, N_n, N_{bs})$ $=$ $(3, 128, 8192)$)%
+        Weak scaling: aggregated loss and run time v.s. iteration ($(N_l$, $N_n$, $N_{bs})$ $=$ $(3$, $128$, $8192)$)%
     }\label{fig:nl3-nn128-npts8192-weak-scaling}
 \end{figure}
 
@@ -38,18 +38,18 @@ We also checked the losses and error histories in the same figures.
 We observed no significant difference between using different numbers of GPUs.
 Note that while the lines of the losses and errors do not visually match, quantitatively speaking, their orders of magnitude are the same, as we will see in table \ref{table:weak-scaling-perf}. 
 
-$(N_l, N_n, N_{bs})\times N_{gpu}$ and $(N_l, N_n, N_{bs}\times N_{gpu})$ have the same network architecture and the same total number of training points, so they are expected to have the same results in terms of losses and errors.
+$(N_l$, $N_n$, $N_{bs})$ $\times$ $N_{gpu}$ and $(N_l$, $N_n$, $N_{bs}\times N_{gpu})$ have the same network architecture and the same total number of training points, so they are expected to have the same results in terms of losses and errors.
 Here we would like to check if the expectation is true.
-Figure \ref{fig:nl2-nn32-npts8192-multi-singl-gpus} shows the comparisons between $(2, 32, 8192)\times N_{gpu}$ and $(2, 32, 8192\times N_{gpu})$.
-And figure \ref{fig:nl3-nn128-npts8192-multi-singl-gpus} shows the same comparisons between $(3, 128, 8192)\times N_{gpu}$ and $(3, 128, 8192\times N_{gpu})$.
+Figure \ref{fig:nl2-nn32-npts8192-multi-singl-gpus} shows the comparisons between $(2$, $32$, $8192)$ $\times$ $N_{gpu}$ and $(2$, $32$, $8192\times N_{gpu})$.
+And figure \ref{fig:nl3-nn128-npts8192-multi-singl-gpus} shows the same comparisons between $(3$, $128$, $8192)$ $\times$ $N_{gpu}$ and $(3$, $128$, $8192\times N_{gpu})$.
 
 \begin{figure}[hbt!]
     \centering%
     \includegraphics[width=0.9\linewidth]{tgv-2d-re100/scaling-tests/nl2-nn32-npts8192-multi-singl-gpus.png}
     \caption[%
-        Comparing multi-GPU and single-GPU cases ($(N_l, N_n)$ $=$ $(2, 32)$)%
+        Comparing multi-GPU and single-GPU cases ($(N_l$, $N_n)$ $=$ $(2$, $32)$)%
     ]{%
-        Comparing multi-GPU and single-GPU cases ($(N_l, N_n)$ $=$ $(2, 32)$)%
+        Comparing multi-GPU and single-GPU cases ($(N_l$, $N_n)$ $=$ $(2$, $32)$)%
     }\label{fig:nl2-nn32-npts8192-multi-singl-gpus}
 \end{figure}
 
@@ -57,18 +57,18 @@ And figure \ref{fig:nl3-nn128-npts8192-multi-singl-gpus} shows the same comparis
     \centering%
     \includegraphics[width=0.9\linewidth]{tgv-2d-re100/scaling-tests/nl3-nn128-npts8192-multi-singl-gpus.png}
     \caption[%
-        Comparing multi-GPU and single-GPU cases ($(N_l, N_n)$ $=$ $(3, 128)$)%
+        Comparing multi-GPU and single-GPU cases ($(N_l$, $N_n)$ $=$ $(3$, $128)$)%
     ]{%
-        Comparing multi-GPU and single-GPU cases ($(N_l, N_n)$ $=$ $(3, 128)$)%
+        Comparing multi-GPU and single-GPU cases ($(N_l$, $N_n)$ $=$ $(3$, $128)$)%
     }\label{fig:nl3-nn128-npts8192-multi-singl-gpus}
 \end{figure}
 
 In these figures, it is expected that the run times are different and that the losses and errors are similar.
-However, though losses and errors show similar trends between $(N_l, N_n, N_{bs})\times N_{gpu}$ and $(N_l, N_n, N_{bs}\times N_{gpu})$, visible differences exist.
-In $(N_l, N_n)=(2, 32)$, losses stop improving earlier for multi-GPU cases, and multi-GPU cases have slightly worse errors.
-On the other hand, for $(N_l, N_n)=(3, 128)$, the multi-GPU cases in general have better errors, though the loss histories do not show a noticeable difference.
+However, though losses and errors show similar trends between $(N_l$, $N_n$, $N_{bs})$ $\times$ $N_{gpu}$ and $(N_l$, $N_n$, $N_{bs}\times N_{gpu})$, visible differences exist.
+In $(N_l$, $N_n)$ $=$ $(2$, $32)$, losses stop improving earlier for multi-GPU cases, and multi-GPU cases have slightly worse errors.
+On the other hand, for $(N_l$, $N_n)$ $=$ $(3$, $128)$, the multi-GPU cases in general have better errors, though the loss histories do not show a noticeable difference.
 The reason is unknown to us at this point.
-The observation shows that $(N_l, N_n, N_{bs})\times N_{gpu}$ and $(N_l, N_n, N_{bs}\times N_{gpu})$ are not necessarily the same.
+The observation shows that $(N_l$, $N_n$, $N_{bs})$ $\times$ $N_{gpu}$ and $(N_l$, $N_n$, $N_{bs}\times N_{gpu})$ are not necessarily the same.
 Nevertheless, we believe the differences are quantitatively minor if we consider their orders of magnitude.
 
 \input{tables/tgv-2d-re100/scaling-tests/weak-scaling.tex}
@@ -81,17 +81,17 @@ During training, each GPU calculates the gradients $\nabla_{\Theta} r(\Theta)$ i
 A good weak scaling is thus expected.
 
 Lastly, we examined the strong scaling.
-Figure \ref{fig:nl2-nn32-npts65536-strong-scaling} shows the strong scaling results of $(2, 32, 65535)\times 1$, $(2, 32, 32768)\times 2$, $(2, 32, 16384)\times 4$, and $(2, 32, 8192)\times 8$.
-Figure \ref{fig:nl3-nn128-npts65536-strong-scaling} shows the corresponding strong scaling tests for $(N_l, N_n)=(3, 128)$.
+Figure \ref{fig:nl2-nn32-npts65536-strong-scaling} shows the strong scaling results of $(2$, $32$, $65535)$ $\times$ $1$, $(2$, $32$, $32768)$ $\times$ $2$, $(2$, $32$, $16384)$ $\times$ $4$, and $(2$, $32$, $8192)$ $\times$ $8$.
+Figure \ref{fig:nl3-nn128-npts65536-strong-scaling} shows the corresponding strong scaling tests for $(N_l$, $N_n)$ $=$ $(3$, $128)$.
 Quantitative results are listed in table \ref{table:strong-scaling-perf}. 
 
 \begin{figure}[hbt!]
     \centering%
     \includegraphics[width=0.9\linewidth]{tgv-2d-re100/scaling-tests/nl2-nn32-npts65536-strong-scaling.png}
     \caption[%
-        Strong-scaling: aggregated loss and run time v.s. iteration ($(N_l, N_n, N_{bs})$ $=$ $(2, 32, 65535)$)%
+        Strong-scaling: aggregated loss and run time v.s. iteration ($(N_l$, $N_n$, $N_{bs})$ $=$ $(2$, $32$, $65535)$)%
     ]{%
-        Strong-scaling: aggregated loss and run time v.s. iteration ($(N_l, N_n, N_{bs})$ $=$ $(2, 32, 65535)$)%
+        Strong-scaling: aggregated loss and run time v.s. iteration ($(N_l$, $N_n$, $N_{bs})$ $=$ $(2$, $32$, $65535)$)%
     }\label{fig:nl2-nn32-npts65536-strong-scaling}
 \end{figure}
 
@@ -99,9 +99,9 @@ Quantitative results are listed in table \ref{table:strong-scaling-perf}.
     \centering%
     \includegraphics[width=0.9\linewidth]{tgv-2d-re100/scaling-tests/nl3-nn128-npts65536-strong-scaling.png}
     \caption[%
-        Strong-scaling: aggregated loss and run time v.s. iteration ($(N_l, N_n, N_{bs})$ $=$ $(3, 128, 65535)$)%
+        Strong-scaling: aggregated loss and run time v.s. iteration ($(N_l$, $N_n$, $N_{bs})$ $=$ $(3$, $128$, $65535)$)%
     ]{%
-        Strong-scaling: aggregated loss and run time v.s. iteration ($(N_l, N_n, N_{bs})$ $=$ $(3, 128, 65535)$)%
+        Strong-scaling: aggregated loss and run time v.s. iteration ($(N_l$, $N_n$, $N_{bs})$ $=$ $(3$, $128$, $65535)$)%
     }\label{fig:nl3-nn128-npts65536-strong-scaling}
 \end{figure}
 

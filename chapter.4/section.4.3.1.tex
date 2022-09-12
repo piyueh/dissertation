@@ -1,14 +1,14 @@
 %! TEX root = main.tex
 With the successful validation for the $Re=40$ cylinder flow, we now would like to test an unsteady cylinder flow at $Re=200$.
 
-The computational spatial domain is $[-8, 25]\times[-8, 8]$, and the simulation time range is $t\in[0, 200]$.
+The computational spatial domain is $[-8$, $25]$ $\times$ $[-8$, $8]$, and the simulation time range is $t\in[0$, $200]$.
 Other problem setups are the same as those in section \ref{sec:pinn-2d-cylinder-re40-conf}, except for the kinematic viscosity.
 The non-dimensional kinematic viscosity is $0.005$ to make the Reynolds number $200$.
 
-The network architecture is the same: $(N_l, N_n)=(6, 512)$.
+The network architecture is the same: $(N_l$, $N_n)$ $=$ $(6$, $512)$.
 We also used a steady and an unsteady PINN solver on this problem, though $Re=200$ is not expected to have a steady-state solution.
-The batch size and the configurations of training points are the same as the case of $N_{bs}=6,400$ in section \ref{sec:pinn-2d-cylinder-re40-conf}.
-We only used one cyclical learning rate schedule: $(\eta_{low}, \eta_{high}, N_c, \gamma)=(1e-6, 1e-2, 5000, 0.9999915)$.
+The batch size and the configurations of training points are the same as the case of $N_{bs}=\num{6400}$ in section \ref{sec:pinn-2d-cylinder-re40-conf}.
+We only used one cyclical learning rate schedule: $(\eta_{low}$, $\eta_{high}$, $N_c$, $\gamma)$ $=$ $(\num{1e-6}$, $\num{1e-2}$, $5000$, $0.9999915)$.
 
 In addition to the steady and unsteady PINN solvers, a third case was done in this benchmark.
 This case is a data-driven PINN simulation.
@@ -28,12 +28,12 @@ where subscript $data$ denotes the data from the PetIBM simulation.
 The total number of data points from PetIBM is around $\num{17000000}$, and we only used $\num{6400}$ every iteration, meaning each data batch was repeated approximately every $\num{2650}$ iterations.
 Except for replacing the IC losses with a data-driven approach, all other loss terms in \eqref{eq:total-residual} remain the same.
 
-Note that for the data-driven case, the loss terms of PDEs and BCs were evaluated only in $t\in[125,\ 200]$ because we treated PetIBM's data as if they were ICs.
+Note that for the data-driven case, the loss terms of PDEs and BCs were evaluated only in $t\in[125$, $200]$ because we treated PetIBM's data as if they were ICs.
 Also, because PDEs were solved even after $t=140$ (the last snapshot from PetIBM), we expected this trained model to be able to make predictions for $t>140$.
 
 Each case ran for $\num{1000000}$ iterations with the Adam optimizer.
 The hardware used was 1 NVIDIA A100 GPU for all cases.
 
 The mentioned PetIBM simulation was done on the same K40 configuration as described in section \ref{sec:pinn-2d-cylinder-re40-conf}.
-The solver configuration is the same as well, except that the grid resolution is $1485\times 720$.
+The solver configuration is the same as well, except that the grid resolution is $1485$ $\times$ $720$.
 % vim:ft=tex
