@@ -60,6 +60,11 @@ The data-driven PINN solver---trained against simulation results from PetIBM in 
 Moreover, the data-driven PINN solver failed to give meaningful predictions for $t<125$.
 Nevertheless, all PINNs' drag coefficients agreed with conventional steady-state simulation results.
 
+The spectral analysis of the data-driven PINN's results in $t \in [125, 140]$ shows that the PINN used in our work is both dispersive and dissipative.
+The dispersion and dissipation may work as dampers in the dynamical system of the fluid flow.
+Such dampers inhibit the instabilities and the oscillating from happening.
+Eventually, the vortex shedding did not occur in the data-free PINN and disappeared ultimately in the data-driven PINN.
+
 Besides the benchmarks, this work briefly introduces PINNs.
 Starting from the difference between data-driven and data-free PINNs, we continue by introducing the history and the development of solving PDEs with data-free PINNs since 1994.
 We discuss the open questions and known issues of data-free PINNs, which further motivated the present work.
