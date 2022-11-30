@@ -1,0 +1,23 @@
+\begin{table}[hbt!]
+    \singlespacing
+    \begin{threeparttable}[b]
+        \begin{tabular}{ccccc}
+            \toprule
+            $St$ & Strength\tnote{1} & Growth Rate & Contours \\
+            \midrule
+            0     & 0.96 & 1.3e-7  & Figure \ref{fig:koopman-petibm-mode-1}\\
+            0.201 & 0.20 & -4.3e-7 & Figure \ref{fig:koopman-petibm-mode-2}\\
+            0.403 & 0.04 & 1.7e-6  & Figure \ref{fig:koopman-petibm-mode-3}\\
+            0.604 & 0.03 & 2.7e-6  & Figure \ref{fig:koopman-petibm-mode-4}\\
+            \bottomrule
+        \end{tabular}%
+        \begin{tablenotes}
+            \footnotesize
+            \item [1] Normalized.
+        \end{tablenotes}
+        \caption{%
+            2D Cylinder, $Re=200$: top 4 primary dynamic modes (sorted by strengths) for PetIBM%
+        }%
+        \label{table:koopman-petibm}
+    \end{threeparttable}
+\end{table}%

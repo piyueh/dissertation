@@ -19,6 +19,7 @@
 \usepackage[protrusion=true, final]{microtype}
 \usepackage{xurl}  % break long URLs in References
 \usepackage{silence}  % hide some known warning
+\usepackage[section]{placeins}  % figures don't escape from sections
 \usepackage[group-separator={,}]{siunitx}
 \input{tikzit.tikzstyles}
 
@@ -166,6 +167,14 @@
         \subsection{Results}
         \label{sec:pinn-2d-cylinder-re200-results}
         \input{chapter.4/section.4.3.2.tex}
+
+        \subsection{Spectral and Koopman Analysis}
+        \label{sec:pinn-2d-cylinder-re200-koopman}
+        \input{chapter.4/section.4.3.3.tex}
+
+        \subsection{Comments}
+        \label{sec:pinn-2d-cylinder-re200-comment}
+        \input{chapter.4/section.4.3.4.tex}
 
 \chapter{Discussion and Conclusion}\label{chap:discussion}
 \input{chapter.5.tex}

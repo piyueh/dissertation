@@ -1,0 +1,41 @@
+%! TEX root = main.tex
+
+Note that a steady solution might still be physical for cylinder flow at $Re=200$ in a perfect world when there is absolutely no perturbation and noise.
+In the real world, the shedding is triggered by any natural perturbation.
+In computer simulations, the shedding is triggered by all kinds of numerical noises, such as rounding errors and truncation errors.
+These numerical noises mimic the natural perturbation.
+As numerical noises also exist in PINNs, PINNs are expected to develop vortex shedding.
+
+In traditional numerical simulations, sometimes it is also challenging to develop vortex shedding, especially if everything is symmetric.
+However, we can still manually trigger shedding by using non-uniform ICs.
+This did not happen to our benchmarks of PINNs, either.
+The data-driven PINN can be seen as a data-free PINN with a non-uniform IC.
+And given that this non-uniform IC already has vortex shedding, the vortex shedding phenomenon is supposed to continue.
+Contrary to our expectation, the data-driven PINN stopped generating new vortices and returned to steady-state behavior.
+
+The root cause for the unsteady data-free PINN's steady-state behavior is unknown to us at this point.
+It is reasonable to assume the same cause also explains why the data-driven PINN falls back to non-shedding flow once we stopped feeding shedding training data.
+In sections \ref{sec:pinn-2d-cylinder-re200-results} and \ref{sec:pinn-2d-cylinder-re200-koopman}, we hoped to gain more insight by examining (1) the vorticity generation and vortex transport in the vicinity of the cylinder and (2) the spectral information of the data-driven PINN.
+We found that the PINN, at least the one we used in this work, is dispersive and dissipative.
+Both dispersion and dissipation inhibit the oscillation and may add stability to the system.
+We suspected the dispersion and the dissipation add difficulty for shedding to happen and cause the steady-state behavior.
+
+Rahaman et al. (2019) \cite{rahaman_spectral_2019} showed that neural networks have spectral bias.
+They tend to prioritize the learning of low-frequency patterns in the training data.
+In the cylinder flow, the lowest frequency is $St=0$.
+It is thus reasonable to suspect that the data-free PINN prioritized the learning of the mode at $St=0$, which is the steady mode, from the Navier-Stokes equations.
+As for the data-driven PINN, on top of learning the solution of the Navier-Stokes equations, the PINN also had to learn from the training data with vortex shedding.
+The vortex shedding in the training data forces the PINN to learn the higher-frequency data.
+However, the tendency to prioritize the mode at $St=0$ made the flow quickly restore the non-oscillating solution in the Navier-Stokes equations.
+And the damped secondary dynamic modes represent this restoration mechanism in the data-driven PINN.
+More work is required to verify our suspicion.
+
+In addition to the fact that the shedding does not continue after $t=140$ in the data-driven PINN, we are also not satisfied with its predictions before $t=125$.
+Of course, there were no training points before $t=125$ during the training.
+However, one reason for using data-driven PINNs is to have a better prediction capability on new data that were not seen before.
+In other words, we expected PINNs to have a satisfying extrapolation capability.
+If data-driven PINNs do not perform well on extrapolation but can only handle interpolation problems, then their advantage over regular data-only machine learning may need more scrutinization.
+
+We must emphasize that while there are too many configurations and settings to try, our benchmark on data-driven PINNs may be very limited and naive.
+Our focus in this work is still the data-free PINNs in solving PDEs.
+% vim:ft=tex
