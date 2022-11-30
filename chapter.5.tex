@@ -80,8 +80,18 @@ Beyond this time range, the data-driven PINN quickly returns to flow without she
 The predicted drag and lift coefficients support that the unsteady PINN converges to a steady state solution.
 Since non-shedding flow might still be possible in a perfect world without any perturbation, we refrain from calling the result unphysical.
 However, we believe it is not the missing perturbation that makes the flow steady; otherwise, the data-driven case should have shown continuous vortex shedding even after the time when no PetIBM data is available.
-The actual reason for the absence of the vortex shedding is still unknown to us.
-Due to the limited resources, we could not test with more flow problems with instability.
+
+The spectral analysis shows that the PINN used in our work was dissipative and dispersive.
+And we believe the dissipation and the dispersion inhibit the oscillation and instabilities from happening.
+They act as dampers in dynamical systems.
+However, the root cause of the dispersion and dissipation is still unknown.
+If the cause is that the network was not trained well, we were unfortunately limited by available computing resources to continue the training.
+On the other hand, if the dissipation and dispersion are the inherent properties of the PINN we used, we would need more theoretical work to analyze the method.
+
+As discussed in section \ref{sec:pinn-2d-cylinder-re200-comment}, spectral bias could be another angle to view the steady-state behaviors and the phenomenon of falling back to the non-oscillating solution.
+We suspected the spectral bias made the PINN prioritize the learning of the mode at $St=0$, i.e., the steady mode.
+It would be interesting to connect the concept of spectral bias with the spectral analysis we performed in section \ref{sec:pinn-2d-cylinder-re200-koopman}.
+More work is needed in the future.
 
 Another point worth discussing is the generalizability of data-driven PINNs.
 Our experiment shows that this data-driven PINN does not perform well in predicting data it never saw during training (i.e., $t \in [0, 125]$ for this specific case).
