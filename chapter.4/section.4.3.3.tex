@@ -56,7 +56,7 @@ Equating equation \eqref{eq:discrete-dmd} and \eqref{eq:koopman} allows us to ca
     \right.
 \end{equation} 
 
-We analyzed the results from PetIBM and the data-driven PINN in $t\in[125, 140]$, which contains about three full cycles of vortex shedding.
+We analyzed the results from PetIBM and the data-driven PINN in $t\in$$[125$, $140]$, which contains about three full cycles of vortex shedding.
 A total of $76$ solution snapshots were used from each solver.
 The time spacing is $\Delta t = 0.2$.
 The Koopman analysis would result in $75$ modes.
@@ -99,7 +99,7 @@ The strong modes falling precisely on the circle may represent the period-averag
 The effect of numerical errors was filtered out from these modes.
 We call these 25 modes primary modes and all other modes secondary modes.
 Secondary modes are mostly weak and may come from the numerical errors in the PetIBM simulation.
-The plot shows these secondary modes are slightly dispersive but non-increasing over time, which is reasonable because the numerical schemes in PetIBM are stable.
+The plot shows these secondary modes are slightly dispersive but non\hyp{}increasing over time, which is reasonable because the numerical schemes in PetIBM are stable.
 
 As for the PINN's result (on the right in figure \ref{fig:koopman-eigval-dist}), the mode distribution is not as structured as in PetIBM.
 It is hard to distinguish if all 25 expected modes also exist in this plot.
@@ -150,7 +150,7 @@ If we re-plot figure \ref{fig:koopman-freq-st} using a regular scale, only $St=0
 
 The strength distribution in the PINN's plot also shows that $St=0$ and $St\approx 0.2$ are strong.
 However, they are not the only dominating modes.  
-Several other modes also have strengths at around $10^{-1}$.
+Some other modes also have strengths at around $10^{-1}$.
 As discovered in the previous paragraphs, these additional strong modes are damped modes.
 We also observed that some damped modes have the same frequencies as primary modes.
 For example, the secondary modes at $St=0$ and $St=0.2$ are damped modes, which can be confirmed in figure \ref{fig:koopman-eigval-dist}.

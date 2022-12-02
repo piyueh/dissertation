@@ -1,13 +1,13 @@
 %! TEX root = main.tex
 Consider the incompressible Navier-Stokes equations in a spatial domain of $\vec{x}\in\Omega$ and a time range of $t\in[0$, $T]$:
 \begin{subequations}\label{eq:orig-ns}
-    \begin{align}[left=\empheqlbrace\,]
+    \begin{empheq}[left=\left\{\,, right=\right.]{align}
         &\pdiff{\vec{u}}{t} + \left(\vec{u} \cdot \nabla\right) \vec{u}
             =
             -\frac{1}{\rho}\nabla p + \frac{1}{Re} \nabla^2 \vec{u}
             \label{eq:orig-ns-momentum} \\
         &\nabla \cdot \vec{u} = 0 \label{eq:orig-ns-cont}
-    \end{align}
+    \end{empheq}
 \end{subequations}
 A solution to the Navier-Stokes equations is subject to IC and BCs:
 \begin{equation}\label{eq:orig-ns-ic}

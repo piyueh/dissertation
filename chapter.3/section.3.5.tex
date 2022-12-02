@@ -22,11 +22,11 @@ The additions and modifications associated with the present work include:
     \item A reimplementation of the unsteady incompressible Navier-Stokes equations.
         Modulus also ships a similar class for the compressible Navier-Stokes equations, which falls back to the same incompressible formulation when the density is a constant.
         We reimplemented it for better control over the source code.
-    \item Other non-governing PDEs, such as vorticity, Q criterion, and Neumann and convective boundary conditions.
+    \item Non-governing PDEs, such as vorticity, Q criterion, and Neumann and convective boundary conditions.
         These PDEs are subclasses of \lstinline{modulus.pdes.PDES}.
         The first two PDEs are for post-processing, and the remaining two are for evaluating the BC losses.
     \item A binding to PyTorch's \lstinline{CylicLR} learning schedule.
-    \item Nonlinear CG and inexact line search as a subclass of \lstinline{torch.optim.Optimizer}.
+    \item A subclass of \lstinline{torch.optim.Optimizer} for nonlinear CG and inexact line search.
     \item Reimplementation of the annealing loss aggregation based on equation \eqref{eq:annealing-in-this-work}.
         The original annealing loss aggregation implementation was hard-coded for single-variable PDEs, which does not work with PDE systems like the Navier-Stokes equations.
     \item A solution workflow controller that allows the use of annealing loss aggregation, Adam, nonlinear CG, and SWA in an arbitrary combination. 

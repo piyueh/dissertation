@@ -84,7 +84,7 @@ And learning well on IC does not help in solving the PDEs.
 
 If we compare the run times, the case of $(2$, $32$, $65536)$ took the longest, about 10.5 hours.
 The case of $(1$, $32$, $16384)$ and $(3$, $256$, $4096)$ took about 3.8 and 3 hours, respectively.
-Intuitively speaking, this observation shows that the run times are mainly dominated by the numbers of training points per batch rather than the complexity of a network.
+Intuitively speaking, this observation shows that the run times are dominated by the numbers of training points per batch rather than the complexity of a network.
 
 We also compare the final $L_{2,sp-t}$ from the three cases with that in figure \ref{fig:petibm-tgv-spatial-temporal-error}.
 While PetIBM was able to achieve an error level of $10^{-3}$ in less than 20 seconds, none of the three PINN cases was able to achieve the same level of error-cost ratio.

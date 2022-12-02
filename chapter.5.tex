@@ -68,7 +68,7 @@ However, we used the cyclical learning rate in later benchmarks of cylinder flow
 Based on our previous experiments, the cyclical learning rate behaves like the exponential learning rate without much performance penalty in the worst scenario.
 
 Regarding the nonlinear CG, though the results of our experiments did not support our optimism, we still see it as a potential alternative to Adam as long as we treat each CG iteration the same as an Adam iteration.
-It means each CG iteration needs to evaluate the aggregated loss on a new batch of data, which may be problematic, as described in section 4.1.6.3. 
+It means each CG iteration needs to evaluate the aggregated loss on a new batch of data, which may be problematic, as described in section \ref{sec:ncg-tests}. 
 However, we did not confirm this speculation in this work.
 Given CG's high efficiency, it may be worth more study in the future.
 

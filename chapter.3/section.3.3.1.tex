@@ -28,7 +28,7 @@ With exponential learning rate adjustment, later iterations may lose the ability
 Smith \cite{smith_cyclical_2017} proposed a cyclical learning rate adjusting strategy for general deep learning applications.
 He found that the cyclical learning rate increased a trained model's accuracy and accelerated the training convergence.
 In the cyclical learning rate, the learning rate bounces back and forth between an upper and lower bound.
-The upper bound may be a constant or a variable that depends on the iteration counter.
+The upper bound can a variable that depends on the iteration counter.
 
 The intuitive reason why the cyclical learning rate works is that the difficulty of training deep neural networks is dominated by saddle points rather than poor local minimums \cite{dauphin_identifying_2014}.
 The cyclical learning rate helps escape saddle points in later iterations by providing large learning rates at the upper bound.

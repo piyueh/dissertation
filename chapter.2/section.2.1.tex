@@ -16,7 +16,7 @@ $\Omega$ and $\Gamma$ correspond to the whole domain of our interest and the flu
 The fluid-solid interface may be moving when viewed from a fixed coordinate system.
 Given a time $t$ and a spatial coordinate $\vec{x}$ in an Eulerian coordinate system defined in $\Omega$, we can write the following Navier-Stokes equations for incompressible flow and the immersed-boundary projection method (IBPM):
 \begin{subequations}\label{eq:mod-ns}
-    \begin{align}[left=\empheqlbrace\,]
+    \begin{empheq}[left=\left\{\,, right=\right.]{align}
         &\pdiff{\vec{u}}{t} + \left(\vec{u} \cdot \nabla\right) \vec{u}
             =
             -\frac{1}{\rho}\nabla p + \frac{1}{Re} \nabla^2 \vec{u} + 
@@ -27,7 +27,7 @@ Given a time $t$ and a spatial coordinate $\vec{x}$ in an Eulerian coordinate sy
             =
             \vec{u}_{\Gamma}\left(s, t\right)
             \label{eq:mod-ns-body-vel}
-    \end{align}
+    \end{empheq}
 \end{subequations}
 
 $\vec{u}$, $p$, $Re$, and $\rho$ are the velocity vector, pressure, Reynolds number, and fluid density.
