@@ -4,7 +4,7 @@ ensure_path('TEXINPUTS', './gw-dissertation-class');
 # the directory to store generated files
 $out_dir = "outputs";
 
-# only have to provess main.tex; other tex files are included in main.tex
+# only have to provide main.tex; other tex files are included in main.tex
 @default_files = ('main.tex');
 
 # which compiler to use for generating PDF (5 means xelatex)
@@ -27,10 +27,10 @@ sub makelos
     );
 }
 
-# let latexmk knows it has to convert .nlo files to .nls files
+# let latexmk know it has to convert .nlo files to .nls files
 add_cus_dep("nlo", "nls", 0, "makelos");
 
-# let latexmk knows .nlo and .nls files have to be cleaned when it does cleaning
+# let latexmk know .nlo and .nls files have to be cleaned when it does cleaning
 push @generated_exts, "nlo", "nls";
 
 # a Perl function to generate a table for glossaries

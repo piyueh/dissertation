@@ -1,0 +1,40 @@
+%! TEX root = main.tex
+\chapter{PINNs and Details of the Methods Used in This Work}\label{chap:pinn}
+
+\section{Solution Workflow}\label{sec:pinn-workflow-overview}
+
+    \subsection{Overview}\label{sec:pinn-overview}
+    \input{chapter.3/section.3.1.1.tex}
+
+    \subsection{Batched Training}\label{sec:batched-training}
+    \input{chapter.3/section.3.1.2.tex}
+
+    \subsection{Adaptive Loss Aggregation}\label{sec:loss-annealing}
+    \input{chapter.3/section.3.1.3.tex}
+
+\section{Deep Neural Network Modeling}\label{sec:pinn-dnnm}
+
+    \subsection{Multilayer Perceptron Networks}\label{sec:mlp}
+    \input{chapter.3/section.3.2.1.tex}
+
+    \subsection{Handling of Periodic Boundaries}\label{sec:periodic-boundary}
+    \input{chapter.3/section.3.2.2.tex}
+
+    \subsection{Automatic Differentiation}\label{sec:ad}
+    \input{chapter.3/section.3.2.3.tex}
+
+\section{Other Training Strategies}
+\input{chapter.3/section.3.3.tex}
+
+    \subsection{Cyclical Learning Rates and Stochastic Weight Averaging}\label{sec:cyclic-swa}
+    \input{chapter.3/section.3.3.1.tex}
+
+    \subsection{Nonlinear Conjugate-Gradient Optimizer and Line Search}\label{sec:ncg}
+    \input{chapter.3/section.3.3.2.tex}
+
+\section{Remarks on Differences and Similarities with Conventional Numerical Methods}\label{sec:pinn-diff}
+\input{chapter.3/section.3.4.tex}
+
+\section{Code Implementation}\label{sec:pinn-code-impl}
+\input{chapter.3/section.3.5.tex}
+% vim:ft=tex:

@@ -1,4 +1,6 @@
 %! TEX root = main.tex
+\chapter{PetIBM: a Distributed-GPU Incompressible Navier-Stokes Solver}\label{chap:petibm}
+
 PetIBM is a C++ library that helps create new incompressible flow solvers for large-scale and distributed GPU computing.
 The core design philosophy of PetIBM is to allow the easy creation of a solver that fits into Perot's framework \cite{perot_analysis_1993} for projection methods.
 Combining Perot's framework and staggered grids, PetIBM does not need pressure boundary conditions.
@@ -26,4 +28,16 @@ The decoupled IBPM solver will be used to generate baseline data for benchmarkin
 For interested readers, a complete PetIBM installation also includes a basic Navier-Stokes equation solver (for flows without objects), the original IBPM solver, and a solver for moving bodies with prescribed motions.
 These solvers, however, are out of this work's scope.
 Their descriptions can be found in the documentation of reference \cite{chuang_petibm:_2018}.
+
+\section{Decoupled Immersed-Boundary Projection Method}\label{sec:petibm-math}
+\input{chapter.2/section.2.1.tex}
+
+\section{Implementation Details}\label{sec:petibm-impl}
+\input{chapter.2/section.2.2.tex}
+
+\section{Verification and Validation}\label{sec:petibm-vv}
+\input{chapter.2/section.2.3.tex}
+
+\section{Performance Benchmarks}\label{sec:petibm-perf}
+\input{chapter.2/section.2.4.tex}
 % vim:ft=tex
