@@ -36,19 +36,20 @@ Here we list the key findings from the first group of our benchmarks:
     For example, 20 seconds with PetIBM versus 2 hours with the PINN for an error level of $1e-3$.
     \item PINNs with the same training loss may give different prediction accuracies.
     This nondeterministic behavior grows when MLP networks' model complexity increases.
-    We found that training losses may keep decreasing even when PDE residuals already stop improving.
+    We found that training losses may keep decreasing even when PDE residuals stop improving.
     In such cases, only the residuals of initial conditions are improving, which does not help with prediction accuracy.
     This finding suggests that PDE residuals are better options for monitoring training progress.
     \item Errors decrease at a similar rate when we either increase the number of hidden layers by one or double the number of per-layer neurons in MLP networks.
-    It suggests that the former is a better option to improve prediction accuracy than the latter because the former needs less computational cost.
+    It suggests that the former is a better option to improve prediction accuracy because it needs less computational cost.
     \item Unlike conventional numerical methods, PINNs' errors do not monotonically decrease when increasing MLP networks' degrees of freedom (DoFs).
     PINNs can have different accuracies under the same number of DoFs, indicating that DoFs are not a proper metric for PINNs' model complexity.
-    \item The per-batch number of training points has a stronger effect on PINNs' time costs than the model complexity. However, the former has less influence than the latter on prediction accuracy.
-    It suggests that increasing per-batch training points should come after increasing hidden layers or neurons when improving PINNs' accuracy.
+    \item The per-batch number of training points substantially affects PINNs’ time costs more than the model complexity.
+    However, the former has less influence than the latter on prediction accuracy.
+    It suggests that increasing per-batch training points should come after increasing hidden layers or neurons when improving PINNs’ accuracy.
     \item PINNs' weak scaling is above $90\%$ on average (with 1 to 8 GPUs), which helps scale per-batch training points on GPUs with limited memory space.
     \item If we defined workload using the number of training points, PINNs have strong-scaling efficiencies ranging from $91\%$ with 2 GPUs in the best case to $27\%$ with 8 GPUs in the worst case.
-    \item Defining a proper quantitative metric to evaluate model complexity is necessary to study PINNs' convergence and scaling properties further.
-    \item All new training strategies we tried did not have significant effects on improving time-to-solution and prediction accuracy.
+    \item Defining a proper quantitative metric to evaluate model complexity is necessary to further study PINNs' convergence and scaling properties.
+    \item All new training strategies we tried did not significantly improve time-to-solution and prediction accuracy.
 \end{enumerate}
 
 In the second group of our benchmarks, the validations of both the steady and unsteady data-free PINN solvers were successful against the 2D cylinder flow at $Re=40$.
@@ -78,6 +79,6 @@ The in-house CFD code served as a baseline for PINNs' benchmarks.
 In a nutshell, our results show that PINNs is a relatively new research area.
 As we investigated the feasibility of PINNs, we found more open questions and challenges for PINNs to become an engineering tool.
 While most studies in the literature focused on the theoretical capability of PINNs and toy PDEs, we hope our work can arouse others' interest in solving those challenges.
-All the code, case configurations, scripts for pre-/post-processing, and definition files of containers are open and available online (https://github.com/piyueh/dissertation-repro-pack).
+All the code, case configurations, scripts for pre-/post-processing, and definition files of containers are open and available online (DOI: 10.5281/zenodo.7388327).
 }
 % vim:ft=tex
