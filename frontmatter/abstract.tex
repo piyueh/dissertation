@@ -33,7 +33,7 @@ In addition, we used a 2D cylinder flow at $Re=40$, which does not have instabil
 Here we list the key findings from the first group of our benchmarks:
 \begin{enumerate}[nolistsep]
     \item Under a given desired error level, the time cost of a PINN solver is several orders of magnitude slower than our in-house conventional CFD solver, PetIBM.
-    For example, 20 seconds with PetIBM versus 2 hours with the PINN for an error level of $1e-3$.
+    For example, 20 seconds with PetIBM versus 2 hours with the PINN for an error level of \num{e-3}.
     \item PINNs with the same training loss may give different prediction accuracies.
     This nondeterministic behavior grows when MLP networks' model complexity increases.
     We found that training losses may keep decreasing even when PDE residuals stop improving.
@@ -46,10 +46,10 @@ Here we list the key findings from the first group of our benchmarks:
     \item The per-batch number of training points substantially affects PINNs’ time costs more than the model complexity.
     However, the former has less influence than the latter on prediction accuracy.
     It suggests that increasing per-batch training points should come after increasing hidden layers or neurons when improving PINNs’ accuracy.
-    \item PINNs' weak scaling is above $90\%$ on average (with 1 to 8 GPUs), which helps scale per-batch training points on GPUs with limited memory space.
-    \item If we defined workload using the number of training points, PINNs have strong-scaling efficiencies ranging from $91\%$ with 2 GPUs in the best case to $27\%$ with 8 GPUs in the worst case.
+    \item PINNs' weak scaling is above \qty{90}{\percent} on average (with 1 to 8 GPUs), which helps scale per-batch training points on GPUs with limited memory space.
+    \item If we defined workload using the number of training points, PINNs have strong-scaling efficiencies ranging from \qty{91}{\percent} with \num{2} GPUs in the best case to \qty{27}{\percent} with \num{8} GPUs in the worst case.
     \item Defining a proper quantitative metric to evaluate model complexity is necessary to further study PINNs' convergence and scaling properties.
-    \item All new training strategies we tried did not significantly improve time-to-solution and prediction accuracy.
+    \item All new training strategies we tried did not significantly improve time\hyp{}to\hyp{}solution and prediction accuracy.
 \end{enumerate}
 
 In the second group of our benchmarks, the validations of both the steady and unsteady data-free PINN solvers were successful against the 2D cylinder flow at $Re=40$.
